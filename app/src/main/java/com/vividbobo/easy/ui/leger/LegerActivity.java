@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import com.vividbobo.easy.BaseActivity;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.databinding.ActivityLegerBinding;
-import com.vividbobo.easy.model.LegerItem;
+import com.vividbobo.easy.database.model.LegerItem;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 
 public class LegerActivity extends BaseActivity {
@@ -50,13 +50,13 @@ public class LegerActivity extends BaseActivity {
         LegerAdapter legerAdapter = new LegerAdapter();
         legerAdapter.setOnEditBtnClickListener(new OnItemClickListener() {
             @Override
-            public void OnItemClick(Object item, int position) {
+            public void onItemClick(View view, Object item, int position) {
                 AddLegerDialog.newInstance((LegerItem) item).show(getSupportFragmentManager(), AddLegerDialog.TAG);
             }
         });
         legerAdapter.setOnClickListener(new OnItemClickListener() {
             @Override
-            public void OnItemClick(Object item, int position) {
+            public void onItemClick(View view, Object item, int position) {
                 //TODO getGlobalViewModel().setLegerId(((LegerItem) item).getId());
                 int old_pos = legerAdapter.getSelectPosition(); //old
                 legerAdapter.setSelectPosition(position);       //new

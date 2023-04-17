@@ -38,11 +38,11 @@
                     android:layout_marginBottom="10dp"
                     android:text="本月结余"
                     android:textColor="@color/home_tool_bar_text"
-                    app:layout_constraintBottom_toTopOf="@+id/home_month_left_money_text"
+                    app:layout_constraintBottom_toTopOf="@+id/home_tool_bar_left_balance_text"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/home_month_left_money_text"
+                    android:id="@+id/home_tool_bar_left_balance_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -65,7 +65,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/home_month_income_text"
+                    android:id="@+id/home_tool_bar_income_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
@@ -85,11 +85,11 @@
                     android:text="本月支出"
                     android:textColor="@color/home_tool_bar_text"
                     app:layout_constraintBottom_toBottomOf="@+id/textView7"
-                    app:layout_constraintStart_toEndOf="@+id/home_month_income_text"
+                    app:layout_constraintStart_toEndOf="@+id/home_tool_bar_income_text"
                     app:layout_constraintTop_toTopOf="@+id/textView7" />
 
                 <TextView
-                    android:id="@+id/home_month_outcome_text"
+                    android:id="@+id/home_tool_bar_outcome_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -114,11 +114,11 @@
                 app:menu="@menu/home_menu"
                 app:navigationIcon="@drawable/menu_ic">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/home_tool_bar_leger_layout"
                     android:layout_width="wrap_content"
                     android:padding="10dp"
-                    android:background="@drawable/selector_item_rectangle_round_alpha_selected"
+                    android:foreground="?selectableItemBackgroundBorderless"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">
 
@@ -127,13 +127,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="日常账本"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_down" />
-                </LinearLayout>
+                        android:layout_width="24dp"
+                        android:layout_height="0dp"
+                        android:src="@drawable/ic_arrow_right"
+                        app:layout_constraintBottom_toBottomOf="@+id/home_tool_bar_title"
+                        app:layout_constraintStart_toEndOf="@+id/home_tool_bar_title"
+                        app:layout_constraintTop_toTopOf="@+id/home_tool_bar_title" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

@@ -15,15 +15,18 @@
         android:theme="@style/Theme.Easy"
         tools:targetApi="31">
         <activity
-            android:name=".ui.tags.TagsActivity"
+            android:name=".ui.calendar.CalendarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.account.AddAccountActivity"
             android:exported="false" />
         <activity
             android:name=".ui.leger.LegerActivity"
             android:exported="false" />
         <activity
             android:name=".ui.bill.BillActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan|adjustResize" />
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true" />
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:exported="false" />

@@ -2,10 +2,8 @@ package com.vividbobo.easy;
 
 import android.app.Application;
 
-import androidx.lifecycle.ViewModelProvider;
-
-import com.vividbobo.easy.model.viewmodel.GlobalViewModel;
-import com.vividbobo.easy.utils.DrawableUtils;
+import com.google.android.material.color.DynamicColors;
+import com.vividbobo.easy.utils.ColorUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.utils.ToastUtil;
 
@@ -14,10 +12,18 @@ import com.vividbobo.easy.utils.ToastUtil;
  * 可用一些全局初始化
  */
 public class EasyApplication extends Application {
-    {
-        ResourceUtils.setContext(this);        //initial
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // some utils need context initial
+        ResourceUtils.setContext(this);
         ToastUtil.setContext(this);
-        DrawableUtils.setContext(this);
+        ColorUtils.setContext(this);
+        // Apply dynamic color
+        DynamicColors.applyToActivitiesIfAvailable(this);
     }
+
 
 }

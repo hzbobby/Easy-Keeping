@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.model.ImageItem;
+import com.vividbobo.easy.database.model.ImageItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.CoverViewHol
     private List<ImageItem> covers;
 
     public CoverAdapter() {
-        covers=new ArrayList<>();
+        covers = new ArrayList<>();
         covers.add(new ImageItem());
         covers.add(new ImageItem());
         covers.add(new ImageItem());

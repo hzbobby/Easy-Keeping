@@ -1,21 +1,47 @@
 package com.vividbobo.easy.ui.account;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.vividbobo.easy.R;
 import com.vividbobo.easy.databinding.FragmentAccountBinding;
+import com.vividbobo.easy.viewmodel.AccountViewModel;
+import com.vividbobo.easy.ui.others.OnItemClickListener;
+import com.vividbobo.easy.ui.others.OnItemLongClickListener;
+import com.vividbobo.easy.ui.others.OperationDialogBuilder;
 
 
 public class AccountFragment extends Fragment {
+    private static final String TAG = "AccountFragment";
 
     private FragmentAccountBinding binding;
+
+    private View.OnClickListener toolbarNavigationClickListener;
+    private int lastClickGroupPos = -1;
+    private int lastClickChildPos = -1;
+
+    public static AccountFragment newInstance(View.OnClickListener toolbarNavigationClickListener) {
+        AccountFragment fragment = new AccountFragment();
+        fragment.setToolbarNavigationClickListener(toolbarNavigationClickListener);
+
+        return fragment;
+    }
+
+    public void setToolbarNavigationClickListener(View.OnClickListener toolbarNavigationClickListener) {
+        this.toolbarNavigationClickListener = toolbarNavigationClickListener;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -23,11 +49,93 @@ public class AccountFragment extends Fragment {
                 new ViewModelProvider(this).get(AccountViewModel.class);
 
         binding = FragmentAccountBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        accountViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
+        binding.accountToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (toolbarNavigationClickListener != null) {
+                    toolbarNavigationClickListener.onClick(null);
+                }
+            }
+        });
+        binding.accountToolBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.account_add:
+                        Intent intent = new Intent(getActivity(), AddAccountActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.account_more:
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+
+
+        AccountExpandableListAdapter accountExpandableListAdapter = new AccountExpandableListAdapter();
+
+        binding.accountExpandableListView.setAdapter(accountExpandableListAdapter);
+
+
+
+        accountExpandableListAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, Object item, int position) {
+
+            }
+        });
+        accountExpandableListAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(Object item, int position) {
+
+            }
+        });
+
+        //click collapse app bar to hide balance
+        binding.accountToolBarConsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 用 viewmodel 存储，否则旋转屏幕将会重置
+                if (accountViewModel.hideAsserts.getValue()) {
+                    accountViewModel.setHideAsserts(false);
+                } else {
+                    accountViewModel.setHideAsserts(true);
+                }
+            }
+        });
+        accountViewModel.hideAsserts.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                binding.accountAssetsVisibleIm.setSelected(aBoolean);
+                accountExpandableListAdapter.setHideBalance(aBoolean);
+                setHideToolBarAssets(aBoolean);
+            }
+        });
+
+
+        return binding.getRoot();
+    }
+
+    private void setHideToolBarAssets(boolean hideToolBarAssets) {
+        if (hideToolBarAssets) {
+            binding.accountNetAssetsText.setText("****");
+            binding.accountTotalAssetsText.setText("****");
+            binding.accountTotalLiabilityText.setText("****");
+        } else {
+            //TODO change to detail assets
+            binding.accountNetAssetsText.setText("1111");
+            binding.accountTotalAssetsText.setText("1111");
+            binding.accountTotalLiabilityText.setText("1111");
+        }
+    }
+
+    private void setLastClickPos(int groupPos, int childPos) {
+        lastClickGroupPos = groupPos;
+        lastClickChildPos = childPos;
     }
 
     @Override

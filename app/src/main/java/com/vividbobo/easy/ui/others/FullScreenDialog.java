@@ -4,6 +4,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.vividbobo.easy.R;
 
+@Deprecated
 public class FullScreenDialog extends DialogFragment {
 
     //全屏设置

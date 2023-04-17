@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?selectableItemBackground"
+
+    android:paddingBottom="15dp"
+    android:paddingStart="5dp"
+    android:paddingTop="15dp">
+
+    <View
+        android:id="@+id/category_tab_indicator"
+        android:layout_width="5dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="@color/pink_400"
+        app:layout_constraintBottom_toBottomOf="@+id/category_tab_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/category_tab_title" />
+
+    <TextView
+        android:id="@+id/category_tab_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="餐饮"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

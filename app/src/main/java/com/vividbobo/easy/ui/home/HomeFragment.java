@@ -13,12 +13,19 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.vividbobo.easy.adapter.HomeBillAdapter;
+import com.vividbobo.easy.database.model.BillPresent;
+import com.vividbobo.easy.database.model.DayBillPresent;
 import com.vividbobo.easy.databinding.FragmentHomeBinding;
 import com.vividbobo.easy.ui.bill.BillActivity;
 import com.vividbobo.easy.ui.leger.LegerActivity;
+import com.vividbobo.easy.viewmodel.HomeViewModel;
+
+import java.util.List;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -26,12 +33,12 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
 
     private View.OnClickListener toolbarNavigationClickListener;
+    private HomeViewModel homeViewModel;
 
     public static HomeFragment newInstance(View.OnClickListener toolbarNavigationClickListener) {
         HomeFragment fragment = new HomeFragment();
         fragment.setToolbarNavigationClickListener(toolbarNavigationClickListener);
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -47,10 +54,9 @@ public class HomeFragment extends Fragment {
         }
     });
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -68,11 +74,7 @@ public class HomeFragment extends Fragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         binding.homeRecyclerView.setLayoutManager(linearLayoutManager);
-        HomeBillAdapter homeBillAdapter = new HomeBillAdapter();
-        homeBillAdapter.setOpenFooter(true);
-        homeBillAdapter.setOpenHeader(true);
-        homeBillAdapter.setDataToShowLimit(true);
-        homeBillAdapter.setMax2show(50);
+        HomeBillAdapter homeBillAdapter = new HomeBillAdapter(getActivity());
         binding.homeRecyclerView.setAdapter(homeBillAdapter);
 
 
@@ -85,7 +87,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
         //leger layout
         binding.homeToolBarLegerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,12 +95,35 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //监听主页账单记录变化
+        DayBillPresent headerBillPresent = new DayBillPresent();
+        homeViewModel.getTodayTotalExpenditure().observe(getActivity(), new Observer<DayBillPresent>() {
+            @Override
+            public void onChanged(DayBillPresent dayBillPresent) {
+                homeBillAdapter.updateHeaderItem(dayBillPresent);
+            }
+        });
+        homeViewModel.getTodayTotalIncome().observe(getActivity(), new Observer<DayBillPresent>() {
+            @Override
+            public void onChanged(DayBillPresent dayBillPresent) {
+                homeBillAdapter.updateHeaderItem(dayBillPresent);
+            }
+        });
+        homeViewModel.getTodayBillPresent().observe(getActivity(), new Observer<List<BillPresent>>() {
+            @Override
+            public void onChanged(List<BillPresent> billPresents) {
+                homeBillAdapter.updateItems(billPresents);
+            }
+        });
+
+
         return root;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        homeViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
     }
 
     @Override

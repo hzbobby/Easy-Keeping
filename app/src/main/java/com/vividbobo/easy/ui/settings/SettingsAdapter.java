@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.model.SettingItem;
+import com.vividbobo.easy.database.model.SettingItem;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -79,14 +79,14 @@ public class SettingsAdapter extends RecyclerView.Adapter {
             headerViewHolder.title.setText(headerTitle);
         } else {
             ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-            SettingItem settingItem = data.get(getDataPosition(position));
+            SettingItem settingItem = data.get( getDataPosition(holder.getAdapterPosition()) );
             itemViewHolder.title.setText(settingItem.getTitle());
             itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (onItemClickListener != null) {
                         //这里的postion是指data中的position
-                        onItemClickListener.OnItemClick(settingItem, getDataPosition(position));
+                        onItemClickListener.onItemClick(view,settingItem, getDataPosition(position));
                     }
                 }
             });

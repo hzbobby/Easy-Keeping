@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.model.LegerItem;
+import com.vividbobo.easy.database.model.LegerItem;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -77,10 +77,10 @@ public class LegerAdapter extends RecyclerView.Adapter<LegerAdapter.LegerViewHol
 
     @Override
     public void onBindViewHolder(@NonNull LegerAdapter.LegerViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        if(position== getSelectPosition()){
+        if (position == getSelectPosition()) {
             //set current label
             holder.label.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             //let it gone
             holder.label.setVisibility(View.GONE);
         }
@@ -90,7 +90,7 @@ public class LegerAdapter extends RecyclerView.Adapter<LegerAdapter.LegerViewHol
             public void onClick(View view) {
                 if (onClickListener != null) {
                     //TODO change position to data.id
-                    onClickListener.OnItemClick(position, position);
+                    onClickListener.onItemClick(view, position, position);
                 }
             }
         });
@@ -99,7 +99,7 @@ public class LegerAdapter extends RecyclerView.Adapter<LegerAdapter.LegerViewHol
             public void onClick(View view) {
                 if (onEditBtnClickListener != null) {
                     //TODO set data
-                    onEditBtnClickListener.OnItemClick(null, position);
+                    onEditBtnClickListener.onItemClick(view, null, holder.getAdapterPosition());
                 }
             }
         });
@@ -124,7 +124,7 @@ public class LegerAdapter extends RecyclerView.Adapter<LegerAdapter.LegerViewHol
             leger_title = itemView.findViewById(R.id.leger_title);
             leger_desc = itemView.findViewById(R.id.leger_desc);
 
-            label=itemView.findViewById(R.id.leger_selected_label);
+            label = itemView.findViewById(R.id.leger_selected_label);
         }
     }
 

@@ -2,25 +2,23 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-<!--    label_blue-->
+    <!--    label_blue-->
     <color name="dodger_blue">#1E90FF</color>
-<!--    money color-->
+    <!--    money color-->
     <color name="orange_red">#ff4500</color>
     <color name="lime_green">#32CD32</color>
-<!--    text gray-->
+    <!--    text gray-->
     <color name="text_gray">#8a8a8a</color>
     <color name="text_light_gray">#bfbfbf</color>
     <color name="line_gray">#dbdbdb</color>
     <color name="home_tool_bar_text">#F5F5F5</color>
 
-<!--    icon color-->
+    <!--    icon color-->
     <color name="key_delete">#ff4500</color>
 
-<!--    background-->
+    <!--    background-->
     <color name="black_alpha_20">#33000000</color>
     <color name="black_alpha_10">#1A000000</color>
-
-
 
 
     <color name="red_50">#FFEBEE</color>
@@ -295,4 +293,11 @@
     <color name="grey_700">#616161</color>
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
+
+
+    <color name="expenditure">#DC143C</color>
+    <color name="income">#32CD32</color>
+
+
+
 </resources>
