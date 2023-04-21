@@ -17,6 +17,13 @@ public class Tag implements Serializable {
     }
 
     @Ignore
+    public Tag(Tag tag) {
+        this.id = tag.getId();
+        this.title = tag.title;
+        this.hexCode = tag.hexCode;
+    }
+
+    @Ignore
     public Tag(String title, String hexCode) {
         this.title = title;
         this.hexCode = hexCode;

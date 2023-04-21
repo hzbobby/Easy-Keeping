@@ -28,13 +28,13 @@ public class BaseEntityAdapter<T extends BaseEntity> extends CommonAdapter<T, Re
 
     @Override
     protected BaseEntityFooterVH onCreateFooterViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_base_entity, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item2, parent, false);
         return new BaseEntityFooterVH(v);
     }
 
     @Override
     protected BaseEntityItemVH onCreateNormalViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_base_entity, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item2, parent, false);
         return new BaseEntityItemVH(v);
     }
 

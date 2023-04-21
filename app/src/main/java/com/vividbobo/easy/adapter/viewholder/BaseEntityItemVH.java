@@ -13,8 +13,8 @@ import com.vividbobo.easy.database.model.BaseEntity;
 import com.vividbobo.easy.utils.ResourceUtils;
 
 public class BaseEntityItemVH extends RecyclerView.ViewHolder {
-    private ImageView iconIv;
-    private TextView titleTv, descTv;
+    public ImageView iconIv;
+    public TextView titleTv, descTv;
 
     public BaseEntityItemVH(@NonNull View itemView) {
         super(itemView);

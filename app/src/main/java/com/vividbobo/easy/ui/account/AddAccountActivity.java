@@ -1,31 +1,33 @@
 package com.vividbobo.easy.ui.account;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.vividbobo.easy.R;
+import com.vividbobo.easy.adapter.AccountTypeAdapter;
 import com.vividbobo.easy.databinding.ActivityAddAccountBinding;
-import com.vividbobo.easy.database.model.AccountTypeItem;
+import com.vividbobo.easy.database.model.AccountType;
+import com.vividbobo.easy.databinding.DialogAddAccount2Binding;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
-import com.vividbobo.easy.ui.others.OperationDialogBuilder;
 
+import java.util.ArrayList;
+
+@Deprecated
 public class AddAccountActivity extends AppCompatActivity {
     private static final String TAG = "AddAccountActivity";
 
-    ActivityAddAccountBinding binding;
+    DialogAddAccount2Binding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityAddAccountBinding.inflate(getLayoutInflater());
+        binding = DialogAddAccount2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
 
@@ -47,21 +49,22 @@ public class AddAccountActivity extends AppCompatActivity {
         });
 
 
-        AccountTypeAdapter accountTypeAdapter = new AccountTypeAdapter();
+        AccountTypeAdapter accountTypeAdapter = new AccountTypeAdapter(this);
         accountTypeAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
-                AccountTypeItem accountTypeItem = (AccountTypeItem) item;
-                Log.d(TAG, "onItemClick: isChildAccountEmpty: " + accountTypeItem.isChildAccountEmpty());
-                if (accountTypeItem.isChildAccountEmpty()) {
-                    AddAccountDialog.newInstance(null).show(getSupportFragmentManager(), AddAccountDialog.TAG);
-                } else {
-                    //into second type select dialog
-                    AccountBankDialog.newInstance().show(getSupportFragmentManager(), AccountBankDialog.TAG);
-                }
+//                AccountType accountType = (AccountType) item;
+//                AddAccountDialog.newInstance(null).show(getSupportFragmentManager(), AddAccountDialog.TAG);
+//
+
+//                if (accountType.getChildren().size() > 0) {
+//                    //into second type select dialog
+//                    AccountBankDialog.newInstance((ArrayList<AccountType>) accountType.getChildren()).show(getSupportFragmentManager(), AccountBankDialog.TAG);
+//                } else {
+//                    AddAccountDialog.newInstance(null).show(getSupportFragmentManager(), AddAccountDialog.TAG);
+//                }
             }
         });
-
 
 
         accountTypeAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {

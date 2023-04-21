@@ -95,7 +95,6 @@ public class SettingsAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount: itemCount: " + (openHeader ? 1 + data.size() : data.size()));
         return openHeader ? 1 + data.size() : data.size();
     }
 

@@ -12,18 +12,19 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.databinding.DialogAddAccountTypeBinding;
-import com.vividbobo.easy.database.model.AccountTypeItem;
+import com.vividbobo.easy.database.model.AccountType;
 import com.vividbobo.easy.ui.others.FullScreenDialog;
 
+@Deprecated
 public class AddAccountTypeDialog extends FullScreenDialog {
     public static final String TAG = "AddAccountType";
     private static final String KEY_ARG1 = "accountTypeItem1";
 
-    public static AddAccountTypeDialog newInstance(AccountTypeItem accountTypeItem) {
+    public static AddAccountTypeDialog newInstance(AccountType accountType) {
 
         Bundle args = new Bundle();
-        if (accountTypeItem != null) {
-            args.putSerializable(KEY_ARG1, accountTypeItem);
+        if (accountType != null) {
+            args.putSerializable(KEY_ARG1, accountType);
         }
         AddAccountTypeDialog fragment = new AddAccountTypeDialog();
         fragment.setArguments(args);
@@ -40,11 +41,11 @@ public class AddAccountTypeDialog extends FullScreenDialog {
         //edit init
         assert getArguments() != null;
         if (getArguments().getSerializable(KEY_ARG1) != null) {
-            AccountTypeItem accountTypeItem = (AccountTypeItem) getArguments().getSerializable(KEY_ARG1);
-            binding.addAccountTypeTitle.getEditText().setText(accountTypeItem.getTitle());
-            binding.addAccountTypeDesc.getEditText().setText(accountTypeItem.getSubTitle());
+            AccountType accountType = (AccountType) getArguments().getSerializable(KEY_ARG1);
+            binding.addAccountTypeTitle.getEditText().setText(accountType.getTitle());
+            binding.addAccountTypeDesc.getEditText().setText(accountType.getDesc());
             binding.addAccountTypeDeleteBtn.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             binding.addAccountTypeDeleteBtn.setVisibility(View.GONE);
         }
 

@@ -2,6 +2,7 @@ package com.vividbobo.easy.database.model;
 
 import java.io.Serializable;
 
+@Deprecated
 public class AccountItem implements Serializable {
     //icon
     //title

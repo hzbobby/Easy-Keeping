@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 
+import androidx.annotation.ArrayRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -31,6 +32,10 @@ public class ResourceUtils {
 
     public static void setContext(Context context) {
         mContext = context;
+    }
+
+    public static String[] getStringArray(@ArrayRes int stringId) {
+        return mContext.getResources().getStringArray(stringId);
     }
 
 

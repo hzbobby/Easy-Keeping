@@ -2,6 +2,7 @@ package com.vividbobo.easy.ui.others.commonAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -92,6 +93,7 @@ public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, N
 
     public void setHeaderItem(Object headerItem) {
         this.headerItem = headerItem;
+        notifyItemChanged(0);
     }
 
     public void setFooterItem(Object footerItem) {
@@ -157,12 +159,30 @@ public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, N
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == ITEM_TYPE_HEADER) {
-            return onCreateHeaderViewHolder(parent, viewType);
+            HEADER header = onCreateHeaderViewHolder(parent, viewType);
+            onHeaderCreated(header);
+            return header;
         } else if (viewType == ITEM_TYPE_FOOTER) {
-            return onCreateFooterViewHolder(parent, viewType);
+            FOOTER footer = onCreateFooterViewHolder(parent, viewType);
+            onFooterCreated(footer);
+            return footer;
         } else {
-            return onCreateNormalViewHolder(parent, viewType);
+            NORMAL normal = onCreateNormalViewHolder(parent, viewType);
+            onNormalCreated(normal);
+            return normal;
         }
+    }
+
+    protected void onHeaderCreated(HEADER header) {
+        // child adapter do some specify
+    }
+
+    protected void onFooterCreated(FOOTER footer) {
+        // child adapter do some specify
+    }
+
+    protected void onNormalCreated(NORMAL normal) {
+        // child adapter do some specify
     }
 
     /**
@@ -296,6 +316,7 @@ public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, N
 
     public void updateItems(List<T> newItems) {
         items = newItems;
+        Log.d(TAG, "updateItems: ");
         notifyDataSetChanged();
     }
 

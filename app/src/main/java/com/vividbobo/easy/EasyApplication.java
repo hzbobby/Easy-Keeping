@@ -5,6 +5,7 @@ import android.app.Application;
 import com.google.android.material.color.DynamicColors;
 import com.vividbobo.easy.utils.ColorUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
+import com.vividbobo.easy.utils.SharePreferenceUtil;
 import com.vividbobo.easy.utils.ToastUtil;
 
 /**

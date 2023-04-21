@@ -305,19 +305,21 @@ public class BillActivity extends BaseActivity {
             }
         });
 
-        //currencyPicker
-        CurrencyPicker currencyPicker = new CurrencyPicker();
-        currencyPicker.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, Object item, int position) {
-                Currency currency = (Currency) item;
-                billViewModel.setCurrencyCode(currency.getCode());
-            }
-        });
-        binding.billCurrencyIv.setOnClickListener(new View.OnClickListener() {
+//        //currencyPicker
+//        CurrencyPicker currencyPicker = new CurrencyPicker();
+//        currencyPicker.setOnItemClickListener(new OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, Object item, int position) {
+//                Currency currency = (Currency) item;
+//                billViewModel.setCurrencyCode(currency.getCode());
+//            }
+//        });
+        binding.billCalculateIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currencyPicker.show(getSupportFragmentManager(), CurrencyPicker.TAG);
+//                currencyPicker.show(getSupportFragmentManager(), CurrencyPicker.TAG);
+                //计算器
+
             }
         });
 

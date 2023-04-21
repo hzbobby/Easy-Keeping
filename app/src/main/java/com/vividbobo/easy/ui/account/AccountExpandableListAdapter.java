@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vividbobo.easy.R;
+import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.AccountGroup;
 import com.vividbobo.easy.database.model.AccountItem;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
@@ -25,12 +26,14 @@ public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
     private int lastClickGroupPos = -1;
     private int lastClickChildPos = -1;
 
+
+
     private void setLastClickPos(int groupPos, int childPos) {
         lastClickGroupPos = groupPos;
         lastClickChildPos = childPos;
     }
 
-    public AccountItem getLastClickItem() {
+    public Account getLastClickItem() {
         if (lastClickGroupPos >= 0 && lastClickChildPos >= 0
                 && lastClickGroupPos < accountGroups.size() && lastClickChildPos < accountGroups.get(lastClickGroupPos).getChildren().size()) {
             return accountGroups.get(lastClickGroupPos).getChildren().get(lastClickChildPos);
@@ -49,7 +52,7 @@ public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public AccountItem getItem(int groupPos, int childPos) {
+    public Account getItem(int groupPos, int childPos) {
         if (groupPos >= 0 && childPos >= 0 && groupPos < accountGroups.size() && childPos < accountGroups.get(groupPos).getChildren().size()) {
             return accountGroups.get(groupPos).getChildren().get(childPos);
         }
@@ -66,19 +69,19 @@ public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
         accountGroups = new ArrayList<>();
 
         //just for test
-        for (int i = 0; i < 15; i++) {
-            String title = String.format("账户#%d", i);
-            AccountGroup accountGroup = new AccountGroup();
-            accountGroup.setTitle(title);
-            for (int j = 0; j < i + 1; j++) {
-                String childTitle = String.format("子账户#%d", j);
-                AccountItem accountItem = new AccountItem();
-                accountItem.setTitle(childTitle);
-                accountItem.setBalance(i * j * 10000);
-                accountGroup.getChildren().add(accountItem);
-            }
-            accountGroups.add(accountGroup);
-        }
+//        for (int i = 0; i < 15; i++) {
+//            String title = String.format("账户#%d", i);
+//            AccountGroup accountGroup = new AccountGroup();
+//            accountGroup.setTitle(title);
+//            for (int j = 0; j < i + 1; j++) {
+//                String childTitle = String.format("子账户#%d", j);
+//                AccountItem accountItem = new AccountItem();
+//                accountItem.setTitle(childTitle);
+//                accountItem.setBalance(i * j * 10000);
+//                accountGroup.getChildren().add(accountItem);
+//            }
+//            accountGroups.add(accountGroup);
+//        }
 
 
     }
@@ -137,7 +140,7 @@ public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
     @SuppressLint("DefaultLocale")
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-        AccountItem accountItem = ((AccountGroup) getGroup(i)).getChildren().get(i1);
+        Account accountItem = ((AccountGroup) getGroup(i)).getChildren().get(i1);
         if (view == null) {
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_account, viewGroup, false);
         }

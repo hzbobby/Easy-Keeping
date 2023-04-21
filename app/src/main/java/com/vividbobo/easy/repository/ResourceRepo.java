@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.database.EasyDatabase;
 import com.vividbobo.easy.database.dao.CategoryDao;
 import com.vividbobo.easy.database.dao.ResourceDao;
@@ -18,16 +19,23 @@ import java.util.List;
 public class ResourceRepo {
 
     //the Dao
+    private final ResourceDao resourceDao;
 
     //the liveData
     private final LiveData<List<ChildRvItem>> iconChildRvItems;
+    private final ListenableFuture<List<Resource>> accountResLF;
 
 
     public ResourceRepo(Application application) {
-
+        EasyDatabase db = EasyDatabase.getDatabase(application);
+        resourceDao = db.resourceDao();
         iconChildRvItems = getIconChildRvItemsLiveData(getCategoryDrawableResources());
+        accountResLF = resourceDao.getResourcesByResType(Resource.ResourceType.ACCOUNT);
     }
 
+    public ListenableFuture<List<Resource>> getAccountResLF() {
+        return accountResLF;
+    }
 
     public LiveData<List<ChildRvItem>> getIconChildRvItems() {
         return iconChildRvItems;

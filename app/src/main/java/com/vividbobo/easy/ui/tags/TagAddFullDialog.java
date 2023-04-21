@@ -20,7 +20,6 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.databinding.DialogAddTagsBinding;
-import com.vividbobo.easy.database.model.TagPresent;
 import com.vividbobo.easy.ui.common.BaseFullScreenMaterialDialog;
 import com.vividbobo.easy.utils.ToastUtil;
 import com.vividbobo.easy.viewmodel.TagViewModel;

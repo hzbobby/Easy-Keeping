@@ -40,7 +40,7 @@
 
     <style name="FullScreenDialogTheme" parent="Theme.Easy">
         <item name="android:windowIsFloating">false</item>
-        <item name="android:windowAnimationStyle">@style/FullScreenDialogAnimation</item>
+<!--        <item name="android:windowAnimationStyle">@style/FullScreenDialogAnimation</item>-->
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>

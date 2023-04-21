@@ -5,6 +5,10 @@ import java.io.Serializable;
 public class TagPresent extends Tag implements Serializable {
     private boolean checked;
 
+    public TagPresent(Tag tag) {
+        super(tag);
+    }
+
     public boolean isChecked() {
         return checked;
     }

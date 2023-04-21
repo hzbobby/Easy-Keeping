@@ -5,7 +5,12 @@ import java.util.List;
 
 public class AccountGroup {
     private String title;
-    private List<AccountItem> children;
+    private List<Account> children;
+
+    public AccountGroup(String title) {
+        this.title = title;
+        children = new ArrayList<>();
+    }
 
     public AccountGroup() {
         children = new ArrayList<>();
@@ -19,11 +24,12 @@ public class AccountGroup {
         this.title = title;
     }
 
-    public List<AccountItem> getChildren() {
+    public List<Account> getChildren() {
         return children;
     }
 
-    public void setChildren(List<AccountItem> children) {
-        this.children = children;
+    public void addChild(Account account) {
+        children.add(account);
     }
+
 }

@@ -218,14 +218,14 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:id="@+id/bill_currency_iv"
+                android:id="@+id/bill_calculate_iv"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@drawable/ripple_round"
                 android:clickable="true"
                 android:outlineSpotShadowColor="@color/black"
                 android:scaleType="centerInside"
-                android:src="@drawable/currency_cn"
+                android:src="@drawable/ic_calculate"
                 android:tooltipText="@string/choose_currency"
                 app:layout_constraintBottom_toBottomOf="@+id/bill_pick_leger_iv"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -246,7 +246,7 @@
                 android:singleLine="true"
                 android:textSize="32sp"
                 app:layout_constraintBottom_toBottomOf="@+id/bill_pick_leger_iv"
-                app:layout_constraintEnd_toStartOf="@+id/bill_currency_iv"
+                app:layout_constraintEnd_toStartOf="@+id/bill_calculate_iv"
                 app:layout_constraintStart_toEndOf="@+id/bill_pick_leger_iv"
                 app:layout_constraintTop_toTopOf="@+id/bill_pick_leger_iv" />
 

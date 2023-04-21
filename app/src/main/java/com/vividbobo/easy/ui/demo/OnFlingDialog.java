@@ -10,6 +10,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.card.MaterialCardView;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.databinding.LayoutFlingBinding;
 import com.vividbobo.easy.ui.bill.BillActivity;
@@ -36,6 +38,11 @@ public class OnFlingDialog extends BaseFullScreenMaterialDialog<LayoutFlingBindi
                 return true;
             }
         });
+
+
+        IconicsDrawable iconicsDrawable = new IconicsDrawable();
+        iconicsDrawable.setIcon(FontAwesome.INSTANCE.getIcon(""));
+        binding.onflingIv.setImageDrawable(iconicsDrawable);
 
     }
 

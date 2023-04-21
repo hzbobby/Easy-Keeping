@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.database.model.Icon;
 import com.vividbobo.easy.database.model.Resource;
 
@@ -13,10 +14,10 @@ import java.util.List;
 
 @Dao
 public interface ResourceDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Resource... resources);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Resource> resources);
 
     @Query("DELETE FROM resources")
@@ -30,4 +31,13 @@ public interface ResourceDao {
 
     @Query("SELECT resName FROM resources where `group`==:groupName")
     LiveData<List<Icon>> getIconsGroupBy(String groupName);
+
+    /**
+     * 根据 resourceType 获取一次资源
+     *
+     * @param resourceType
+     * @return
+     */
+    @Query("select * from resources where resType==:resourceType")
+    ListenableFuture<List<Resource>> getResourcesByResType(Resource.ResourceType resourceType);
 }

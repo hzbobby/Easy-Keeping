@@ -1,6 +1,5 @@
 package com.vividbobo.easy.ui.account;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,18 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.vividbobo.easy.R;
+import com.vividbobo.easy.adapter.ExpandableAdapter;
+import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.databinding.FragmentAccountBinding;
-import com.vividbobo.easy.viewmodel.AccountViewModel;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
-import com.vividbobo.easy.ui.others.OperationDialogBuilder;
+import com.vividbobo.easy.viewmodel.AccountViewModel;
+
+import java.util.List;
 
 
 public class AccountFragment extends Fragment {
@@ -63,7 +65,7 @@ public class AccountFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.account_add:
-                        Intent intent = new Intent(getActivity(), AddAccountActivity.class);
+                        Intent intent = new Intent(getActivity(), AccountAddActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.account_more:
@@ -75,44 +77,30 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        //折叠item Adapter
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        ExpandableAdapter<Account> expandableAdapter = new ExpandableAdapter<Account>(getContext(), linearLayoutManager, R.layout.item_expandable_child_list);
+        expandableAdapter.setEnableChildIcon(true);
+        expandableAdapter.setEnableParentIcon(true);
+        binding.accountExpandableRv.setAdapter(expandableAdapter);
 
-        AccountExpandableListAdapter accountExpandableListAdapter = new AccountExpandableListAdapter();
 
-        binding.accountExpandableListView.setAdapter(accountExpandableListAdapter);
-
-
-
-        accountExpandableListAdapter.setOnItemClickListener(new OnItemClickListener() {
+        expandableAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
-
             }
         });
-        accountExpandableListAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+        expandableAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public void onItemLongClick(Object item, int position) {
 
             }
         });
 
-        //click collapse app bar to hide balance
-        binding.accountToolBarConsLayout.setOnClickListener(new View.OnClickListener() {
+        accountViewModel.getAllAccountsLD().observe(getActivity(), new Observer<List<ExpandableAdapter.ExpandableItem<Account>>>() {
             @Override
-            public void onClick(View view) {
-                // 用 viewmodel 存储，否则旋转屏幕将会重置
-                if (accountViewModel.hideAsserts.getValue()) {
-                    accountViewModel.setHideAsserts(false);
-                } else {
-                    accountViewModel.setHideAsserts(true);
-                }
-            }
-        });
-        accountViewModel.hideAsserts.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                binding.accountAssetsVisibleIm.setSelected(aBoolean);
-                accountExpandableListAdapter.setHideBalance(aBoolean);
-                setHideToolBarAssets(aBoolean);
+            public void onChanged(List<ExpandableAdapter.ExpandableItem<Account>> expandableItems) {
+                expandableAdapter.updateItems(expandableItems);
             }
         });
 

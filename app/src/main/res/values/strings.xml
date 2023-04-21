@@ -179,4 +179,11 @@
     <string name="operation_menu_3">删除</string>
     <string name="operation">操作</string>
     <string name="tag_manage">标签管理</string>
+    <string name="currency_code">货币代码</string>
+    <string name="currency_title">货币名称</string>
+    <string name="selected_currency">选择币种</string>
+    <string name="currency_manage">币种管理</string>
+    <string name="resource_bottom_title">资源选择</string>
+
+
 </resources>

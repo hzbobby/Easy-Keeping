@@ -10,8 +10,12 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.converter.Converters;
+import com.vividbobo.easy.database.converter.EnumConverter;
 import com.vividbobo.easy.database.converter.LocalTimeConverter;
+import com.vividbobo.easy.database.dao.AccountDao;
+import com.vividbobo.easy.database.dao.AccountTypeDao;
 import com.vividbobo.easy.database.dao.BillDao;
 import com.vividbobo.easy.database.dao.CategoryDao;
 import com.vividbobo.easy.database.dao.ConfigDao;
@@ -21,6 +25,7 @@ import com.vividbobo.easy.database.dao.RoleDao;
 import com.vividbobo.easy.database.dao.StoreDao;
 import com.vividbobo.easy.database.dao.TagDao;
 import com.vividbobo.easy.database.model.Account;
+import com.vividbobo.easy.database.model.AccountType;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
@@ -31,7 +36,10 @@ import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.database.model.Store;
 import com.vividbobo.easy.database.model.Tag;
+import com.vividbobo.easy.repository.AccountsRepo;
+import com.vividbobo.easy.repository.CurrenciesRepo;
 import com.vividbobo.easy.utils.AsyncProcessor;
+import com.vividbobo.easy.utils.ResourceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +48,15 @@ import java.util.concurrent.Callable;
 @Database(
         entities = {Bill.class, Category.class, Leger.class,
                 Account.class, Tag.class, Currency.class, CurrencyRate.class, Resource.class,
-                Role.class, Config.class, Store.class},
+                Role.class, Config.class, Store.class, AccountType.class},
         version = 1,
         exportSchema = false)
-@TypeConverters({Converters.class, LocalTimeConverter.class})
+@TypeConverters({Converters.class, LocalTimeConverter.class, EnumConverter.class})
 public abstract class EasyDatabase extends RoomDatabase {
+
+    public abstract AccountTypeDao accountTypeDao();
+
+    public abstract AccountDao accountDao();
 
     public abstract TagDao tagDao();
 
@@ -72,6 +84,9 @@ public abstract class EasyDatabase extends RoomDatabase {
                                     EasyDatabase.class, "easy_database.sqlite")
                             .addCallback(resourceInit)
                             .addCallback(categoryInit)
+                            .addCallback(currencyInit)
+                            .addCallback(accountTypeInit)
+                            .addCallback(resourceAccountInit)
                             .build();
 
                 }
@@ -80,10 +95,40 @@ public abstract class EasyDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+    private static RoomDatabase.Callback accountTypeInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    AccountTypeDao dao = INSTANCE.accountTypeDao();
+                    dao.insert(new AccountType("现金", "ic_wallet", 1));
+                    dao.insert(new AccountType("储蓄卡", "银行储蓄卡、借记卡", "ic_redeem", 2));
+                    dao.insert(new AccountType("信用卡", "银行信用卡、花呗、白条", "ic_credit_card", 3));
+                    dao.insert(new AccountType("网络账户", "支付宝、财付通", "ic_public", 4));
+                    dao.insert(new AccountType("投资账户", "证券、基金", "ic_circle_dollar", 5));
+                    dao.insert(new AccountType("储值卡", "购物卡、餐卡、医保卡", "ic_card_membership", 6));
+                    dao.insert(new AccountType("虚拟账户", "积分、点卡", "ic_cloud", 7));
+                    dao.insert(new AccountType("借贷", "亲友借还、押金", "ic_at_loan", 8));
+                    return null;
+                }
+            });
+        }
+    };
+
     private static RoomDatabase.Callback currencyInit = new Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    CurrencyDao currencyDao = INSTANCE.currencyDao();
+                    currencyDao.insert(getInitCurrencies());
+                    return null;
+                }
+            });
         }
     };
 
@@ -91,8 +136,22 @@ public abstract class EasyDatabase extends RoomDatabase {
     private static List<Currency> getInitCurrencies() {
         List<Currency> currencies = new ArrayList<>();
         //构造主流货币的
-//        currencies.add(new Currency())
-
+        Currency rmb = new Currency("CNY", 156, "人民币元", "中国");
+        rmb.setRate(1f);
+        rmb.setEnable(true);
+        currencies.add(rmb);
+        currencies.add(new Currency("MOP", 446, "澳元(中国)", "中国澳门"));
+        currencies.add(new Currency("HKD", 344, "港元", "中国香港"));
+        currencies.add(new Currency("TWD", 901, "新台币元", "中国台湾"));
+        currencies.add(new Currency("USD", 840, "美元", "美国"));
+        currencies.add(new Currency("GBP", 826, "英镑", "大不列颠及北爱尔兰联合王国"));
+        currencies.add(new Currency("EUR", 978, "欧元", "欧盟"));
+        currencies.add(new Currency("JPY", 392, "日元", "日本"));
+        currencies.add(new Currency("KRW", 410, "韩元", "韩国"));
+        currencies.add(new Currency("INR", 356, "印度卢比", "印度"));
+        currencies.add(new Currency("CAD", 124, "加元", "加拿大"));
+        currencies.add(new Currency("RUB", 643, "卢布", "俄罗斯"));
+        currencies.add(new Currency("AUD", 036, "澳元", "澳大利亚"));
 
         return currencies;
     }
@@ -150,6 +209,62 @@ public abstract class EasyDatabase extends RoomDatabase {
         categories.add(new Category("红包", "category_othe_lucky_money", Category.DEFAULT_PARENT_ID, 8, Category.TYPE_INCOME));
 
         return categories;
+    }
+
+    private static RoomDatabase.Callback resourceAccountInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    ResourceDao dao = INSTANCE.resourceDao();
+                    dao.insert(getResourceAccountList());
+
+                    return null;
+                }
+            });
+        }
+    };
+
+    private static List<Resource> getResourceAccountList() {
+        List<Resource> resources = new ArrayList<>();
+        resources.add(new Resource("支付宝", "at_alipay", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("微信支付", "at_wechat_pay", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("Paypal", "at_paypal", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("银联", "at_union_pay", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("Apple Pay", "at_apple_pay", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("VISA", "at_visa", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("比特币", "at_bitcoin", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("云闪付", "at_quick_pass", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("花呗", "at_huabei", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("淘宝", "at_taobao", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("京东", "at_jd", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("拼多多", "at_pdd", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("qq", "at_qq", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("微信", "at_wechat", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("美团", "at_meituan", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("饿了么", "at_eleme", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("肯德基", "at_kfc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("麦当劳", "at_mcdonalds", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("中国银行", "at_bank_boc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("农业银行", "at_bank_abc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("工商银行", "at_bank_icbc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("邮政银行", "at_bank_psbc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("农村信用社", "at_bank_pbc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("建设银行", "at_bank_ccb", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("招商银行", "at_bank_cmb", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("交通银行", "at_bank_comm", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("浦发银行", "at_bank_spdb", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("东亚银行", "at_bank_bea", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("光大银行", "at_bank_ceb", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("中信银行", "at_bank_citic", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("民生银行", "at_bank_cmbc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("恒丰银行", "at_bank_hf", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("汇丰银行", "at_bank_hsbc", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("华夏银行", "at_bank_hx", "drawable", Resource.ResourceType.ACCOUNT));
+        resources.add(new Resource("中原银行", "at_bank_zy", "drawable", Resource.ResourceType.ACCOUNT));
+        return resources;
     }
 
     private static RoomDatabase.Callback resourceInit = new Callback() {
@@ -260,6 +375,7 @@ public abstract class EasyDatabase extends RoomDatabase {
         resources.add(new Resource("category_vip_qq_music", "drawable", "会员"));
         resources.add(new Resource("category_vip_tx_video", "drawable", "会员"));
         resources.add(new Resource("category_vip_vip", "drawable", "会员"));
+
 
         Log.d("RESOURCE_TEST", "get resources init: " + resources.size());
 

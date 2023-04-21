@@ -3,18 +3,51 @@ package com.vividbobo.easy.database.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.vividbobo.easy.adapter.ExpandableAdapter;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(tableName = "accounts")
-public class Account extends BaseEntity {
+public class Account extends BaseEntity implements Serializable, ExpandableAdapter.ItemExpandableChild {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
-
     private String currencyCode;    //币种Code
     private Long balance;   //余额
-    private List<Integer> legerIds; //适用账本Id
     private String cardNum;     //卡号
     private String remark;      //备注
+
+    private Integer accountTypeId;
+    private String accountTypeTitle;
+    private String accountTypeIconResName;
+
+    public String getFormatBalance() {
+        return String.format("%.2f", (float) balance / 100);
+    }
+
+    public Integer getAccountTypeId() {
+        return accountTypeId;
+    }
+
+    public void setAccountTypeId(Integer accountTypeId) {
+        this.accountTypeId = accountTypeId;
+    }
+
+    public String getAccountTypeTitle() {
+        return accountTypeTitle;
+    }
+
+    public void setAccountTypeTitle(String accountTypeTitle) {
+        this.accountTypeTitle = accountTypeTitle;
+    }
+
+    public String getAccountTypeIconResName() {
+        return accountTypeIconResName;
+    }
+
+    public void setAccountTypeIconResName(String accountTypeIconResName) {
+        this.accountTypeIconResName = accountTypeIconResName;
+    }
 
     public Integer getId() {
         return id;
@@ -40,13 +73,6 @@ public class Account extends BaseEntity {
         this.balance = balance;
     }
 
-    public List<Integer> getLegerIds() {
-        return legerIds;
-    }
-
-    public void setLegerIds(List<Integer> legerIds) {
-        this.legerIds = legerIds;
-    }
 
     public String getCardNum() {
         return cardNum;
@@ -62,5 +88,20 @@ public class Account extends BaseEntity {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Override
+    public String getItemTitle() {
+        return getTitle();
+    }
+
+    @Override
+    public String getItemSubTitle() {
+        return getFormatBalance();
+    }
+
+    @Override
+    public String getItemIconResName() {
+        return getIconResName();
     }
 }

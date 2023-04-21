@@ -17,4 +17,38 @@
         <item>理财</item>
         <item>其他</item>
     </string-array>
+
+    <string-array name="currencies">
+        <item>faw_yen_sign</item>
+        <item>faw_dollar_sign</item>
+        <item>faw_euro_sign</item>
+        <item>faw_pound_sign</item>
+        <item>faw_ruble_sign</item>
+        <item>faw_rupee_sign</item>
+        <item>faw_won_sign</item>
+        <item>faw_lira_sign</item>
+        <item>faw_bitcoin</item>
+    </string-array>
+    <string-array name="currencies_cn">
+        <item>人民币</item>
+        <item>美元</item>
+        <item>欧元</item>
+        <item>英镑</item>
+        <item>卢布</item>
+        <item>卢比</item>
+        <item>韩元</item>
+        <item>里拉</item>
+        <item>比特币</item>
+    </string-array>
+    <string-array name="currencies_code">
+        <item>faw_yen_sign</item>
+        <item>faw_dollar_sign</item>
+        <item>faw_euro_sign</item>
+        <item>faw_pound_sign</item>
+        <item>faw_ruble_sign</item>
+        <item>faw_rupee_sign</item>
+        <item>faw_won_sign</item>
+        <item>faw_lira_sign</item>
+        <item>faw_bitcoin</item>
+    </string-array>
 </resources>

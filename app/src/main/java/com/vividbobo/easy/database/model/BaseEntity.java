@@ -1,11 +1,11 @@
 package com.vividbobo.easy.database.model;
 
-import androidx.room.Ignore;
-
 public abstract class BaseEntity {
 
     private String title;
     private String desc;
+
+    private Integer iconResId;
     private String iconResName;
 
     public BaseEntity() {
@@ -25,6 +25,13 @@ public abstract class BaseEntity {
         this.iconResName = iconResName;
     }
 
+    public Integer getIconResId() {
+        return iconResId;
+    }
+
+    public void setIconResId(Integer iconResId) {
+        this.iconResId = iconResId;
+    }
 
     public String getTitle() {
         return title;

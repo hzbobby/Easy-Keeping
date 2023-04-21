@@ -12,19 +12,27 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.vividbobo.easy.R;
+import com.vividbobo.easy.adapter.AccountTypeAdapter;
+import com.vividbobo.easy.database.model.Account;
+import com.vividbobo.easy.database.model.AccountType;
 import com.vividbobo.easy.databinding.DialogAccountBankBinding;
 import com.vividbobo.easy.ui.others.FullScreenDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Deprecated
 public class AccountBankDialog extends FullScreenDialog {
     public static final String TAG = "AccountBankDialog";
 
     private DialogAccountBankBinding binding;
-    private BankAdapter bankAdapter;
+    private AccountTypeAdapter adapter;
 
-    public static AccountBankDialog newInstance() {
+    public static AccountBankDialog newInstance(ArrayList<AccountType> accountTypes) {
 
         Bundle args = new Bundle();
+        args.putParcelableArrayList("data", accountTypes);
 
         AccountBankDialog fragment = new AccountBankDialog();
         fragment.setArguments(args);
@@ -49,16 +57,19 @@ public class AccountBankDialog extends FullScreenDialog {
             }
         });
 
+        List<AccountType> accountTypes = getArguments().getParcelableArrayList("data");
 
-        bankAdapter = new BankAdapter();
+        adapter = new AccountTypeAdapter(getContext());
+        adapter.updateItems(accountTypes);
 
-        bankAdapter.setOnItemClickListener(new OnItemClickListener() {
+
+        adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
-                AddAccountDialog.newInstance(null).show(getParentFragmentManager(), AccountBankDialog.TAG);
+                AddAccountDialog.newInstance((Account) item).show(getParentFragmentManager(), AccountBankDialog.TAG);
             }
         });
-        binding.bankTypeRecyclerView.setAdapter(bankAdapter);
+        binding.bankTypeRecyclerView.setAdapter(adapter);
 
         initSearchView();
 

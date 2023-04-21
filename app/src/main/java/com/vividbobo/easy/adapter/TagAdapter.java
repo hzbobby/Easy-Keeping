@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
+import com.vividbobo.easy.adapter.viewholder.BaseEntityFooterVH;
 import com.vividbobo.easy.adapter.viewholder.BaseEntityItemVH;
 import com.vividbobo.easy.adapter.viewholder.TagVH;
 import com.vividbobo.easy.database.model.Tag;
@@ -31,19 +32,19 @@ public class TagAdapter extends CommonAdapter<Tag, RecyclerView.ViewHolder, TagV
 
     @Override
     protected RecyclerView.ViewHolder onCreateFooterViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item1, parent, false);
+        return new BaseEntityFooterVH(v);
     }
 
     @Override
     protected TagVH onCreateNormalViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tag, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item1, parent, false);
         return new TagVH(view);
     }
 
     @Override
     protected void onBindNormalViewHolder(@NonNull TagVH holder, int position) {
         Tag tag = getItemByHolderPosition(position);
-        Log.d("TAG", "onBindNormalViewHolder: " + String.format("pos:%d, tagTitle:%s", position, tag.getTitle()));
         holder.bind(mContext, tag);
     }
 

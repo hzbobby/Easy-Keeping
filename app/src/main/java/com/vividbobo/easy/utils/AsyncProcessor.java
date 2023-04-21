@@ -32,6 +32,10 @@ public class AsyncProcessor {
         return executorService.submit(task);
     }
 
+    public ListeningExecutorService getExecutorService() {
+        return executorService;
+    }
+
     public void shutdown() {
         executorService.shutdown();
     }

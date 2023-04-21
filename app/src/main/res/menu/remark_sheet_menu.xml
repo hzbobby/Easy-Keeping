@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/remark_sheet_check"
-        android:icon="@drawable/ic_check"
+        android:icon="@drawable/ic_confirm"
         android:title="确定"
         app:showAsAction="ifRoom" />
 </menu>
