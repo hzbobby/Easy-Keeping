@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.BaseEntityAdapter;
+import com.vividbobo.easy.adapter.adapter.BaseEntityAdapter;
 import com.vividbobo.easy.database.model.Store;
 import com.vividbobo.easy.databinding.DialogBaseEntityBinding;
 import com.vividbobo.easy.ui.common.BaseEntityFullDialog;

@@ -4,19 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.AccountTypeAdapter;
-import com.vividbobo.easy.databinding.ActivityAddAccountBinding;
-import com.vividbobo.easy.database.model.AccountType;
+import com.vividbobo.easy.adapter.adapter.AccountTypeAdapter;
 import com.vividbobo.easy.databinding.DialogAddAccount2Binding;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
-
-import java.util.ArrayList;
 
 @Deprecated
 public class AddAccountActivity extends AppCompatActivity {

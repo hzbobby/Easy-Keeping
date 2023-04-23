@@ -16,6 +16,8 @@ public abstract class BaseFullScreenMaterialDialog<VB extends androidx.viewbindi
 
     protected abstract VB getViewBinding(@NonNull LayoutInflater inflater);
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

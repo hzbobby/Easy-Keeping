@@ -1,7 +1,6 @@
 package com.vividbobo.easy.ui.others;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.database.model.Icon;
 import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.utils.ResourceUtils;
 

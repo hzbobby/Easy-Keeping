@@ -1,6 +1,6 @@
 package com.vividbobo.easy.database.model;
 
-public abstract class BaseEntity {
+public abstract class BaseEntity extends ServerBaseEntity {
 
     private String title;
     private String desc;

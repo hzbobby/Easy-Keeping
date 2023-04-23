@@ -1,18 +1,28 @@
 package com.vividbobo.easy.database.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "configs")
-public class Config {
-    public static final int CONFIG_LEGER_SELECTED = 1;
-    public static final int CONFIG_ROLE_SELECTED = 2;
-    public static final int CONFIG_ACCOUNT_SELECTED = 3;
+public class Config extends ServerBaseEntity {
+    public static final int CONFIG_TYPE_LEGER = 1;
+    public static final int CONFIG_TYPE_ROLE = 2;
+    public static final int CONFIG_TYPE_ACCOUNT = 3;
 
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int type;   //配置类型
     private int selected_id;
+
+    public Config() {
+    }
+
+    @Ignore
+    public Config(int type, int selected_id) {
+        this.type = type;
+        this.selected_id = selected_id;
+    }
 
     public int getId() {
         return id;

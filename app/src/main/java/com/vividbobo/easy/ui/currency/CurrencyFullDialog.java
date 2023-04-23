@@ -9,13 +9,12 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.CurrenciesAdapter;
+import com.vividbobo.easy.adapter.adapter.CurrenciesAdapter;
 import com.vividbobo.easy.database.model.Currency;
 import com.vividbobo.easy.databinding.DialogCurrenciesBinding;
 import com.vividbobo.easy.ui.common.BaseFullScreenMaterialDialog;

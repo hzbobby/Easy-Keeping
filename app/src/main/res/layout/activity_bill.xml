@@ -164,14 +164,14 @@
                 android:tooltipText="@string/is_reimburse"
                 app:chipCornerRadius="36dp" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/bill_receive_payment_chip"
-                style="@style/Widget.Material3.Chip.Assist.Elevated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/receive_payment"
-                app:chipCornerRadius="36dp" />
+<!--            <com.google.android.material.chip.Chip-->
+<!--                android:id="@+id/bill_receive_payment_chip"-->
+<!--                style="@style/Widget.Material3.Chip.Assist.Elevated"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:checkable="true"-->
+<!--                android:text="@string/receive_payment"-->
+<!--                app:chipCornerRadius="36dp" />-->
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/bill_statistics_chip"
@@ -226,7 +226,7 @@
                 android:outlineSpotShadowColor="@color/black"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_calculate"
-                android:tooltipText="@string/choose_currency"
+                android:tooltipText="@string/calculater"
                 app:layout_constraintBottom_toBottomOf="@+id/bill_pick_leger_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/bill_pick_leger_iv" />

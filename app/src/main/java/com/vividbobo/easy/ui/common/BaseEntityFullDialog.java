@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.BaseEntityAdapter;
+import com.vividbobo.easy.adapter.adapter.BaseEntityAdapter;
 import com.vividbobo.easy.database.model.BaseEntity;
 import com.vividbobo.easy.databinding.DialogBaseEntityBinding;
 import com.vividbobo.easy.ui.others.OnItemClickListener;

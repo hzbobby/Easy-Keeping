@@ -2,6 +2,7 @@ package com.vividbobo.easy.database.model;
 
 import java.io.Serializable;
 
+@Deprecated
 public class LegerItem implements Serializable {
     private Long id;
     private String coverPath;

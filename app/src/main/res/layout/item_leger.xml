@@ -2,78 +2,88 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:foreground="?selectableItemBackground"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginBottom="8dp"
+    android:foreground="?selectableItemBackground">
 
-    android:layout_margin="5dp"
-    android:elevation="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:paddingBottom="8dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="8dp">
 
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
+            style="@style/Widget.Material3.CardView.Elevated"
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/leger_cover"
+                android:id="@+id/item_icon_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg1" />
+
+            <include
+                android:id="@+id/item_selected_label"
+                layout="@layout/layout_selected_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </com.google.android.material.card.MaterialCardView>
 
-        <include
-            android:id="@+id/leger_selected_label"
-            layout="@layout/layout_selected_label"
-            android:layout_width="wrap_content"
-            android:visibility="gone"
-            android:layout_margin="5dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
-            android:id="@+id/leger_title"
+            android:id="@+id/item_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:text="日常账本"
             android:textSize="18sp"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
         <TextView
-            android:id="@+id/leger_desc"
+            android:id="@+id/item_desc_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="共10笔记账"
             android:textColor="@color/text_gray"
-            app:layout_constraintStart_toStartOf="@+id/leger_title"
-            app:layout_constraintTop_toBottomOf="@+id/leger_title" />
+            app:layout_constraintStart_toStartOf="@+id/item_title_tv"
+            app:layout_constraintTop_toBottomOf="@+id/item_title_tv" />
 
-        <ImageButton
-            android:id="@+id/leger_edit_image_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/item_leger_edit_iv"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:foreground="@drawable/ripple_round"
             android:padding="10dp"
-            android:layout_margin="24dp"
-            android:background="@drawable/selector_item_round_selected"
-            android:layout_marginEnd="16dp"
             android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="@+id/leger_desc"
+            android:tooltipText="@string/edit"
+            app:layout_constraintBottom_toBottomOf="@+id/item_desc_tv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/leger_title" />
+            app:layout_constraintTop_toTopOf="@+id/item_title_tv" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

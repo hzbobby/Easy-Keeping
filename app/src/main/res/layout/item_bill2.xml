@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:foreground="?selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/bill_category_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/materialDivider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/line1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/line2"
+        app:layout_constraintStart_toEndOf="@+id/bill_category_icon"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/bill_category_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="CATEGORY"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+        <TextView
+            android:id="@+id/bill_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="DATE"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray" />
+
+        <TextView
+            android:id="@+id/bill_role_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="ROLE"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray" />
+
+        <TextView
+            android:id="@+id/bill_store_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="STORE"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray" />
+        <TextView
+            android:id="@+id/bill_images_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="IMAGES"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/line2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/line3"
+        app:layout_constraintStart_toEndOf="@+id/bill_category_icon"
+        app:layout_constraintTop_toBottomOf="@+id/line1">
+
+        <TextView
+            android:id="@+id/bill_refund_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="REFUND"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray"
+            app:layout_constraintBottom_toTopOf="@+id/bill_label_text"
+            app:layout_constraintStart_toEndOf="@+id/bill_category_icon"
+            app:layout_constraintTop_toBottomOf="@+id/bill_category_text" />
+
+        <TextView
+            android:id="@+id/bill_reimburse_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="REIMBURSE"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray"
+            app:layout_constraintBottom_toTopOf="@+id/bill_label_text"
+            app:layout_constraintStart_toEndOf="@+id/bill_refund_text"
+            app:layout_constraintTop_toBottomOf="@+id/bill_category_text" />
+
+        <TextView
+            android:id="@+id/bill_other_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:text="REMARK"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray"
+            app:layout_constraintBottom_toTopOf="@+id/bill_label_text"
+            app:layout_constraintStart_toEndOf="@+id/bill_reimburse_text"
+            app:layout_constraintTop_toBottomOf="@+id/bill_category_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/line3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/materialDivider"
+        app:layout_constraintStart_toEndOf="@+id/bill_category_icon"
+        app:layout_constraintTop_toBottomOf="@+id/line2">
+
+        <TextView
+            android:id="@+id/bill_label_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLength="15"
+            android:text="#TAGS"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            app:layout_constraintBottom_toTopOf="@+id/materialDivider"
+            app:layout_constraintStart_toEndOf="@+id/bill_category_icon"
+            app:layout_constraintTop_toBottomOf="@+id/bill_refund_text" />
+
+        <TextView
+            android:id="@+id/bill_sta1_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="EXPENDITURE"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/bill_label_text"
+            app:layout_constraintStart_toEndOf="@+id/bill_label_text"
+            app:layout_constraintTop_toTopOf="@+id/bill_label_text" />
+
+        <TextView
+            android:id="@+id/bill_sta2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="BUDGET"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/text_light_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/bill_label_text"
+            app:layout_constraintStart_toEndOf="@+id/bill_sta1_text"
+            app:layout_constraintTop_toTopOf="@+id/bill_label_text" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/bill_money_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="100000"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/bill_account_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bill_account_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="ACCOUNT"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+        android:textColor="@color/text_light_gray"
+        app:layout_constraintBottom_toTopOf="@+id/materialDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bill_money_text" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/materialDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

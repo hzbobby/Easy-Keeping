@@ -15,7 +15,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.BaseActivity;
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.DropdownMenuAdapter;
+import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.AccountType;
 import com.vividbobo.easy.database.model.Currency;
@@ -30,7 +30,6 @@ import com.vividbobo.easy.viewmodel.CurrencyViewModel;
 import com.vividbobo.easy.viewmodel.ResourceViewModel;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class AccountAddActivity extends BaseActivity {
     public static final String KEY_EDIT_ACCOUNT = "edit_account";
@@ -210,7 +209,13 @@ public class AccountAddActivity extends BaseActivity {
     private void save() {
         Account account = new Account();
         String balanceStr = binding.addAccountBalanceTextTil.getEditText().getText().toString();
-        account.setBalance((long) (Double.parseDouble(balanceStr) * 100));
+        Double balance = null;
+        if (balanceStr.isEmpty()) {
+            balance = 0.0;
+        } else {
+            balance = Double.parseDouble(balanceStr);
+        }
+        account.setBalance((long) (balance * 100));
         account.setTitle(binding.addAccountTitleTv.getEditText().getText().toString());
         account.setAccountTypeId(selectedAccountType.getId());
         account.setAccountTypeTitle(selectedAccountType.getTitle());

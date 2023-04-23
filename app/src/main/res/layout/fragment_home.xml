@@ -20,6 +20,7 @@
             app:titleEnabled="false">
 
             <ImageView
+                android:id="@+id/home_header_cover_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -117,10 +118,10 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/home_tool_bar_leger_layout"
                     android:layout_width="wrap_content"
-                    android:padding="10dp"
-                    android:foreground="?selectableItemBackgroundBorderless"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:foreground="?selectableItemBackgroundBorderless"
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/home_tool_bar_title"

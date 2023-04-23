@@ -14,6 +14,7 @@ import com.vividbobo.easy.repository.ResourceRepo;
 import java.util.List;
 
 public class ResourceViewModel extends AndroidViewModel {
+    private final ListenableFuture<List<Resource>> sysCoverLF;
     private ResourceRepo resourceRepo;
 
     private final ListenableFuture<List<Resource>> accountResLF;
@@ -23,6 +24,11 @@ public class ResourceViewModel extends AndroidViewModel {
         super(application);
         this.resourceRepo = new ResourceRepo(application);
         accountResLF = resourceRepo.getAccountResLF();
+        sysCoverLF = resourceRepo.getSysCoverLF();
+    }
+
+    public ListenableFuture<List<Resource>> getSysCoverLF() {
+        return sysCoverLF;
     }
 
     public ListenableFuture<List<Resource>> getAccountResLF() {

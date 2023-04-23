@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.BaseEntityAdapter;
+import com.vividbobo.easy.adapter.adapter.BaseEntityAdapter;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.databinding.DialogCommonPickerBinding;
 import com.vividbobo.easy.ui.common.BaseMaterialDialog;

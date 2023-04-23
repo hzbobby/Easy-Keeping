@@ -50,6 +50,17 @@ public class ResourceUtils {
                 .error(new ColorDrawable(Color.RED));
     }
 
+    /**
+     * @param context
+     * @param imagePath the path of image; eg: the absolute path of images
+     * @return
+     */
+    public static RequestBuilder<Drawable> bindImageDrawable(Context context, String imagePath) {
+        return Glide.with(context)
+                .load(imagePath)
+                .error(new ColorDrawable(Color.RED));
+    }
+
     public static int getResourceId(String resourceName, String defType) {
         try {
             return mContext.getResources().getIdentifier(resourceName, defType, mContext.getPackageName());

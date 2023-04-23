@@ -5,6 +5,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillPresent;
 
 public class HomeBillTransferVH extends RecyclerView.ViewHolder {
@@ -12,7 +13,7 @@ public class HomeBillTransferVH extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    public void bind(BillPresent billPresent) {
+    public void bind(Bill billPresent) {
 
     }
 }

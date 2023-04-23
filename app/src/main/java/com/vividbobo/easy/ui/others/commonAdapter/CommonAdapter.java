@@ -18,10 +18,10 @@ import java.util.List;
 /**
  * 一个带 Header, Footer, NormalItem 且支持最大显示item数量的RecyclerView Adapter
  *
- * @param <T>
- * @param <HEADER>
- * @param <NORMAL>
- * @param <FOOTER>
+ * @param <T> type of item
+ * @param <HEADER> header view holder
+ * @param <NORMAL> item view holder
+ * @param <FOOTER> footer view holder
  */
 public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, NORMAL extends RecyclerView.ViewHolder, FOOTER extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "BaseRecyclerViewAdapter";

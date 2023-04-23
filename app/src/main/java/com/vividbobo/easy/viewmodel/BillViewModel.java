@@ -1,6 +1,7 @@
 package com.vividbobo.easy.viewmodel;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,7 +14,6 @@ import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.database.model.Store;
-import com.vividbobo.easy.database.model.StoreItem;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.repository.BillsRepo;
 
@@ -32,72 +32,72 @@ public class BillViewModel extends AndroidViewModel {
     //金额
     private final MutableLiveData<Long> amount = new MutableLiveData<>(0L);
     //支出类别
-    private final MutableLiveData<Category> categoryExpenditure = new MutableLiveData<>(new Category());
+    private final MutableLiveData<Category> categoryExpenditure = new MutableLiveData<>(new Category("其他","category_othe_others"));
     //收入类别
-    private final MutableLiveData<Category> categoryIncome = new MutableLiveData<>(new Category());
+    private final MutableLiveData<Category> categoryIncome = new MutableLiveData<>(new Category("其他","category_othe_others"));
 
-    private final MutableLiveData<Leger> leger = new MutableLiveData<>();
     //账单类别
     private final MutableLiveData<Integer> billType = new MutableLiveData<>(Bill.EXPENDITURE);
 
     //账户
-    private final MutableLiveData<Account> srcAccount = new MutableLiveData<>(new Account());
-    private final MutableLiveData<Account> tarAccount = new MutableLiveData<>(new Account());
+    private Account srcAccount = null;
+    private Account tarAccount = null;
     //备注
     private final MutableLiveData<String> remark = new MutableLiveData<>("");
     //标签
     private final MutableLiveData<List<Tag>> tags = new MutableLiveData<>(new ArrayList<>());
     //日期
-    private final MutableLiveData<Date> date = new MutableLiveData<>(new Date(System.currentTimeMillis()));  //或改用long
+    private Date date = new Date(System.currentTimeMillis());  //或改用long
     //时间
-    private final MutableLiveData<LocalTime> time = new MutableLiveData<>(LocalTime.now());
-    private final MutableLiveData<Store> store = new MutableLiveData<>();
+    private LocalTime time = LocalTime.now();
+    private Store store = null;
     private final MutableLiveData<String> currencyCode = new MutableLiveData<>();
-    private final MutableLiveData<Role> role = new MutableLiveData<>();
-
-    private final LiveData<Leger> selectedLeger;
-    private final LiveData<Role> selectedRole;
-    private final LiveData<Account> selectedAccount;
+    private Boolean isIncomeExpenditureIncluded = false;
+    private Boolean isBudgetIncluded = false;
+    private Role role = null;
 
 
     private BillsRepo billsRepo;
+    private Leger leger;
+    private MutableLiveData<List<String>> imagePaths = new MutableLiveData<>(new ArrayList<>());
 
     public BillViewModel(@NonNull Application application) {
         super(application);
         billsRepo = new BillsRepo(application);
-        selectedLeger = billsRepo.getSelectedLeger();
-        selectedRole = billsRepo.getSelectedRole();
-        selectedAccount = billsRepo.getSelectedAccount();
-
     }
 //    private final MutableLiveData<LegerItem> leger=new MutableLiveData<LegerItem>();  //账本是否在此处共享？
 
-    public void setRole(Role role) {
-        this.role.setValue(role);
+
+    public Boolean getIncomeExpenditureIncluded() {
+        return isIncomeExpenditureIncluded;
     }
 
-    public LiveData<Role> getRole() {
+    public void setIncomeExpenditureIncluded(Boolean incomeExpenditureIncluded) {
+        isIncomeExpenditureIncluded = incomeExpenditureIncluded;
+    }
+
+    public Boolean getBudgetIncluded() {
+        return isBudgetIncluded;
+    }
+
+    public void setBudgetIncluded(Boolean budgetIncluded) {
+        isBudgetIncluded = budgetIncluded;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Role getRole() {
         return role;
     }
 
     public void setStore(Store store) {
-        this.store.setValue(store);
+        this.store = store;
     }
 
-    public LiveData<Store> getStore() {
+    public Store getStore() {
         return store;
-    }
-
-    public LiveData<Account> getSelectedAccount() {
-        return selectedAccount;
-    }
-
-    public LiveData<Role> getSelectedRole() {
-        return selectedRole;
-    }
-
-    public LiveData<Leger> getSelectedLeger() {
-        return selectedLeger;
     }
 
     public void setAmount(Long aLong) {
@@ -117,11 +117,11 @@ public class BillViewModel extends AndroidViewModel {
     }
 
     public void setSrcAccount(Account account) {
-        srcAccount.setValue(account);
+        this.srcAccount = account;
     }
 
     public void setTarAccount(Account account) {
-        tarAccount.setValue(account);
+        tarAccount = account;
     }
 
     public void setRemark(String remarkStr) {
@@ -133,11 +133,11 @@ public class BillViewModel extends AndroidViewModel {
     }
 
     public void setDate(Date date) {
-        this.date.setValue(date);
+        this.date = date;
     }
 
     public void setTime(LocalTime time) {
-        this.time.setValue(time);
+        this.time = time;
     }
 
     public LiveData<Long> getAmount() {
@@ -156,11 +156,11 @@ public class BillViewModel extends AndroidViewModel {
         return billType;
     }
 
-    public LiveData<Account> getSrcAccount() {
+    public Account getSrcAccount() {
         return srcAccount;
     }
 
-    public LiveData<Account> getTarAccount() {
+    public Account getTarAccount() {
         return tarAccount;
     }
 
@@ -172,11 +172,11 @@ public class BillViewModel extends AndroidViewModel {
         return tags;
     }
 
-    public LiveData<Date> getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public LiveData<LocalTime> getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
@@ -186,5 +186,25 @@ public class BillViewModel extends AndroidViewModel {
 
     public LiveData<String> getCurrencyCode() {
         return currencyCode;
+    }
+
+    public void setLeger(Leger leger) {
+        this.leger = leger;
+    }
+
+    public Leger getLeger() {
+        return leger;
+    }
+
+    public void setImagePaths(List<String> result) {
+        this.imagePaths.setValue(result);
+    }
+
+    public MutableLiveData<List<String>> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void insert(Bill bill) {
+        billsRepo.insert(bill);
     }
 }

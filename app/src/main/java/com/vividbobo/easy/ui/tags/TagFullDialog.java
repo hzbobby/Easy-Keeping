@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.TagAdapter;
+import com.vividbobo.easy.adapter.adapter.TagAdapter;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.databinding.DialogBaseEntityBinding;
 import com.vividbobo.easy.ui.common.BaseFullScreenMaterialDialog;

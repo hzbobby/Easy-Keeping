@@ -19,6 +19,7 @@
             app:titleEnabled="false">
 
             <ImageView
+                android:id="@+id/account_header_cover_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -152,6 +153,7 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_expandable_rv"
             android:layout_width="match_parent"

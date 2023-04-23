@@ -7,10 +7,9 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.vividbobo.easy.adapter.DropdownMenuAdapter;
+import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Entity(tableName = "accountTypes")
 public class AccountType extends BaseEntity implements Serializable, Parcelable, DropdownMenuAdapter.DropdownMenuItem {

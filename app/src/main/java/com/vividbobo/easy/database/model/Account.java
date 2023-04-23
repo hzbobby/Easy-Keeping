@@ -3,13 +3,13 @@ package com.vividbobo.easy.database.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.vividbobo.easy.adapter.ExpandableAdapter;
+import com.vividbobo.easy.adapter.Itemzable;
+import com.vividbobo.easy.adapter.adapter.ExpandableAdapter;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Entity(tableName = "accounts")
-public class Account extends BaseEntity implements Serializable, ExpandableAdapter.ItemExpandableChild {
+public class Account extends BaseEntity implements Serializable, ExpandableAdapter.ItemExpandableChild, Itemzable {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String currencyCode;    //币种Code
@@ -103,5 +103,10 @@ public class Account extends BaseEntity implements Serializable, ExpandableAdapt
     @Override
     public String getItemIconResName() {
         return getIconResName();
+    }
+
+    @Override
+    public String getItemDesc() {
+        return "余额: " + getFormatBalance();
     }
 }

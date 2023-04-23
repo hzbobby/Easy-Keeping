@@ -19,10 +19,10 @@ import com.vividbobo.easy.ui.account.AccountFragment;
 import com.vividbobo.easy.ui.chart.ChartFragment;
 import com.vividbobo.easy.ui.home.HomeFragment;
 import com.vividbobo.easy.ui.settings.SettingsActivity;
+import com.vividbobo.easy.utils.SharePreferenceUtil;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
-
     private ActivityMainBinding binding;
 
 
@@ -125,9 +125,6 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         });
-//        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, binding.mainDrawerLayout, null, R.string.open, R.string.close);
-//        binding.mainDrawerLayout.addDrawerListener(mDrawerToggle);
-//        mDrawerToggle.syncState();
 
     }
 

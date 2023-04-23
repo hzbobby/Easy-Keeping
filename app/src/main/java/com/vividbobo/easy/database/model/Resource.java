@@ -4,22 +4,33 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.vividbobo.easy.adapter.Itemzable;
 import com.vividbobo.easy.ui.account.ResourceBottomSheet;
 
+import java.io.Serializable;
+
+/**
+ * 系统图标、系统图片、用户图片，都视为资源Resource
+ */
 @Entity(tableName = "resources")
-public class Resource implements ResourceBottomSheet.Itemzable {
+public class Resource extends ServerBaseEntity implements Itemzable, Serializable {
+
+    public final static String DEF_TYPE_DRAWABLE = "drawable";
+    public final static String DEF_TYPE_SYS_COVER = "sys_cover";
+    public final static String DEF_TYPE_USER_COVER = "user_cover";
+
 
     /**
      * resourceType enum type; 枚举类型
      */
     public static enum ResourceType {
-        CATEGORY, ACCOUNT
+        CATEGORY, ACCOUNT, SYSTEM_COVER, USER_COVER
     }
 
     @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String title;   //res title
-    private String resName; //resource name
+    private String resName; //resource name or the path
     private String defType; //eg: if the resource is drawable, then the defType is "drawable"
 
     /**
@@ -38,6 +49,11 @@ public class Resource implements ResourceBottomSheet.Itemzable {
     @Override
     public String getItemIconResName() {
         return getResName();
+    }
+
+    @Override
+    public String getItemDesc() {
+        return null;
     }
 
     public String getTitle() {

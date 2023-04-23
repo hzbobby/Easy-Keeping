@@ -10,7 +10,6 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.converter.Converters;
 import com.vividbobo.easy.database.converter.EnumConverter;
 import com.vividbobo.easy.database.converter.LocalTimeConverter;
@@ -20,6 +19,7 @@ import com.vividbobo.easy.database.dao.BillDao;
 import com.vividbobo.easy.database.dao.CategoryDao;
 import com.vividbobo.easy.database.dao.ConfigDao;
 import com.vividbobo.easy.database.dao.CurrencyDao;
+import com.vividbobo.easy.database.dao.LegerDao;
 import com.vividbobo.easy.database.dao.ResourceDao;
 import com.vividbobo.easy.database.dao.RoleDao;
 import com.vividbobo.easy.database.dao.StoreDao;
@@ -30,16 +30,12 @@ import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Currency;
-import com.vividbobo.easy.database.model.CurrencyRate;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.database.model.Store;
 import com.vividbobo.easy.database.model.Tag;
-import com.vividbobo.easy.repository.AccountsRepo;
-import com.vividbobo.easy.repository.CurrenciesRepo;
 import com.vividbobo.easy.utils.AsyncProcessor;
-import com.vividbobo.easy.utils.ResourceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +43,15 @@ import java.util.concurrent.Callable;
 
 @Database(
         entities = {Bill.class, Category.class, Leger.class,
-                Account.class, Tag.class, Currency.class, CurrencyRate.class, Resource.class,
+                Account.class, Tag.class, Currency.class, Resource.class,
                 Role.class, Config.class, Store.class, AccountType.class},
         version = 1,
         exportSchema = false)
 @TypeConverters({Converters.class, LocalTimeConverter.class, EnumConverter.class})
 public abstract class EasyDatabase extends RoomDatabase {
+
+
+    public abstract LegerDao legerDao();
 
     public abstract AccountTypeDao accountTypeDao();
 
@@ -87,6 +86,11 @@ public abstract class EasyDatabase extends RoomDatabase {
                             .addCallback(currencyInit)
                             .addCallback(accountTypeInit)
                             .addCallback(resourceAccountInit)
+                            .addCallback(coverInit)
+                            .addCallback(legerInit)
+                            .addCallback(accountInit)
+                            .addCallback(roleInit)
+                            .addCallback(configInit)
                             .build();
 
                 }
@@ -94,6 +98,106 @@ public abstract class EasyDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
+    private static Callback roleInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    Role role = new Role();
+                    role.setId(1);
+                    role.setTitle("自己");
+                    INSTANCE.roleDao().insert(role);
+                    return null;
+                }
+            });
+        }
+    };
+
+
+    private static Callback configInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            //初始时的配置
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    ConfigDao dao = INSTANCE.configDao();
+                    //默认账户
+                    dao.insert(new Config(Config.CONFIG_TYPE_ACCOUNT, 1));
+                    //默认账本
+                    dao.insert(new Config(Config.CONFIG_TYPE_LEGER, 1));
+                    //默认角色
+                    dao.insert(new Config(Config.CONFIG_TYPE_ROLE, 1));
+
+                    return null;
+                }
+            });
+        }
+    };
+
+
+    private static Callback legerInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    LegerDao legerDao = INSTANCE.legerDao();
+                    legerDao.insert(new Leger(1, "日常账本", "默认账本", "bg1", Resource.ResourceType.SYSTEM_COVER));
+                    return null;
+                }
+            });
+        }
+    };
+
+    private static RoomDatabase.Callback coverInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    ResourceDao dao = INSTANCE.resourceDao();
+                    dao.insert(new Resource("bg1", "bg1", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    dao.insert(new Resource("bg2", "bg2", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    dao.insert(new Resource("bg3", "bg3", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    dao.insert(new Resource("bg4", "bg4", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    dao.insert(new Resource("bg5", "bg5", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    dao.insert(new Resource("bg6", "bg6", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    dao.insert(new Resource("bg7", "bg7", Resource.DEF_TYPE_SYS_COVER, Resource.ResourceType.SYSTEM_COVER));
+                    return null;
+                }
+            });
+        }
+    };
+    private static Callback accountInit = new Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            AsyncProcessor.getInstance().submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    AccountDao dao = INSTANCE.accountDao();
+                    Account account = new Account();
+                    account.setId(1);
+                    account.setTitle("零钱");
+                    account.setBalance(0L);
+                    account.setAccountTypeId(1);
+                    account.setAccountTypeTitle("现金");
+                    account.setAccountTypeIconResName("ic_wallet");
+                    account.setCurrencyCode("CNY");
+                    account.setIconResName("at_cash");
+                    dao.insert(account);
+                    return null;
+                }
+            });
+        }
+    };
 
     private static RoomDatabase.Callback accountTypeInit = new Callback() {
         @Override
@@ -199,6 +303,7 @@ public abstract class EasyDatabase extends RoomDatabase {
         categories.add(new Category("烟酒", "category_ente_smoke_drink", Category.DEFAULT_PARENT_ID, 22, Category.TYPE_EXPENDITURE));
         categories.add(new Category("会员", "category_vip_vip", Category.DEFAULT_PARENT_ID, 23, Category.TYPE_EXPENDITURE));
 
+        categories.add(new Category("其他", "category_othe_others", Category.DEFAULT_PARENT_ID, 0, Category.TYPE_INCOME));
         categories.add(new Category("工资", "category_inve_salary", Category.DEFAULT_PARENT_ID, 1, Category.TYPE_INCOME));
         categories.add(new Category("奖金", "category_inve_scholarship2", Category.DEFAULT_PARENT_ID, 2, Category.TYPE_INCOME));
         categories.add(new Category("兼职", "category_inve_parttime", Category.DEFAULT_PARENT_ID, 3, Category.TYPE_INCOME));
@@ -229,6 +334,7 @@ public abstract class EasyDatabase extends RoomDatabase {
 
     private static List<Resource> getResourceAccountList() {
         List<Resource> resources = new ArrayList<>();
+        resources.add(new Resource("现金", "at_cash", "drawable", Resource.ResourceType.ACCOUNT));
         resources.add(new Resource("支付宝", "at_alipay", "drawable", Resource.ResourceType.ACCOUNT));
         resources.add(new Resource("微信支付", "at_wechat_pay", "drawable", Resource.ResourceType.ACCOUNT));
         resources.add(new Resource("Paypal", "at_paypal", "drawable", Resource.ResourceType.ACCOUNT));

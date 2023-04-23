@@ -1,18 +1,16 @@
 package com.vividbobo.easy.database.model;
 
-import android.content.pm.LauncherActivityInfo;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.vividbobo.easy.adapter.DropdownMenuAdapter;
+import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 
 import java.io.Serializable;
 
 @Entity(tableName = "currencies")
-public class Currency implements Serializable, DropdownMenuAdapter.DropdownMenuItem {
+public class Currency  extends ServerBaseEntity implements Serializable, DropdownMenuAdapter.DropdownMenuItem {
     @PrimaryKey
     @NonNull
     private String code;

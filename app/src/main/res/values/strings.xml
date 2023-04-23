@@ -184,6 +184,8 @@
     <string name="selected_currency">选择币种</string>
     <string name="currency_manage">币种管理</string>
     <string name="resource_bottom_title">资源选择</string>
+    <string name="edit">编辑</string>
+    <string name="calculater">计算器</string>
 
 
 </resources>

@@ -5,12 +5,15 @@ import android.os.Parcelable;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import org.checkerframework.checker.interning.qual.FindDistinct;
+
 @Entity(tableName = "categories")
-public class Category implements Parcelable {
+public class Category extends ServerBaseEntity implements Parcelable {
     public final static int TYPE_EXPENDITURE = 0;
     public final static int TYPE_INCOME = 1;
     public final static int DEFAULT_PARENT_ID = -1;
@@ -75,6 +78,14 @@ public class Category implements Parcelable {
         }
     };
 
+
+    @Ignore
+    public Category(String title, String resName) {
+        super();
+        this.title = title;
+        this.iconResName = resName;
+    }
+
     public String getIconResName() {
         return iconResName;
     }
@@ -98,7 +109,6 @@ public class Category implements Parcelable {
     public void setTitle(String title) {
         this.title = title;
     }
-
 
 
     public Integer getParentId() {

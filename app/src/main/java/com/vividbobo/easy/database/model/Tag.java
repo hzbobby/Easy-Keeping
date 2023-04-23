@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
 @Entity(tableName = "tags")
-public class Tag implements Serializable {
+public class Tag extends ServerBaseEntity implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String title;

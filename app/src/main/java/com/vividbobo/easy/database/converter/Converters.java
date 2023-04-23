@@ -10,9 +10,12 @@ import java.lang.reflect.Type;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class Converters {
 
@@ -87,20 +90,27 @@ public class Converters {
         return new ArrayList<>(Arrays.asList(string.split(",")));
     }
 
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
     @TypeConverter
-    public static long fromDateToLong(Date date) {
+    public static String fromDateToDateText(Date date) {
         if (date == null) {
-            return 0;
+            return null;
         }
-        return date.getTime();
+        return dateFormat.format(date);
     }
 
     @TypeConverter
-    public static Date fromLongToDate(long time) {
-        if (time == 0) {
+    public static Date fromDateStringToDate(String dateText) {
+        if (dateText == null) {
             return null;
         }
-        return new Date(time);
+        try {
+            return new Date(dateFormat.parse(dateText).getTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @TypeConverter

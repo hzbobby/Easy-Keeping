@@ -24,6 +24,7 @@ public class ResourceRepo {
     //the liveData
     private final LiveData<List<ChildRvItem>> iconChildRvItems;
     private final ListenableFuture<List<Resource>> accountResLF;
+    private final ListenableFuture<List<Resource>> sysCoverLF;
 
 
     public ResourceRepo(Application application) {
@@ -31,6 +32,11 @@ public class ResourceRepo {
         resourceDao = db.resourceDao();
         iconChildRvItems = getIconChildRvItemsLiveData(getCategoryDrawableResources());
         accountResLF = resourceDao.getResourcesByResType(Resource.ResourceType.ACCOUNT);
+        sysCoverLF = resourceDao.getResourcesByResType(Resource.ResourceType.SYSTEM_COVER);
+    }
+
+    public ListenableFuture<List<Resource>> getSysCoverLF() {
+        return sysCoverLF;
     }
 
     public ListenableFuture<List<Resource>> getAccountResLF() {

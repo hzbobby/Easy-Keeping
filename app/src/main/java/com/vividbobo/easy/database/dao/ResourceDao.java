@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.vividbobo.easy.database.model.Icon;
 import com.vividbobo.easy.database.model.Resource;
 
 import java.util.List;
@@ -26,12 +25,6 @@ public interface ResourceDao {
     @Query("SELECT * FROM resources")
     LiveData<List<Resource>> getResources();
 
-    @Query("SELECT DISTINCT `group` FROM resources")
-    LiveData<List<String>> getDistinctGroups();
-
-    @Query("SELECT resName FROM resources where `group`==:groupName")
-    LiveData<List<Icon>> getIconsGroupBy(String groupName);
-
     /**
      * 根据 resourceType 获取一次资源
      *
@@ -40,4 +33,5 @@ public interface ResourceDao {
      */
     @Query("select * from resources where resType==:resourceType")
     ListenableFuture<List<Resource>> getResourcesByResType(Resource.ResourceType resourceType);
+
 }

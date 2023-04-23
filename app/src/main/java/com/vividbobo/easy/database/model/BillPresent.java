@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * 主界面账单展示模型 支出账单、收入账单、转账账单
  */
+@Deprecated
 public class BillPresent extends BaseEntity {
     public static final int TYPE_EXPENDITURE = 100;
     public static final int TYPE_INCOME = 101;
@@ -21,6 +22,11 @@ public class BillPresent extends BaseEntity {
     private int billType;       //Expenditure; Income; Transfer
 
     public BillPresent(Bill bill) {
+        this.setTitle(bill.getCategoryTitle());
+        this.setDesc(bill.getRemark());
+        this.setIconResName(bill.getCategoryIconResName());
+
+
         this.id = bill.getId();
         this.date = bill.getDate();
         this.amount = bill.getAmount();

@@ -12,7 +12,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.AccountTypeAdapter;
+import com.vividbobo.easy.adapter.adapter.AccountTypeAdapter;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.AccountType;
 import com.vividbobo.easy.databinding.DialogAccountBankBinding;

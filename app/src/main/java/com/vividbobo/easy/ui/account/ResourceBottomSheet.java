@@ -1,8 +1,5 @@
 package com.vividbobo.easy.ui.account;
 
-import android.content.ClipData;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,31 +7,22 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.ResourceAdapter;
-import com.vividbobo.easy.database.model.Category;
-import com.vividbobo.easy.database.model.CategoryPresent;
+import com.vividbobo.easy.adapter.Itemzable;
+import com.vividbobo.easy.adapter.adapter.ResourceAdapter;
 import com.vividbobo.easy.databinding.SheetMoreCategoryBinding;
-import com.vividbobo.easy.ui.bill.MoreCategoryAdapter;
-import com.vividbobo.easy.ui.bill.OnItemChangeListener;
 import com.vividbobo.easy.ui.common.BottomSheetDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 资源选择bottom sheet
  */
-public class ResourceBottomSheet<T extends ResourceBottomSheet.Itemzable> extends BottomSheetDialog<SheetMoreCategoryBinding> {
+public class ResourceBottomSheet<T extends Itemzable> extends BottomSheetDialog<SheetMoreCategoryBinding> {
     /**
      * 资源的相关属性
      */
-    public interface Itemzable {
-        String getItemTitle();
 
-        String getItemIconResName();
-    }
 
     public static final String TAG = "ResourceBottomSheet";
     private static final String KEY_DATA = "data";

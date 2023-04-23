@@ -13,32 +13,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.TagAdapter;
+import com.vividbobo.easy.adapter.adapter.TagAdapter;
 import com.vividbobo.easy.adapter.viewholder.BaseEntityFooterVH;
 import com.vividbobo.easy.adapter.viewholder.TagVH;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.databinding.DialogCommonPickerBinding;
-import com.vividbobo.easy.database.model.TagPresent;
 import com.vividbobo.easy.ui.common.BaseMaterialDialog;
-import com.vividbobo.easy.ui.common.BaseDialogPickerAdapter;
-import com.vividbobo.easy.ui.common.CommonFooterViewHolder;
-import com.vividbobo.easy.ui.common.CommonItemViewHolder;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
-import com.vividbobo.easy.ui.others.commonAdapter.CommonAdapter;
-import com.vividbobo.easy.viewmodel.BillViewModel;
-import com.vividbobo.easy.viewmodel.CurrencyViewModel;
 import com.vividbobo.easy.viewmodel.TagViewModel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class TagPicker extends BaseMaterialDialog<DialogCommonPickerBinding> {
 
@@ -190,6 +181,7 @@ public class TagPicker extends BaseMaterialDialog<DialogCommonPickerBinding> {
                         //check change
                         if (isChecked) selectedTagSet.add(tag);
                         else selectedTagSet.remove(tag);
+                        Log.d(TAG, "onCheckedChanged: selectTagSet Size: " + selectedTagSet.size());
                     }
                 });
                 if (selectedTagSet.contains(tag)) {

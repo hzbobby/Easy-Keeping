@@ -11,7 +11,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity(tableName = "bills")
-public class Bill {
+public class Bill extends ServerBaseEntity {
     public static final int EXPENDITURE = 0;
     public static final int INCOME = 1;
     public static final int TRANSFER = 2;
@@ -35,7 +35,6 @@ public class Bill {
     private Date date;    //日期
     private LocalTime time;    //时间
     private String remark;      //备注
-    private Timestamp lastUpdateTime; //更新时间
     private Integer storeId;    //商家ID
     private String storeTitle;
     private Boolean isRefund;   //退款
@@ -197,14 +196,6 @@ public class Bill {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Timestamp getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(Timestamp lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 
     public Integer getStoreId() {

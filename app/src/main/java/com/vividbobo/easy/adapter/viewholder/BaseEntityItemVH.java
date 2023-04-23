@@ -12,6 +12,7 @@ import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.BaseEntity;
 import com.vividbobo.easy.utils.ResourceUtils;
 
+@Deprecated
 public class BaseEntityItemVH extends RecyclerView.ViewHolder {
     public ImageView iconIv;
     public TextView titleTv, descTv;
@@ -30,7 +31,7 @@ public class BaseEntityItemVH extends RecyclerView.ViewHolder {
             iconIv.setImageDrawable(ResourceUtils.getDrawable(entity.getIconResName()));
         }
         titleTv.setText(entity.getTitle());
-        if (entity.getDesc().isEmpty()) {
+        if (entity.getDesc() == null || entity.getDesc().isEmpty()) {
             descTv.setVisibility(View.GONE);
         } else {
             descTv.setVisibility(View.VISIBLE);

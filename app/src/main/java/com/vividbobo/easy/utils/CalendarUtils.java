@@ -34,4 +34,9 @@ public class CalendarUtils {
     public static String getDayOfWeekCN(Date date) {
         return dayOfWeek.get(getDayOfWeek(date));
     }
+
+    public static String getMMDD(Date date) {
+        return monthDayFormat.format(date);
+    }
+
 }

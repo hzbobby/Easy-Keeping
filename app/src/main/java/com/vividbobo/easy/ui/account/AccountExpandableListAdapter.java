@@ -11,13 +11,13 @@ import android.widget.TextView;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.AccountGroup;
-import com.vividbobo.easy.database.model.AccountItem;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
 
     private List<AccountGroup> accountGroups;
@@ -25,7 +25,6 @@ public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
 
     private int lastClickGroupPos = -1;
     private int lastClickChildPos = -1;
-
 
 
     private void setLastClickPos(int groupPos, int childPos) {
@@ -164,7 +163,7 @@ public class AccountExpandableListAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 setLastClickPos(i, i1);
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(view,accountItem, i1);
+                    onItemClickListener.onItemClick(view, accountItem, i1);
                 }
             }
         });

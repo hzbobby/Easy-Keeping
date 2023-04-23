@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.utils.ResourceUtils;
 
+@Deprecated
 public class BaseEntityFooterVH extends RecyclerView.ViewHolder {
     public ImageView iconIv;
     public TextView titleTv;
