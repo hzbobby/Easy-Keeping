@@ -12,7 +12,7 @@ import com.vividbobo.easy.utils.AsyncProcessor;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class RolesRepo {
+public class PayeesRepo {
 
     //the Dao
     private final RoleDao roleDao;
@@ -20,7 +20,7 @@ public class RolesRepo {
     //the liveData
     private final LiveData<List<Role>> roleList;
 
-    public RolesRepo(Application application) {
+    public PayeesRepo(Application application) {
         roleDao = EasyDatabase.getDatabase(application).roleDao();
         roleList = roleDao.getAllRoles();
     }

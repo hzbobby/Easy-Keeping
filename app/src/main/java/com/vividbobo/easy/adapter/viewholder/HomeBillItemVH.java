@@ -1,6 +1,6 @@
 package com.vividbobo.easy.adapter.viewholder;
 
-import android.util.Log;
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.Bill;
-import com.vividbobo.easy.database.model.BillPresent;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.utils.CalendarUtils;
 import com.vividbobo.easy.utils.FormatUtils;
@@ -44,13 +43,13 @@ public class HomeBillItemVH extends RecyclerView.ViewHolder {
         line3 = itemView.findViewById(R.id.line3);
     }
 
-    public void bind(Bill billPresent) {
+    public void bind(Context context, Bill billPresent) {
         try {
             if (billPresent.getBillType() == Category.TYPE_EXPENDITURE) {
-                ResourceUtils.bindImageDrawable(itemView.getContext(), ResourceUtils.getTintedDrawable(billPresent.getCategoryIconResName(), ResourceUtils.getColor(R.color.expenditure))).into(iconIv);
+                ResourceUtils.bindImageDrawable(context, ResourceUtils.getTintedDrawable(billPresent.getCategoryIconResName(), ResourceUtils.getColor(R.color.expenditure))).into(iconIv);
                 amountTv.setTextColor(ResourceUtils.getColor(R.color.expenditure));
             } else {
-                ResourceUtils.bindImageDrawable(itemView.getContext(), ResourceUtils.getTintedDrawable(billPresent.getCategoryIconResName(), ResourceUtils.getColor(R.color.income))).into(iconIv);
+                ResourceUtils.bindImageDrawable(context, ResourceUtils.getTintedDrawable(billPresent.getCategoryIconResName(), ResourceUtils.getColor(R.color.income))).into(iconIv);
                 amountTv.setTextColor(ResourceUtils.getColor(R.color.income));
             }
         } catch (NullPointerException e) {
@@ -70,17 +69,17 @@ public class HomeBillItemVH extends RecyclerView.ViewHolder {
             otherTv.setText(billPresent.getRemark());
             visibleLine2 = true;
         }
-        if (billPresent.getRoleTitle() == null || billPresent.getRoleTitle().isEmpty()) {
+        if (billPresent.getRoleTitle() == null || billPresent.getRoleTitle().isEmpty() || billPresent.getRoleTitle().equals("自己")) {
             roleTv.setVisibility(View.GONE);
         } else {
             roleTv.setVisibility(View.VISIBLE);
             roleTv.setText(billPresent.getRoleTitle());
         }
-        if (billPresent.getStoreTitle() == null || billPresent.getStoreTitle().isEmpty()) {
+        if (billPresent.getPayeeTitle() == null || billPresent.getPayeeTitle().isEmpty()) {
             storeTv.setVisibility(View.GONE);
         } else {
             storeTv.setVisibility(View.VISIBLE);
-            storeTv.setText(billPresent.getStoreTitle());
+            storeTv.setText(billPresent.getPayeeTitle());
         }
         if (billPresent.getRefund() == null || !billPresent.getRefund()) {
             refundTv.setVisibility(View.GONE);

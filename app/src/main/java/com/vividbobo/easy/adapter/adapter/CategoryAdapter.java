@@ -19,8 +19,14 @@ import com.vividbobo.easy.database.model.CategoryPresent;
 import com.vividbobo.easy.ui.others.commonAdapter.CommonAdapter;
 import com.vividbobo.easy.utils.ResourceUtils;
 
+import java.util.Objects;
+
+/**
+ * TODO 1.
+ */
 public class CategoryAdapter extends CommonAdapter<CategoryPresent, RecyclerView.ViewHolder, CategoryAdapter.NormalViewHolder, CategoryAdapter.FooterViewHolder> {
     private int selectPosition = 0;
+//    private Category selectedCategory;
 
     public CategoryAdapter(Context mContext) {
         super(mContext);
@@ -29,18 +35,18 @@ public class CategoryAdapter extends CommonAdapter<CategoryPresent, RecyclerView
 
 
     @Override
-    protected RecyclerView.ViewHolder onCreateHeaderViewHolder(@NonNull ViewGroup parent,int viewType) {
+    protected RecyclerView.ViewHolder onCreateHeaderViewHolder(@NonNull ViewGroup parent, int viewType) {
         return null;
     }
 
     @Override
-    protected FooterViewHolder onCreateFooterViewHolder(@NonNull ViewGroup parent,int viewType) {
+    protected FooterViewHolder onCreateFooterViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_category, parent, false);
         return new FooterViewHolder(view);
     }
 
     @Override
-    protected NormalViewHolder onCreateNormalViewHolder(@NonNull ViewGroup parent,int viewType) {
+    protected NormalViewHolder onCreateNormalViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_category, parent, false);
         return new NormalViewHolder(view);
     }
@@ -65,11 +71,27 @@ public class CategoryAdapter extends CommonAdapter<CategoryPresent, RecyclerView
                 Log.d("TAG", "onBindNormalViewHolder: set expenditure color icon");
                 ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(categoryPresent.getIconResName(), ContextCompat.getColor(mContext, R.color.expenditure))).centerInside().into(holder.iconIv);
             } else {
-                ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(categoryPresent.getIconResName(),ContextCompat.getColor(mContext,  R.color.income))).centerInside().into(holder.iconIv);
+                ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(categoryPresent.getIconResName(), ContextCompat.getColor(mContext, R.color.income))).centerInside().into(holder.iconIv);
             }
         } else {
-            ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(categoryPresent.getIconResName(),ContextCompat.getColor(mContext,  R.color.black))).centerInside().into(holder.iconIv);
+            ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(categoryPresent.getIconResName(), ContextCompat.getColor(mContext, R.color.black))).centerInside().into(holder.iconIv);
         }
+
+//        if (selectedCategory != null) {
+//            Integer selectedId = null;
+//            if (Objects.isNull(selectedCategory.getParentId()) || selectedCategory.getParentId() == Category.DEFAULT_PARENT_ID) {
+//                //parent
+//                selectedId = selectedCategory.getId();
+//            } else {
+//                // is child category
+//                selectedId = selectedCategory.getParentId();
+//            }
+//            if (selectedId != null && selectedId == categoryPresent.getId()) {
+//                //定位到该位置
+//                setItemSelected(holder.getAdapterPosition());
+//            }
+//        }
+
     }
 
     @Override
@@ -87,7 +109,23 @@ public class CategoryAdapter extends CommonAdapter<CategoryPresent, RecyclerView
         selectPosition = position;
         notifyItemChanged(oldPosition);
         notifyItemChanged(selectPosition);
+    }
 
+    public void setSelectedCategory(Category category) {
+        Log.d("TAG", "setSelectedCategory: ");
+        for (int i = 0; i < items.size(); i++) {
+            int id;
+            if (Objects.isNull(category.getParentId()) || category.getParentId() == Category.DEFAULT_PARENT_ID) {
+                id = category.getId();
+            } else {
+                id = category.getParentId();
+            }
+            if (id == items.get(i).getId()) {
+                items.get(i).setPresentCategory(category);
+                setItemSelected(getHolderPosition(i));
+                break;
+            }
+        }
     }
 
     public class NormalViewHolder extends RecyclerView.ViewHolder {
@@ -102,8 +140,7 @@ public class CategoryAdapter extends CommonAdapter<CategoryPresent, RecyclerView
         }
 
         public void bind(CategoryPresent item) {
-            ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getDrawable(item.getIconResName()))
-                    .fitCenter().into(iconIv);
+            ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getDrawable(item.getIconResName())).fitCenter().into(iconIv);
             titleTv.setText(item.getTitle());
 
             if (!item.getChildren().isEmpty()) {
@@ -122,8 +159,7 @@ public class CategoryAdapter extends CommonAdapter<CategoryPresent, RecyclerView
             super(itemView);
             iconIv = itemView.findViewById(R.id.grid_item_icon_iv);
             titleTv = itemView.findViewById(R.id.grid_item_title_tv);
-            ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(R.drawable.menu_ic_setting, ContextCompat.getColor(mContext, R.color.black)))
-                    .fitCenter().into(iconIv);
+            ResourceUtils.bindImageDrawable(mContext, ResourceUtils.getTintedDrawable(R.drawable.menu_ic_setting, ContextCompat.getColor(mContext, R.color.black))).fitCenter().into(iconIv);
             iconIv.setImageResource(R.drawable.menu_ic_setting);
             titleTv.setText(R.string.setting);
             itemView.findViewById(R.id.grid_item_more_iv).setVisibility(View.GONE);

@@ -8,21 +8,21 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.vividbobo.easy.database.model.Store;
+import com.vividbobo.easy.database.model.Payee;
 
 import java.util.List;
 
 @Dao
-public interface StoreDao {
+public interface PayeeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Store store);
+    void insert(Payee payee);
 
-    @Query("select * from stores")
-    LiveData<List<Store>> getAllStores();
+    @Query("select * from payees")
+    LiveData<List<Payee>> getAllStores();
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void update(Store entity);
+    void update(Payee entity);
 
     @Delete
-    void delete(Store item);
+    void delete(Payee item);
 }

@@ -6,9 +6,16 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "configs")
 public class Config extends ServerBaseEntity {
-    public static final int CONFIG_TYPE_LEGER = 1;
-    public static final int CONFIG_TYPE_ROLE = 2;
-    public static final int CONFIG_TYPE_ACCOUNT = 3;
+    public static final int TYPE_LEGER = 1;
+    public static final int TYPE_ROLE = 2;
+    public static final int TYPE_ACCOUNT = 3;
+
+    public static final int TYPE_AUTO_BILLING_LEGER = 101;
+    public static final int TYPE_AUTO_BILLING_ACCOUNT_WECHAT = 1030;
+    public static final int TYPE_AUTO_BILLING_ACCOUNT_ALIPAY = 1031;
+    public static final int TYPE_AUTO_BILLING_CATEGORY_EXPENDITURE = 1040;
+    public static final int TYPE_AUTO_BILLING_CATEGORY_INCOME = 1041;
+
 
     @PrimaryKey(autoGenerate = true)
     private int id;

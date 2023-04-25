@@ -10,29 +10,21 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.BaseActivity;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.adapter.adapter.LegerAdapter;
-import com.vividbobo.easy.adapter.adapter.TagAdapter;
-import com.vividbobo.easy.database.EasyDatabase;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.databinding.ActivityLegerBinding;
 import com.vividbobo.easy.ui.common.ContextOperationMenuDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
-import com.vividbobo.easy.utils.AsyncProcessor;
 import com.vividbobo.easy.utils.ConstantValue;
-import com.vividbobo.easy.utils.SharePreferenceUtil;
 import com.vividbobo.easy.utils.ToastUtil;
 import com.vividbobo.easy.viewmodel.ConfigViewModel;
 import com.vividbobo.easy.viewmodel.LegerViewModel;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 public class LegerActivity extends BaseActivity {
     private static final String TAG = "LegerActivity";
@@ -73,7 +65,7 @@ public class LegerActivity extends BaseActivity {
                         if (item.getId() == selectedLeger.getId()) {
                             //删除的账本是当前选中的账本，则设置为默认账本
                             //修改选中的账本
-                            configViewModel.updateSelected(Config.CONFIG_TYPE_LEGER, 1);
+                            configViewModel.updateSelected(Config.TYPE_LEGER, 1);
                         }
                         legerViewModel.delete(item);
                     } catch (Exception e) {
@@ -166,7 +158,7 @@ public class LegerActivity extends BaseActivity {
         //退出时修改选中账本
         if (selectedLeger != null) {
             Log.d(TAG, "onStop: update selected leger title:" + selectedLeger.getTitle());
-            configViewModel.updateSelected(Config.CONFIG_TYPE_LEGER, selectedLeger.getId());
+            configViewModel.updateSelected(Config.TYPE_LEGER, selectedLeger.getId());
         }
     }
 }

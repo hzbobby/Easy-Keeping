@@ -23,4 +23,13 @@ public interface CategoryDao {
 
     @Query("select max(orderNum) from categories where parentId==:parentId")
     int getMaxOrderNumByParentId(int parentId);
+
+    @Query("select * from categories where id==:id")
+    LiveData<Category> getCategoryByIdLd(Integer id);
+
+    @Query("select * from categories where id in (1,24) and type==:billType")
+    Category getRawDefaultCategoryByType(Integer billType);
+
+    @Query("select * from categories where id==:categoryId")
+    Category getRawCategoryById(Integer categoryId);
 }

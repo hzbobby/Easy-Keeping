@@ -1,14 +1,30 @@
 package com.vividbobo.easy.database.model;
 
+import androidx.room.Ignore;
+
+import org.checkerframework.framework.qual.IgnoreInWholeProgramInference;
+
 /**
  * 每日总账单记录
  */
-public class DayBillInfo {
-    private String date="";
-    private String week="";
+public class BillInfo {
+    @Ignore
+    private String date = "";
+    @Ignore
+    private String week = "";
     private long incomeAmount;
     private long expenditureAmount;
 
+    @Ignore
+    private long balanceAmount;   //结余
+
+    public long getBalanceAmount() {
+        return balanceAmount;
+    }
+
+    public void setBalanceAmount(long balanceAmount) {
+        this.balanceAmount = balanceAmount;
+    }
 
     public String getDate() {
         return date;

@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.vividbobo.easy.database.model.Account;
-import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Role;
@@ -17,17 +16,24 @@ public interface ConfigDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Config config);
 
-    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==" + Config.CONFIG_TYPE_LEGER)
+    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==" + Config.TYPE_LEGER)
     LiveData<Leger> getSelectedLeger();
 
-    @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==" + Config.CONFIG_TYPE_ROLE)
+    @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==" + Config.TYPE_ROLE)
     LiveData<Role> getSelectedRole();
 
-    @Query("select accounts.* from configs,accounts where accounts.id==configs.selected_id and type==" + Config.CONFIG_TYPE_ACCOUNT)
+    @Query("select accounts.* from configs,accounts where accounts.id==configs.selected_id and type==" + Config.TYPE_ACCOUNT)
     LiveData<Account> getSelectedAccount();
 
     @Query("update configs set selected_id=:selectedId where type==:type")
     void updateSelectedId(int type, int selectedId);
 
+    @Query("select selected_id from configs where type==:type")
+    LiveData<Integer> getSelectedIdByType(int type);
 
+    @Query("select legers.* from legers,configs where configs.type==101 and legers.id==configs.selected_id")
+    Leger getRawAutoBillingLeger();
+
+    @Query("select selected_id from configs where type==:type")
+    Integer getRawSelectedIdByType(int type);
 }

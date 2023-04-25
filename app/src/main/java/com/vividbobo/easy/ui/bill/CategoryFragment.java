@@ -1,6 +1,7 @@
 package com.vividbobo.easy.ui.bill;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.vividbobo.easy.adapter.adapter.CategoryAdapter;
+import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.CategoryPresent;
 import com.vividbobo.easy.databinding.FragmentCategoryBinding;
@@ -30,12 +32,10 @@ public class CategoryFragment extends Fragment {
     private BillViewModel billViewModel;
     private int billType;
 
-    static CategoryFragment newInstance(@NonNull int type, Object data) {
+    static CategoryFragment newInstance(@NonNull int type) {
         CategoryFragment fragment = new CategoryFragment();
-        //如果需要传入数据
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_BILL_KIND, type);
-
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -107,11 +107,24 @@ public class CategoryFragment extends Fragment {
                     categoryAdapter.updateItems(categoryPresents);
                 }
             });
+            billViewModel.getSelectedExpCategory().observe(getActivity(), new Observer<Category>() {
+                @Override
+                public void onChanged(Category category) {
+                    Log.d("TAG", "onChanged: livedate expense");
+                    categoryAdapter.setSelectedCategory(category);
+                }
+            });
         } else {
             categoryViewModel.getIncomeCategories().observe(getViewLifecycleOwner(), new Observer<List<CategoryPresent>>() {
                 @Override
                 public void onChanged(List<CategoryPresent> categoryPresents) {
                     categoryAdapter.updateItems(categoryPresents);
+                }
+            });
+            billViewModel.getSelectedIncCategory().observe(getActivity(), new Observer<Category>() {
+                @Override
+                public void onChanged(Category category) {
+                    categoryAdapter.setSelectedCategory(category);
                 }
             });
         }
@@ -121,6 +134,5 @@ public class CategoryFragment extends Fragment {
 
         return root;
     }
-
 
 }

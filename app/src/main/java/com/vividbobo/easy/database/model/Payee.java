@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
-@Entity(tableName = "stores")
-public class Store extends BaseEntity implements Serializable {
+@Entity(tableName = "payees")
+public class Payee extends BaseEntity implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 

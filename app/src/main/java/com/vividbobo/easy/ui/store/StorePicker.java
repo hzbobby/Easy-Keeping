@@ -14,11 +14,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.adapter.adapter.BaseEntityAdapter;
-import com.vividbobo.easy.database.model.Store;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.databinding.DialogCommonPickerBinding;
 import com.vividbobo.easy.ui.common.BaseMaterialDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
-import com.vividbobo.easy.viewmodel.StoreViewModel;
+import com.vividbobo.easy.viewmodel.PayeeViewModel;
 
 import java.util.List;
 
@@ -26,12 +26,12 @@ public class StorePicker extends BaseMaterialDialog<DialogCommonPickerBinding>  
     public static final String TAG = "StorePicker";
 
     private OnItemClickListener onItemClickListener;
-    private StoreViewModel storeViewModel;
+    private PayeeViewModel payeeViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storeViewModel = new ViewModelProvider(getActivity()).get(StoreViewModel.class);
+        payeeViewModel = new ViewModelProvider(getActivity()).get(PayeeViewModel.class);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -58,7 +58,7 @@ public class StorePicker extends BaseMaterialDialog<DialogCommonPickerBinding>  
     protected void onBindView(DialogCommonPickerBinding binding) {
         binding.descriptionContentTv.setText(R.string.pick_store_desc);
 
-        BaseEntityAdapter<Store> storeAdapter = new BaseEntityAdapter<>(getActivity());
+        BaseEntityAdapter<Payee> storeAdapter = new BaseEntityAdapter<>(getActivity());
         storeAdapter.setEnableFooter(true);
         storeAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -76,10 +76,10 @@ public class StorePicker extends BaseMaterialDialog<DialogCommonPickerBinding>  
         });
         binding.contentRecyclerView.setAdapter(storeAdapter);
 
-        storeViewModel.getAllStores().observe(getActivity(), new Observer<List<Store>>() {
+        payeeViewModel.getAllStores().observe(getActivity(), new Observer<List<Payee>>() {
             @Override
-            public void onChanged(List<Store> stores) {
-                storeAdapter.updateItems(stores);
+            public void onChanged(List<Payee> payees) {
+                storeAdapter.updateItems(payees);
             }
         });
     }

@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 一个带 Header, Footer, NormalItem 且支持最大显示item数量的RecyclerView Adapter
  *
- * @param <T> type of item
+ * @param <T>      type of item
  * @param <HEADER> header view holder
  * @param <NORMAL> item view holder
  * @param <FOOTER> footer view holder
@@ -166,11 +166,30 @@ public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, N
             FOOTER footer = onCreateFooterViewHolder(parent, viewType);
             onFooterCreated(footer);
             return footer;
-        } else {
+        } else if (viewType == ITEM_TYPE_NORMAL) {
             NORMAL normal = onCreateNormalViewHolder(parent, viewType);
             onNormalCreated(normal);
             return normal;
+        } else {
+            RecyclerView.ViewHolder vh = onCreateOtherViewHolder(parent, viewType);
+            onOtherCreated(vh);
+            return vh;
         }
+    }
+
+    private void onOtherCreated(RecyclerView.ViewHolder vh) {
+        //do some specify
+    }
+
+    /**
+     * create other type viewHolder, if you need other types
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
+    protected RecyclerView.ViewHolder onCreateOtherViewHolder(ViewGroup parent, int viewType) {
+        return null;
     }
 
     protected void onHeaderCreated(HEADER header) {
@@ -248,7 +267,7 @@ public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, N
                 }
             });
             onBindFooterViewHolder((FOOTER) holder, position);
-        } else {
+        } else if (getItemViewType(position) == ITEM_TYPE_HEADER) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -259,7 +278,13 @@ public abstract class CommonAdapter<T, HEADER extends RecyclerView.ViewHolder, N
                 }
             });
             onBindHeaderViewHolder((HEADER) holder, position);
+        } else {
+            onBindOtherViewHolder(holder, position);
         }
+    }
+
+    protected void onBindOtherViewHolder(RecyclerView.ViewHolder holder, int position) {
+        //do nothing
     }
 
     /**

@@ -20,9 +20,9 @@ import com.vividbobo.easy.database.dao.CategoryDao;
 import com.vividbobo.easy.database.dao.ConfigDao;
 import com.vividbobo.easy.database.dao.CurrencyDao;
 import com.vividbobo.easy.database.dao.LegerDao;
+import com.vividbobo.easy.database.dao.PayeeDao;
 import com.vividbobo.easy.database.dao.ResourceDao;
 import com.vividbobo.easy.database.dao.RoleDao;
-import com.vividbobo.easy.database.dao.StoreDao;
 import com.vividbobo.easy.database.dao.TagDao;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.AccountType;
@@ -31,9 +31,9 @@ import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Currency;
 import com.vividbobo.easy.database.model.Leger;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.database.model.Role;
-import com.vividbobo.easy.database.model.Store;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.utils.AsyncProcessor;
 
@@ -44,7 +44,7 @@ import java.util.concurrent.Callable;
 @Database(
         entities = {Bill.class, Category.class, Leger.class,
                 Account.class, Tag.class, Currency.class, Resource.class,
-                Role.class, Config.class, Store.class, AccountType.class},
+                Role.class, Config.class, Payee.class, AccountType.class},
         version = 1,
         exportSchema = false)
 @TypeConverters({Converters.class, LocalTimeConverter.class, EnumConverter.class})
@@ -61,7 +61,7 @@ public abstract class EasyDatabase extends RoomDatabase {
 
     public abstract CurrencyDao currencyDao();
 
-    public abstract StoreDao storeDao();
+    public abstract PayeeDao payeeDao();
 
     public abstract ConfigDao configDao();
 
@@ -127,12 +127,21 @@ public abstract class EasyDatabase extends RoomDatabase {
                 public Object call() throws Exception {
                     ConfigDao dao = INSTANCE.configDao();
                     //默认账户
-                    dao.insert(new Config(Config.CONFIG_TYPE_ACCOUNT, 1));
+                    dao.insert(new Config(Config.TYPE_ACCOUNT, 1));
                     //默认账本
-                    dao.insert(new Config(Config.CONFIG_TYPE_LEGER, 1));
+                    dao.insert(new Config(Config.TYPE_LEGER, 1));
                     //默认角色
-                    dao.insert(new Config(Config.CONFIG_TYPE_ROLE, 1));
+                    dao.insert(new Config(Config.TYPE_ROLE, 1));
 
+                    //自动记账
+                    //默认账本
+                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_LEGER, 1));
+                    //默认账户
+                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_ACCOUNT_WECHAT, 2));
+                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_ACCOUNT_ALIPAY, 3));
+                    //默认类别
+                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_CATEGORY_EXPENDITURE, 1));
+                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_CATEGORY_INCOME, 24));
                     return null;
                 }
             });
@@ -183,16 +192,12 @@ public abstract class EasyDatabase extends RoomDatabase {
                 @Override
                 public Object call() throws Exception {
                     AccountDao dao = INSTANCE.accountDao();
-                    Account account = new Account();
-                    account.setId(1);
-                    account.setTitle("零钱");
-                    account.setBalance(0L);
-                    account.setAccountTypeId(1);
-                    account.setAccountTypeTitle("现金");
-                    account.setAccountTypeIconResName("ic_wallet");
-                    account.setCurrencyCode("CNY");
-                    account.setIconResName("at_cash");
-                    dao.insert(account);
+                    Account cash = new Account("零钱", 0L, 1, "现金", "ic_wallet", "CNY", "at_cash");
+                    Account wechat = new Account("微信", 0L, 4, "网络账户", "ic_public", "CNY", "at_wechat");
+                    Account alipay = new Account("支付宝", 0L, 4, "网络账户", "ic_public", "CNY", "at_alipay");
+                    dao.insert(cash);
+                    dao.insert(wechat);
+                    dao.insert(alipay);
                     return null;
                 }
             });

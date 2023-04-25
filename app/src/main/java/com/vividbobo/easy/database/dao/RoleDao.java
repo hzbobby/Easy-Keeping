@@ -25,7 +25,7 @@ public interface RoleDao {
     void insert(Role... roles);
 
     @Query("select * from roles where id=:id")
-    LiveData<Role> getRoleById(int id);
+    LiveData<Role> getRoleByIdLD(int id);
 
     @Delete
     void delete(Role item);

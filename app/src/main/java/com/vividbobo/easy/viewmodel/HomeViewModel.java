@@ -7,30 +7,43 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.vividbobo.easy.database.model.Bill;
-import com.vividbobo.easy.database.model.BillPresent;
-import com.vividbobo.easy.database.model.DayBillInfo;
+import com.vividbobo.easy.database.model.BillInfo;
 import com.vividbobo.easy.repository.HomeRepo;
 
 import java.util.List;
 
 public class HomeViewModel extends AndroidViewModel {
-    private final LiveData<DayBillInfo> todayBillInfo;
+    private final LiveData<BillInfo> todayBillInfo;
     private final LiveData<List<Bill>> todayBills;
-    private HomeRepo billsRepo;
+    private final LiveData<BillInfo> monthBillInfo;
+    private HomeRepo homeRepo;
 
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        billsRepo = new HomeRepo(application);
-        todayBills = billsRepo.getTodayBills();
-        todayBillInfo = billsRepo.getTodayBillInfo();
+        homeRepo = new HomeRepo(application);
+        todayBills = homeRepo.getTodayBills();
+        todayBillInfo = homeRepo.getTodayBillInfo();
+        monthBillInfo = homeRepo.getMonthBillInfo();
+    }
+
+    public LiveData<BillInfo> getMonthBillInfo() {
+        return monthBillInfo;
     }
 
     public LiveData<List<Bill>> getTodayBills() {
         return todayBills;
     }
 
-    public LiveData<DayBillInfo> getTodayBillInfo() {
+    public LiveData<BillInfo> getTodayBillInfo() {
         return todayBillInfo;
+    }
+
+    public void updateBill(Bill bill) {
+        homeRepo.updateBill(bill);
+    }
+
+    public void deleteBill(Bill bill) {
+        homeRepo.deleteBill(bill);
     }
 }

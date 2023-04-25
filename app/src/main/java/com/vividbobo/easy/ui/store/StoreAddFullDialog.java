@@ -5,25 +5,25 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.vividbobo.easy.database.model.Store;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.ui.common.BaseEntityAddFullDialog;
-import com.vividbobo.easy.viewmodel.StoreViewModel;
+import com.vividbobo.easy.viewmodel.PayeeViewModel;
 
-public class StoreAddFullDialog extends BaseEntityAddFullDialog<Store> {
+public class StoreAddFullDialog extends BaseEntityAddFullDialog<Payee> {
     public static final String TAG = "AddRoleDialog";
 
-    private StoreViewModel storeViewModel;
+    private PayeeViewModel payeeViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storeViewModel = new ViewModelProvider(getActivity()).get(StoreViewModel.class);
+        payeeViewModel = new ViewModelProvider(getActivity()).get(PayeeViewModel.class);
     }
 
-    public static StoreAddFullDialog newInstance(Store store) {
+    public static StoreAddFullDialog newInstance(Payee payee) {
 
         Bundle args = new Bundle();
-        args.putSerializable(KEY_DATA, store);
+        args.putSerializable(KEY_DATA, payee);
         StoreAddFullDialog fragment = new StoreAddFullDialog();
         fragment.setArguments(args);
         return fragment;
@@ -45,14 +45,14 @@ public class StoreAddFullDialog extends BaseEntityAddFullDialog<Store> {
 
     @Override
     public void save(String title, String desc) {
-        Store store = new Store();
-        store.setTitle(title);
-        store.setDesc(desc);
-        storeViewModel.insert(store);
+        Payee payee = new Payee();
+        payee.setTitle(title);
+        payee.setDesc(desc);
+        payeeViewModel.insert(payee);
     }
 
     @Override
-    public void update(Store entity) {
-        storeViewModel.update(entity);
+    public void update(Payee entity) {
+        payeeViewModel.update(entity);
     }
 }

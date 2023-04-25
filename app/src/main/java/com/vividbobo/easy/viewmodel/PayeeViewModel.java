@@ -6,35 +6,35 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.vividbobo.easy.database.model.Store;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.repository.StoresRepo;
 
 import java.util.List;
 
-public class StoreViewModel extends AndroidViewModel {
-    private final LiveData<List<Store>> allStores;
+public class PayeeViewModel extends AndroidViewModel {
+    private final LiveData<List<Payee>> allStores;
     private StoresRepo storesRepo;
 
 
-    public StoreViewModel(@NonNull Application application) {
+    public PayeeViewModel(@NonNull Application application) {
         super(application);
         storesRepo = new StoresRepo(application);
         allStores = storesRepo.getAllStores();
     }
 
-    public LiveData<List<Store>> getAllStores() {
+    public LiveData<List<Payee>> getAllStores() {
         return allStores;
     }
 
-    public void insert(Store store) {
-        storesRepo.insert(store);
+    public void insert(Payee payee) {
+        storesRepo.insert(payee);
     }
 
-    public void update(Store entity) {
+    public void update(Payee entity) {
         storesRepo.update(entity);
     }
 
-    public void delete(Store item) {
+    public void delete(Payee item) {
         storesRepo.delete(item);
     }
 }

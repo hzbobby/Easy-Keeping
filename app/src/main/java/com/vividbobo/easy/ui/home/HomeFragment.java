@@ -20,18 +20,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.vividbobo.easy.adapter.adapter.HomeBillAdapter;
 import com.vividbobo.easy.database.model.Bill;
-import com.vividbobo.easy.database.model.BillPresent;
-import com.vividbobo.easy.database.model.DayBillInfo;
+import com.vividbobo.easy.database.model.BillInfo;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.databinding.FragmentHomeBinding;
 import com.vividbobo.easy.ui.bill.BillActivity;
+import com.vividbobo.easy.ui.bill.BillDetailBottomSheet;
 import com.vividbobo.easy.ui.leger.LegerActivity;
+import com.vividbobo.easy.ui.others.OnItemClickListener;
+import com.vividbobo.easy.utils.FormatUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.viewmodel.ConfigViewModel;
 import com.vividbobo.easy.viewmodel.HomeViewModel;
 
+import java.text.Normalizer;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -89,9 +93,40 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        binding.homeRecyclerView.setLayoutManager(linearLayoutManager);
         HomeBillAdapter homeBillAdapter = new HomeBillAdapter(getActivity());
+        homeBillAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, Object item, int position) {
+                Bill bill = (Bill) item;
+                BillDetailBottomSheet bottomSheet = BillDetailBottomSheet.newInstance(bill);
+                bottomSheet.setOnRefundClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //退款
+                        bill.setRefund(true);
+                        //dismiss?
+                        homeViewModel.updateBill(bill);
+                        bottomSheet.dismiss();
+                    }
+                });
+                bottomSheet.setOnDeleteClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        homeViewModel.deleteBill(bill);
+                        bottomSheet.dismiss();
+                    }
+                });
+                bottomSheet.setOnEditClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), BillActivity.class);
+                        intent.putExtra("data", bill);
+                        startActivity(intent);
+                    }
+                });
+                bottomSheet.show(getParentFragmentManager(), BillDetailBottomSheet.TAG);
+            }
+        });
         binding.homeRecyclerView.setAdapter(homeBillAdapter);
 
         //add bill
@@ -112,10 +147,24 @@ public class HomeFragment extends Fragment {
         });
 
 
-        homeViewModel.getTodayBillInfo().observe(getActivity(), new Observer<DayBillInfo>() {
+        //month info
+        homeViewModel.getMonthBillInfo().observe(getActivity(), new Observer<BillInfo>() {
             @Override
-            public void onChanged(DayBillInfo dayBillInfo) {
-                homeBillAdapter.setHeaderItem(dayBillInfo);
+            public void onChanged(BillInfo billInfo) {
+                Log.d(TAG, "onChanged: bill info is null?" + Objects.isNull(billInfo));
+                if (billInfo != null) {
+                    Log.d(TAG, "onChanged: bill income amount:" + billInfo.getIncomeAmount());
+                    binding.homeToolBarIncomeText.setText(FormatUtils.getAmount(billInfo.getIncomeAmount()));
+                    binding.homeToolBarOutcomeText.setText(FormatUtils.getAmount(billInfo.getExpenditureAmount()));
+                    binding.homeToolBarLeftBalanceText.setText(FormatUtils.getAmount(billInfo.getBalanceAmount()));
+                }
+            }
+        });
+
+        homeViewModel.getTodayBillInfo().observe(getActivity(), new Observer<BillInfo>() {
+            @Override
+            public void onChanged(BillInfo billInfo) {
+                homeBillAdapter.setHeaderItem(billInfo);
             }
         });
         homeViewModel.getTodayBills().observe(getActivity(), new Observer<List<Bill>>() {

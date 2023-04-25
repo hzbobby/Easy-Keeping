@@ -297,7 +297,7 @@
 
     <color name="expenditure">#DC143C</color>
     <color name="income">#32CD32</color>
-
+    <color name="transfer">#0277BD</color>
 
 
 </resources>

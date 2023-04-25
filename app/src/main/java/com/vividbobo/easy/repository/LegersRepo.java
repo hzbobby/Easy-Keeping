@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.database.EasyDatabase;
-import com.vividbobo.easy.database.dao.ConfigDao;
 import com.vividbobo.easy.database.dao.LegerDao;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.utils.AsyncProcessor;
@@ -63,7 +62,7 @@ public class LegersRepo {
     }
 
     public ListenableFuture<Leger> getLegerById(Integer defaultId) {
-        return legerDao.getLegerByID(defaultId);
+        return legerDao.getLegerByIdLF(defaultId);
     }
 
 }

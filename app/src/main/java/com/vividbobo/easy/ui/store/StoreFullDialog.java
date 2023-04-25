@@ -8,25 +8,25 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.adapter.adapter.BaseEntityAdapter;
-import com.vividbobo.easy.database.model.Store;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.databinding.DialogBaseEntityBinding;
 import com.vividbobo.easy.ui.common.BaseEntityFullDialog;
 import com.vividbobo.easy.ui.common.ContextOperationMenuDialog;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
 import com.vividbobo.easy.ui.role.RoleAddFullFullDialog;
-import com.vividbobo.easy.viewmodel.StoreViewModel;
+import com.vividbobo.easy.viewmodel.PayeeViewModel;
 
 import java.util.List;
 
-public class StoreFullDialog extends BaseEntityFullDialog<Store> {
+public class StoreFullDialog extends BaseEntityFullDialog<Payee> {
     public static final String TAG = "StoreFullDialog";
-    private StoreViewModel storeViewModel;
-    private ContextOperationMenuDialog<Store> operationDialog;
+    private PayeeViewModel payeeViewModel;
+    private ContextOperationMenuDialog<Payee> operationDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storeViewModel = new ViewModelProvider(getActivity()).get(StoreViewModel.class);
+        payeeViewModel = new ViewModelProvider(getActivity()).get(PayeeViewModel.class);
         operationDialog = new ContextOperationMenuDialog<>();
     }
 
@@ -44,38 +44,38 @@ public class StoreFullDialog extends BaseEntityFullDialog<Store> {
     }
 
     @Override
-    public void config(DialogBaseEntityBinding binding, BaseEntityAdapter<Store> adapter) {
+    public void config(DialogBaseEntityBinding binding, BaseEntityAdapter<Payee> adapter) {
         binding.appBarLayout.layoutToolBarTitleTv.setText(R.string.store_manage);
 
         adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public void onItemLongClick(Object item, int position) {
-                operationDialog.show(getParentFragmentManager(), (Store) item);
+                operationDialog.show(getParentFragmentManager(), (Payee) item);
             }
         });
-        storeViewModel.getAllStores().observe(getViewLifecycleOwner(), new Observer<List<Store>>() {
+        payeeViewModel.getAllStores().observe(getViewLifecycleOwner(), new Observer<List<Payee>>() {
             @Override
-            public void onChanged(List<Store> stores) {
-                adapter.updateItems(stores);
+            public void onChanged(List<Payee> payees) {
+                adapter.updateItems(payees);
             }
         });
 
-        operationDialog.setOnDetailClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Store>() {
+        operationDialog.setOnDetailClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Payee>() {
             @Override
-            public void onMenuItemClick(Store item) {
+            public void onMenuItemClick(Payee item) {
 
             }
         });
-        operationDialog.setOnEditClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Store>() {
+        operationDialog.setOnEditClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Payee>() {
             @Override
-            public void onMenuItemClick(Store item) {
+            public void onMenuItemClick(Payee item) {
                 StoreAddFullDialog.newInstance(item).show(getParentFragmentManager(), RoleAddFullFullDialog.TAG);
             }
         });
-        operationDialog.setOnDeleteClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Store>() {
+        operationDialog.setOnDeleteClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Payee>() {
             @Override
-            public void onMenuItemClick(Store item) {
-                storeViewModel.delete(item);
+            public void onMenuItemClick(Payee item) {
+                payeeViewModel.delete(item);
             }
         });
     }

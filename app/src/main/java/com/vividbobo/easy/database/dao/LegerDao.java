@@ -31,5 +31,12 @@ public interface LegerDao {
     void delete(Leger item);
 
     @Query("select * from legers where id==:id")
-    ListenableFuture<Leger> getLegerByID(Integer id);
+    ListenableFuture<Leger> getLegerByIdLF(Integer id);
+
+    @Query("select * from legers where id==:id")
+    LiveData<Leger> getLegerByIdLD(Integer id);
+
+    @Query("select * from legers where id==:legerId")
+
+    Leger getRawLegerById(Integer legerId);
 }

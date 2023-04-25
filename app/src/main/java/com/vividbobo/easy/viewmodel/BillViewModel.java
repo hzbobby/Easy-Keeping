@@ -1,7 +1,6 @@
 package com.vividbobo.easy.viewmodel;
 
 import android.app.Application;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -12,8 +11,8 @@ import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Leger;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.database.model.Role;
-import com.vividbobo.easy.database.model.Store;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.repository.BillsRepo;
 
@@ -28,29 +27,29 @@ import java.util.List;
 public class BillViewModel extends AndroidViewModel {
     //用 viewmodel 共享数据
 
-
     //金额
     private final MutableLiveData<Long> amount = new MutableLiveData<>(0L);
     //支出类别
-    private final MutableLiveData<Category> categoryExpenditure = new MutableLiveData<>(new Category("其他","category_othe_others"));
+    private final MutableLiveData<Category> categoryExpenditure = new MutableLiveData<>(new Category("其他", "category_othe_others"));
     //收入类别
-    private final MutableLiveData<Category> categoryIncome = new MutableLiveData<>(new Category("其他","category_othe_others"));
+    private final MutableLiveData<Category> categoryIncome = new MutableLiveData<>(new Category("其他", "category_othe_others"));
 
     //账单类别
     private final MutableLiveData<Integer> billType = new MutableLiveData<>(Bill.EXPENDITURE);
 
     //账户
-    private Account srcAccount = null;
     private Account tarAccount = null;
+    private Account srcAccount = null;
+
     //备注
     private final MutableLiveData<String> remark = new MutableLiveData<>("");
     //标签
     private final MutableLiveData<List<Tag>> tags = new MutableLiveData<>(new ArrayList<>());
     //日期
-    private Date date = new Date(System.currentTimeMillis());  //或改用long
+    private final MutableLiveData<Date> date = new MutableLiveData<>(new Date(System.currentTimeMillis()));  //或改用long
     //时间
-    private LocalTime time = LocalTime.now();
-    private Store store = null;
+    private final MutableLiveData<LocalTime> time = new MutableLiveData<>(LocalTime.now());
+    private Payee payee = null;
     private final MutableLiveData<String> currencyCode = new MutableLiveData<>();
     private Boolean isIncomeExpenditureIncluded = false;
     private Boolean isBudgetIncluded = false;
@@ -64,9 +63,16 @@ public class BillViewModel extends AndroidViewModel {
     public BillViewModel(@NonNull Application application) {
         super(application);
         billsRepo = new BillsRepo(application);
-    }
-//    private final MutableLiveData<LegerItem> leger=new MutableLiveData<LegerItem>();  //账本是否在此处共享？
 
+    }
+
+    public void setFilterLegerId(Integer id) {
+        billsRepo.setFilterLegerId(id);
+    }
+
+    public LiveData<Leger> getSelectedLeger() {
+        return billsRepo.getSelectedLeger();
+    }
 
     public Boolean getIncomeExpenditureIncluded() {
         return isIncomeExpenditureIncluded;
@@ -92,12 +98,12 @@ public class BillViewModel extends AndroidViewModel {
         return role;
     }
 
-    public void setStore(Store store) {
-        this.store = store;
+    public void setStore(Payee payee) {
+        this.payee = payee;
     }
 
-    public Store getStore() {
-        return store;
+    public Payee getStore() {
+        return payee;
     }
 
     public void setAmount(Long aLong) {
@@ -133,11 +139,11 @@ public class BillViewModel extends AndroidViewModel {
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date.setValue(date);
     }
 
     public void setTime(LocalTime time) {
-        this.time = time;
+        this.time.setValue(time);
     }
 
     public LiveData<Long> getAmount() {
@@ -172,11 +178,11 @@ public class BillViewModel extends AndroidViewModel {
         return tags;
     }
 
-    public Date getDate() {
+    public LiveData<Date> getDate() {
         return date;
     }
 
-    public LocalTime getTime() {
+    public LiveData<LocalTime> getTime() {
         return time;
     }
 
@@ -206,5 +212,45 @@ public class BillViewModel extends AndroidViewModel {
 
     public void insert(Bill bill) {
         billsRepo.insert(bill);
+    }
+
+    public void setFilterRoleId(Integer roleId) {
+        billsRepo.setFilterRoleId(roleId);
+    }
+
+    public LiveData<Role> getSelectedRole() {
+        return billsRepo.getSelectedRole();
+    }
+
+    public void setFilterSrcAccountId(Integer id) {
+        billsRepo.setFilterSrcAccountId(id);
+    }
+
+    public LiveData<Account> getSelectedSrcAccount() {
+        return billsRepo.getSelectedSrcAccount();
+    }
+
+    public void setFilterTarAccountId(Integer tarAccountId) {
+        billsRepo.setFilterTarAccountId(tarAccountId);
+    }
+
+    public LiveData<Account> getSelectedTarAccount() {
+        return billsRepo.getSelectedTarAccount();
+    }
+
+    public void setFilterExpCategoryId(Integer categoryId) {
+        billsRepo.setFilterExpCategoryId(categoryId);
+    }
+
+    public void setFilterIncCategoryId(Integer categoryId) {
+        billsRepo.setFilterIncCategoryId(categoryId);
+    }
+
+    public LiveData<Category> getSelectedExpCategory() {
+        return billsRepo.getSelectedExpCategory();
+    }
+
+    public LiveData<Category> getSelectedIncCategory() {
+        return billsRepo.getSelectedIncCategory();
     }
 }

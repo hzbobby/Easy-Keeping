@@ -25,6 +25,12 @@ public interface AccountDao {
     @Query("select * from accounts where id==:id")
     ListenableFuture<Account> getAccountByID(int id);
 
+    @Query("select * from accounts where id==:id")
+    LiveData<Account> getAccountByIdLD(int id);
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void update(Account account);
+
+    @Query("select * from accounts where id==:accountId")
+    Account getRawAccountById(Integer accountId);
 }

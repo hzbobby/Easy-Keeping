@@ -1,15 +1,17 @@
 package com.vividbobo.easy.database.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.vividbobo.easy.adapter.Itemzable;
+import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 import com.vividbobo.easy.adapter.adapter.ExpandableAdapter;
 
 import java.io.Serializable;
 
 @Entity(tableName = "accounts")
-public class Account extends BaseEntity implements Serializable, ExpandableAdapter.ItemExpandableChild, Itemzable {
+public class Account extends BaseEntity implements Serializable, ExpandableAdapter.ItemExpandableChild, Itemzable, DropdownMenuAdapter.DropdownMenuItem {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String currencyCode;    //币种Code
@@ -20,6 +22,21 @@ public class Account extends BaseEntity implements Serializable, ExpandableAdapt
     private Integer accountTypeId;
     private String accountTypeTitle;
     private String accountTypeIconResName;
+
+
+    public Account() {
+    }
+
+    @Ignore
+    public Account(String title, long balancd, int typeId, String typeTitle, String typeIconResName, String currencyCode, String accountIconResName) {
+        setTitle(title);
+        setBalance(balancd);
+        setAccountTypeId(typeId);
+        setAccountTypeTitle(typeTitle);
+        setAccountTypeIconResName(typeIconResName);
+        setCurrencyCode(currencyCode);
+        setIconResName(accountIconResName);
+    }
 
     public String getFormatBalance() {
         return String.format("%.2f", (float) balance / 100);
