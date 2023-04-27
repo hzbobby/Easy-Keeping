@@ -103,6 +103,10 @@ public class Bill extends ServerBaseEntity implements Serializable {
         return amount;
     }
 
+    public float getFloatAmount() {
+        return (float) amount / 100;
+    }
+
     public void setAmount(Long amount) {
         this.amount = amount;
     }

@@ -31,7 +31,7 @@ public class HomeRepo {
         today = new Date(System.currentTimeMillis());
         todayBills = billDao.getBillsByDate(today);
         todayBillInfo = billDao.getBillInfoByDate(today);
-        monthBillInfo = billDao.getBillInfoByMonth(CalendarUtils.getDateYYYYMM(today));
+        monthBillInfo = billDao.getBillInfoByMonth(CalendarUtils.getYYYYMM(today));
     }
 
     public LiveData<BillInfo> getMonthBillInfo() {
@@ -43,7 +43,7 @@ public class HomeRepo {
     }
 
     public BillInfo wrapMonthBillInfo(BillInfo billInfo) {
-        billInfo.setDate(CalendarUtils.getDateYYYYMM(today));
+        billInfo.setDate(CalendarUtils.getYYYYMM(today));
         billInfo.setBalanceAmount(billInfo.getIncomeAmount() - billInfo.getExpenditureAmount());
         return billInfo;
     }

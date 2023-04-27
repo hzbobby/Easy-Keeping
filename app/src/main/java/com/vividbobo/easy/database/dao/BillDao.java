@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillInfo;
 
@@ -43,4 +44,7 @@ public interface BillDao {
 
     @Delete
     void delete(Bill bill);
+
+    @Query("SELECT * FROM bills WHERE date >= :start and date<=:end")
+    ListenableFuture<List<Bill>> getBillsByDateRange(Date start, Date end);
 }

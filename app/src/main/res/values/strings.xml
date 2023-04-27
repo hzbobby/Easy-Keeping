@@ -186,6 +186,9 @@
     <string name="resource_bottom_title">资源选择</string>
     <string name="edit">编辑</string>
     <string name="calculater">计算器</string>
+    <string name="navigate_prev">上一个</string>
+    <string name="navigate_next">下一个</string>
+    <string name="select_leger">选择账本</string>
 
 
 </resources>

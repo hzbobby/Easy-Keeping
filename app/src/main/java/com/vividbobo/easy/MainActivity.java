@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity {
                     case 1:
                         return AccountFragment.newInstance(onNavigationClickListener);
                     default:
-                        return new ChartFragment();
+                        return ChartFragment.newInstance(onNavigationClickListener);
                 }
             }
 
