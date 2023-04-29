@@ -33,6 +33,14 @@ android {
 }
 
 dependencies {
+    /************* HMS ML Kit  **************/
+    //ocr
+    // 引入基础SDK
+    implementation 'com.huawei.hms:ml-computer-vision-ocr:2.0.5.301'
+    // 引入中英文文字识别模型包
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-cn-model:2.0.5.301'
+
+
     /************* charts lib *************/
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 

@@ -7,6 +7,8 @@ plugins {
 
     //add kotlin plugin
     id "org.jetbrains.kotlin.android" version "1.8.20" apply false
+
+    id "com.huawei.agconnect.agcp" version "1.8.1.300" apply false
 }
 
 

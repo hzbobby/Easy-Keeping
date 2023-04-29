@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.vividbobo.easy.database.model.Account;
+import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Role;
@@ -16,7 +17,7 @@ public interface ConfigDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Config config);
 
-    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==" + Config.TYPE_LEGER)
+    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==1" + Config.TYPE_LEGER)
     LiveData<Leger> getSelectedLeger();
 
     @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==" + Config.TYPE_ROLE)
@@ -36,4 +37,25 @@ public interface ConfigDao {
 
     @Query("select selected_id from configs where type==:type")
     Integer getRawSelectedIdByType(int type);
+
+    @Query("select accounts.* from accounts,configs where configs.type==:type and configs.selected_id==accounts.id")
+    LiveData<Account> getAccountByType(int type);
+
+    @Query("select accounts.* from accounts,configs where configs.type==:type and configs.selected_id==accounts.id")
+    Account getRawAccountByType(int type);
+
+    @Query("select categories.* from categories, configs where configs.type==:type and configs.selected_id==categories.id")
+    Category getRawCategoryByType(int type);
+
+    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==:type")
+    LiveData<Leger> getLegerByType(int type);
+
+    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==:type")
+    Leger getRawLegerByType(int type);
+
+    @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==:type")
+    LiveData<Role> getRoleByType(int type);
+
+    @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==:type")
+    Role getRawRoleByType(int type);
 }

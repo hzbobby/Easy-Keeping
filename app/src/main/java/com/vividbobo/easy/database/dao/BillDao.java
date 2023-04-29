@@ -17,6 +17,9 @@ import java.util.List;
 
 @Dao
 public interface BillDao {
+
+
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Bill... bills);
 

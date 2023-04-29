@@ -16,10 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Easy"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.huawei.hms.ml.DEPENDENCY"
+            android:value="ocr" />
         <service
             android:name=".accessibility.ContentReaderService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
@@ -39,6 +42,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <activity
+            android:name=".ui.home.ScreenshotImportActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.calendar.CalendarActivity"
             android:exported="false" />

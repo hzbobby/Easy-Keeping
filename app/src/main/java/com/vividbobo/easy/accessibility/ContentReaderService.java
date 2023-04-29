@@ -16,7 +16,6 @@ import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.utils.AsyncProcessor;
-import com.vividbobo.easy.utils.ToastUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,9 +95,9 @@ public class ContentReaderService extends AccessibilityService {
 
                 Integer categoryId = null;
                 if (bill.getBillType() == Bill.EXPENDITURE) {
-                    categoryId = db.configDao().getRawSelectedIdByType(Config.TYPE_AUTO_BILLING_CATEGORY_EXPENDITURE);
+                    categoryId = db.configDao().getRawSelectedIdByType(Config.TYPE_CATEGORY_EXPENDITURE);
                 } else {
-                    categoryId = db.configDao().getRawSelectedIdByType(Config.TYPE_AUTO_BILLING_CATEGORY_INCOME);
+                    categoryId = db.configDao().getRawSelectedIdByType(Config.TYPE_CATEGORY_INCOME);
                 }
                 Category category = db.categoryDao().getRawCategoryById(categoryId);
                 bill.setCategoryId(category.getId());

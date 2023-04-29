@@ -189,6 +189,8 @@
     <string name="navigate_prev">上一个</string>
     <string name="navigate_next">下一个</string>
     <string name="select_leger">选择账本</string>
+    <string name="wechat_screenshot_import">微信截图导入</string>
+    <string name="alipay_screenshot_import">支付宝截图导入</string>
 
 
 </resources>

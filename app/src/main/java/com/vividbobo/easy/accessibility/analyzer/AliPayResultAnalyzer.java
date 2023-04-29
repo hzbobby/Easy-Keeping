@@ -28,11 +28,19 @@ public class AliPayResultAnalyzer extends PayResultAnalyzer {
                     // 成功
                     setSuccess(true);
                     break;
-                case 1:
+                case 3:
                     //amount
-                    setAmount((long) (Double.parseDouble(nodeInfo.getText().toString()) * 100));
+                    Double amount = 0.0;
+                    try {
+                        amount = Double.parseDouble(nodeInfo.getText().toString());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "exploreNodeHierarchy: infoNode: " + nodeInfo.getText().toString());
+                    }
+
+                    setAmount((long) (amount * 100));
                     break;
-                case 2:
+                case 1:
                     //payee
                     setPayee(nodeInfo.getText().toString());
                     break;

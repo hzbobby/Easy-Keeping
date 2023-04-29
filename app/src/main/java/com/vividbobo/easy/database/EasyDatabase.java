@@ -99,6 +99,7 @@ public abstract class EasyDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+
     private static Callback roleInit = new Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -139,9 +140,12 @@ public abstract class EasyDatabase extends RoomDatabase {
                     //默认账户
                     dao.insert(new Config(Config.TYPE_AUTO_BILLING_ACCOUNT_WECHAT, 2));
                     dao.insert(new Config(Config.TYPE_AUTO_BILLING_ACCOUNT_ALIPAY, 3));
+
+                    dao.insert(new Config(Config.TYPE_IMPORT_ACCOUNT_WECHAT, 2));
+                    dao.insert(new Config(Config.TYPE_IMPORT_ACCOUNT_ALIPAY, 3));
                     //默认类别
-                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_CATEGORY_EXPENDITURE, 1));
-                    dao.insert(new Config(Config.TYPE_AUTO_BILLING_CATEGORY_INCOME, 24));
+                    dao.insert(new Config(Config.TYPE_CATEGORY_EXPENDITURE, 1));
+                    dao.insert(new Config(Config.TYPE_CATEGORY_INCOME, 24));
                     return null;
                 }
             });

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,11 +14,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.vividbobo.easy.R;
 import com.vividbobo.easy.adapter.adapter.HomeBillAdapter;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillInfo;
@@ -89,6 +92,31 @@ public class HomeFragment extends Fragment {
 //                binding.homeDrawerLayout.open();
                 if (toolbarNavigationClickListener != null) {
                     toolbarNavigationClickListener.onClick(null);
+                }
+            }
+        });
+        binding.homeToolBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home_voice -> { //;
+                        return true;
+                    }
+                    case R.id.wechat_screenshot_import -> {
+                        Intent intent = new Intent(getActivity(), ScreenshotImportActivity.class);
+                        intent.putExtra("analyzer", ScreenshotImportActivity.ANALYZER_WECHAT);
+                        startActivity(intent);
+                        return true;
+                    }
+                    case R.id.alipay_screenshot_import -> {
+                        Intent intent = new Intent(getActivity(), ScreenshotImportActivity.class);
+                        intent.putExtra("analyzer", ScreenshotImportActivity.ANALYZER_ALIPAY);
+                        startActivity(intent);
+                        return true;
+                    }
+                    default -> {
+                        return false;
+                    }
                 }
             }
         });

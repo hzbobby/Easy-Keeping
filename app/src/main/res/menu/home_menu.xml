@@ -2,18 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        app:showAsAction="ifRoom"
         android:id="@+id/home_voice"
         android:icon="@drawable/menu_ic_voice"
-        android:title="@string/voice" />
+        android:title="@string/voice"
+        app:showAsAction="ifRoom" />
+    <!--    <item-->
+    <!--        app:showAsAction="ifRoom"-->
+    <!--        android:id="@+id/home_search"-->
+    <!--        android:icon="@drawable/menu_ic_search"-->
+    <!--        android:title="@string/search" />-->
+    <!--    <item-->
+    <!--        app:showAsAction="ifRoom"-->
+    <!--        android:id="@+id/home_calendar"-->
+    <!--        android:icon="@drawable/menu_ic_calendar"-->
+    <!--        android:title="@string/calendar"/>-->
     <item
-        app:showAsAction="ifRoom"
-        android:id="@+id/home_search"
-        android:icon="@drawable/menu_ic_search"
-        android:title="@string/search" />
+        android:id="@+id/wechat_screenshot_import"
+        android:title="@string/wechat_screenshot_import"
+        app:showAsAction="never" />
     <item
-        app:showAsAction="ifRoom"
-        android:id="@+id/home_calendar"
-        android:icon="@drawable/menu_ic_calendar"
-        android:title="@string/calendar"/>
+        android:id="@+id/alipay_screenshot_import"
+        android:title="@string/alipay_screenshot_import"
+        app:showAsAction="never" />
 </menu>

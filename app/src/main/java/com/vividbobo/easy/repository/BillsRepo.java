@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.room.Query;
 
 import com.vividbobo.easy.database.EasyDatabase;
 import com.vividbobo.easy.database.dao.AccountDao;
@@ -16,7 +17,6 @@ import com.vividbobo.easy.database.dao.RoleDao;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
-import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.utils.AsyncProcessor;

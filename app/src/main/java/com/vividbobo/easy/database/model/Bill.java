@@ -66,6 +66,21 @@ public class Bill extends ServerBaseEntity implements Serializable {
         bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return bill;
     }
+    @Ignore
+    public static Bill create() {
+        Bill bill = new Bill();
+        bill.setRefund(false);
+        bill.setTags(null);
+        bill.setImagePaths(null);
+        bill.setDate(new Date(System.currentTimeMillis()));
+        bill.setTime(LocalTime.now());
+        bill.setTarAccountId(null);
+        bill.setTarAccountTitle(null);
+        bill.setTarAccountIconResName(null);
+        bill.setUploaded(false);
+        bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        return bill;
+    }
 
     public Integer getBillType() {
         return billType;
