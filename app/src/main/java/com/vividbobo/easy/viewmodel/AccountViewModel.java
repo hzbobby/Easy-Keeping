@@ -56,4 +56,8 @@ public class AccountViewModel extends AndroidViewModel {
     public void update(Account srcAccount) {
         accountsRepo.update(srcAccount);
     }
+
+    public void delete(Account item) {
+        accountsRepo.delete(item);
+    }
 }

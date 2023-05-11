@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(tableName = "bills")
 public class Bill extends ServerBaseEntity implements Serializable {
@@ -18,37 +19,59 @@ public class Bill extends ServerBaseEntity implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id;
-    private Long amount; //金额
-    private Integer categoryId; //类别ID
-    private String categoryTitle;
-    private String categoryIconResName;
-    private Integer legerId;    //账本ID
-    private String legerTitle;
-    private Integer roleId;     //角色ID
-    private String roleTitle;
-    private Integer accountId;  //账户ID
-    private String accountTitle;
-    private String accountIconResName;
-    private List<Tag> tags;   //标签
-    private List<String> imagePaths;    //图片路径
-    private String currencyCode;    //此账单的币种
-    private Boolean isIncomeExpenditureIncluded;    //记入收支
-    private Date date;    //日期
-    private LocalTime time;    //时间
-    private String remark;      //备注
-    private Integer payeeId;    //商家ID
-    private String payeeTitle;
-    private Boolean isRefund;   //退款
-    private Boolean isReimburse;    //报销
-    private Boolean isBudgetIncluded;   //计入预算
 
-    private Integer tarAccountId;   //转出账户s
-    private String tarAccountTitle;   //转出账户
+    private Long amount; //金额
+
+    private Integer billType;
+
+    private Integer categoryId; //类别ID
+
+    private String categoryTitle;
+
+    private String categoryIconResName;
+
+    private Integer legerId;    //账本ID
+
+    private String legerTitle;
+
+    private Integer roleId;     //角色ID
+
+    private String roleTitle;
+
+    private Integer accountId;  //账户ID
+
+    private String accountTitle;
+
+    private String accountIconResName;
+
+
+    private Integer payeeId;    //收款方ID
+
+    private String payeeTitle;
+
+    private Integer tarAccountId;   //转入账户
+
+    private String tarAccountTitle;   //转入账户
 
     private String tarAccountIconResName;
 
+    private String currencyCode;    //此账单的币种
 
-    private Integer billType;
+    private List<Tag> tags;   //标签
+    private List<String> imagePaths;    //图片路径
+    private String remark;      //备注
+    private Boolean isRefund;   //退款
+
+    private Boolean isReimburse;    //报销
+
+    private Boolean isIncomeExpenditureIncluded;    //记入收支
+
+    private Boolean isBudgetIncluded;   //计入预算
+
+    private Date date;    //日期
+
+    private LocalTime time;    //时间
+
 
     @Ignore
     public static Bill create(int billType) {
@@ -66,6 +89,7 @@ public class Bill extends ServerBaseEntity implements Serializable {
         bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return bill;
     }
+
     @Ignore
     public static Bill create() {
         Bill bill = new Bill();
@@ -81,6 +105,7 @@ public class Bill extends ServerBaseEntity implements Serializable {
         bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return bill;
     }
+
 
     public Integer getBillType() {
         return billType;
@@ -312,35 +337,72 @@ public class Bill extends ServerBaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "Bill{" +
-                "id=" + id +
-                ", amount=" + amount +
-                ", categoryId=" + categoryId +
-                ", categoryTitle='" + categoryTitle + '\'' +
-                ", categoryIconResName='" + categoryIconResName + '\'' +
-                ", legerId=" + legerId +
-                ", legerTitle='" + legerTitle + '\'' +
-                ", roleId=" + roleId +
-                ", roleTitle='" + roleTitle + '\'' +
-                ", accountId=" + accountId +
-                ", accountTitle='" + accountTitle + '\'' +
-                ", accountIconResName='" + accountIconResName + '\'' +
-                ", tags=" + tags +
-                ", imagePaths=" + imagePaths +
-                ", currencyCode='" + currencyCode + '\'' +
-                ", isIncomeExpenditureIncluded=" + isIncomeExpenditureIncluded +
-                ", date=" + date +
-                ", time=" + time +
-                ", remark='" + remark + '\'' +
-                ", payeeId=" + payeeId +
-                ", payeeTitle='" + payeeTitle + '\'' +
-                ", isRefund=" + isRefund +
-                ", isReimburse=" + isReimburse +
-                ", isBudgetIncluded=" + isBudgetIncluded +
-                ", tarAccountId=" + tarAccountId +
-                ", tarAccountTitle='" + tarAccountTitle + '\'' +
-                ", tarAccountIconResName='" + tarAccountIconResName + '\'' +
-                ", billType=" + billType +
-                '}';
+        return "Bill{" + "id=" + id + ", amount=" + amount + ", categoryId=" + categoryId + ", categoryTitle='" + categoryTitle + '\'' + ", categoryIconResName='" + categoryIconResName + '\'' + ", legerId=" + legerId + ", legerTitle='" + legerTitle + '\'' + ", roleId=" + roleId + ", roleTitle='" + roleTitle + '\'' + ", accountId=" + accountId + ", accountTitle='" + accountTitle + '\'' + ", accountIconResName='" + accountIconResName + '\'' + ", tags=" + tags + ", imagePaths=" + imagePaths + ", currencyCode='" + currencyCode + '\'' + ", isIncomeExpenditureIncluded=" + isIncomeExpenditureIncluded + ", date=" + date + ", time=" + time + ", remark='" + remark + '\'' + ", payeeId=" + payeeId + ", payeeTitle='" + payeeTitle + '\'' + ", isRefund=" + isRefund + ", isReimburse=" + isReimburse + ", isBudgetIncluded=" + isBudgetIncluded + ", tarAccountId=" + tarAccountId + ", tarAccountTitle='" + tarAccountTitle + '\'' + ", tarAccountIconResName='" + tarAccountIconResName + '\'' + ", billType=" + billType + '}';
+    }
+
+    public static Bill createBill(Integer billType, Long amount, Leger leger) {
+        Bill bill = new Bill();
+        bill.setBillType(billType);
+        bill.setAmount(amount);
+        bill.setLeger(leger);
+        bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        bill.initBoolValue();
+        return bill;
+    }
+
+    public void initBoolValue() {
+        setRefund(false);
+        setReimburse(false);
+        setBudgetIncluded(false);
+        setIncomeExpenditureIncluded(false);
+        setUploaded(false);
+    }
+
+    public void initDateTime() {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        setDate(new Date(timestamp.getTime()));
+        setTime(LocalTime.now());
+        setCreateTime(timestamp);
+    }
+
+    public void setRole(Role role) {
+        if (Objects.isNull(role)) return;
+        setRoleId(role.getId());
+        setRoleTitle(role.getTitle());
+    }
+
+    public void setCategory(Category category) {
+        if (Objects.isNull(category)) return;
+        setCategoryId(category.getId());
+        setCategoryTitle(category.getTitle());
+        setCategoryIconResName(category.getIconResName());
+    }
+
+    public void setAccount(Account account) {
+        if (Objects.isNull(account)) return;
+        setAccountId(account.getId());
+        setAccountTitle(account.getTitle());
+        setAccountIconResName(account.getIconResName());
+        setCurrencyCode(account.getCurrencyCode());
+    }
+
+    public void setLeger(Leger leger) {
+        if (Objects.isNull(leger)) return;
+        setLegerId(leger.getId());
+        setLegerTitle(leger.getTitle());
+    }
+
+    public void setTarAccount(Account account) {
+        if (Objects.isNull(account)) return;
+        setTarAccountId(account.getId());
+        setTarAccountTitle(account.getTitle());
+        setTarAccountIconResName(account.getIconResName());
+    }
+
+    public void setPayee(Payee billPayee) {
+        if (Objects.isNull(billPayee)) return;
+        setPayeeId(billPayee.getId());
+        setPayeeTitle(billPayee.getTitle());
     }
 }
+

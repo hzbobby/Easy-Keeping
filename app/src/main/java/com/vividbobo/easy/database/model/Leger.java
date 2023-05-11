@@ -5,11 +5,13 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.vividbobo.easy.adapter.Itemzable;
+import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity(tableName = "legers")
-public class Leger extends ServerBaseEntity implements Serializable, Itemzable {
+public class Leger extends ServerBaseEntity implements Serializable, Itemzable, DropdownMenuAdapter.DropdownMenuItem {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String title;       //账本名称
@@ -39,6 +41,7 @@ public class Leger extends ServerBaseEntity implements Serializable, Itemzable {
         this.desc = desc;
         this.coverPath = coverPath;
         this.coverType = coverType;
+        setCreateTime(new Timestamp(System.currentTimeMillis()));
     }
 
     public void setCoverType(Resource.ResourceType coverType) {
@@ -101,7 +104,7 @@ public class Leger extends ServerBaseEntity implements Serializable, Itemzable {
 
     @Override
     public String getItemDesc() {
-        return String.format("共%d笔账单", getBillCount());
+        return getDesc();
     }
 
     @Override

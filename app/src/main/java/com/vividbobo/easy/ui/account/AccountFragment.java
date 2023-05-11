@@ -23,8 +23,10 @@ import com.vividbobo.easy.database.model.AccountsInfo;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.databinding.FragmentAccountBinding;
+import com.vividbobo.easy.ui.common.ContextOperationMenuDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.OnItemLongClickListener;
+import com.vividbobo.easy.utils.GlideUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.viewmodel.AccountViewModel;
 import com.vividbobo.easy.viewmodel.ConfigViewModel;
@@ -43,6 +45,7 @@ public class AccountFragment extends Fragment {
     private int lastClickGroupPos = -1;
     private int lastClickChildPos = -1;
 
+    private ContextOperationMenuDialog<Account> operationDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class AccountFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         AccountViewModel accountViewModel =
                 new ViewModelProvider(this).get(AccountViewModel.class);
-
+        operationDialog = new ContextOperationMenuDialog<>();
         binding = FragmentAccountBinding.inflate(inflater, container, false);
 
         binding.accountToolBar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -84,8 +87,6 @@ public class AccountFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), AccountAddActivity.class);
                         startActivity(intent);
                         break;
-                    case R.id.account_more:
-                        break;
                     default:
                         return false;
                 }
@@ -101,15 +102,15 @@ public class AccountFragment extends Fragment {
         binding.accountExpandableRv.setAdapter(expandableAdapter);
 
 
-        expandableAdapter.setOnItemClickListener(new OnItemClickListener() {
+        expandableAdapter.setOnChildItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
             }
         });
-        expandableAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+        expandableAdapter.setOnChildItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public void onItemLongClick(Object item, int position) {
-
+                operationDialog.show(getParentFragmentManager(), (Account) item);
             }
         });
 
@@ -128,18 +129,31 @@ public class AccountFragment extends Fragment {
                 setAccountsInfo(accountsInfo);
             }
         });
+        /*********** operation dialog ***********/
+
+        operationDialog.setOnEditClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Account>() {
+            @Override
+            public void onMenuItemClick(Account item) {
+                Intent intent = new Intent(getActivity(), AccountAddActivity.class);
+                intent.putExtra(AccountAddActivity.KEY_EDIT_ACCOUNT, item);
+                startActivity(intent);
+            }
+        });
+        operationDialog.setOnDeleteClickListener(new ContextOperationMenuDialog.OnOperationMenuItemClickListener<Account>() {
+            @Override
+            public void onMenuItemClick(Account item) {
+                accountViewModel.delete(item);
+            }
+        });
+
 
         /********** header cover **********/
         configViewModel.getSelectedLeger().observe(getActivity(), new Observer<Leger>() {
             @Override
             public void onChanged(Leger leger) {
                 if (leger == null) return;
-                if (leger.getCoverType() == Resource.ResourceType.SYSTEM_COVER) {
-                    ResourceUtils.bindImageDrawable(getContext(), ResourceUtils.getDrawable(leger.getCoverPath()))
-                            .centerCrop().into(binding.accountHeaderCoverIv);
-                } else {
-                    //TODO 非系统图片的加载
-                }
+                GlideUtils.bindLegerCover(getActivity(), leger.getItemIconResName(), leger.getCoverType())
+                        .centerCrop().into(binding.accountHeaderCoverIv);
             }
         });
 

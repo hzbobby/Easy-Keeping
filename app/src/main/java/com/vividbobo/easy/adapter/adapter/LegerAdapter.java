@@ -12,11 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.Leger;
+import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.others.commonAdapter.CommonAdapter;
+import com.vividbobo.easy.utils.GlideUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
+
+import java.util.Objects;
 
 public class LegerAdapter extends CommonAdapter<Leger, RecyclerView.ViewHolder, LegerAdapter.LegerVH, RecyclerView.ViewHolder> {
     private OnItemClickListener onEditClickListener;
@@ -123,10 +128,10 @@ public class LegerAdapter extends CommonAdapter<Leger, RecyclerView.ViewHolder, 
         }
 
         public void bind(Context context, Leger entity) {
-            if (entity.getItemIconResName() == null || entity.getItemIconResName().isEmpty()) {
+            if (Objects.isNull(entity.getItemIconResName())) {
                 ResourceUtils.bindImageDrawable(context, ResourceUtils.getTextImageIcon(entity.getItemTitle(), ResourceUtils.getColor(R.color.black))).centerCrop().into(iconIv);
             } else {
-                ResourceUtils.bindImageDrawable(context, ResourceUtils.getDrawable(entity.getItemIconResName())).centerCrop().into(iconIv);
+                GlideUtils.bindLegerCover(context, entity.getItemIconResName(), entity.getCoverType()).centerCrop().into(iconIv);
             }
 
             titleTv.setText(entity.getItemTitle());

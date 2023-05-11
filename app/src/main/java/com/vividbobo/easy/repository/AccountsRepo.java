@@ -115,7 +115,11 @@ public class AccountsRepo {
         AsyncProcessor.getInstance().submit(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                accountDao.insert(account);
+                if (account.getId() == null) {
+                    accountDao.insert(account);
+                } else {
+                    accountDao.update(account);
+                }
                 return null;
             }
         });
@@ -126,6 +130,16 @@ public class AccountsRepo {
             @Override
             public Object call() throws Exception {
                 accountDao.update(account);
+                return null;
+            }
+        });
+    }
+
+    public void delete(Account item) {
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                accountDao.delete(item);
                 return null;
             }
         });

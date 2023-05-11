@@ -6,9 +6,4 @@
         app:showAsAction="ifRoom"
         android:title="@string/add_account"
         android:contentDescription="@string/add_account_description"/>
-    <item android:id="@+id/account_more"
-        android:icon="@drawable/ic_more_vert"
-        app:showAsAction="ifRoom"
-        android:title="@string/more"
-        android:contentDescription="@string/more_description"/>
 </menu>

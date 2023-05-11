@@ -10,10 +10,14 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.vividbobo.easy.adapter.Itemzable;
+
 import org.checkerframework.checker.interning.qual.FindDistinct;
 
+import java.sql.Timestamp;
+
 @Entity(tableName = "categories")
-public class Category extends ServerBaseEntity implements Parcelable {
+public class Category extends ServerBaseEntity implements Parcelable, Itemzable {
     public final static int TYPE_EXPENDITURE = 0;
     public final static int TYPE_INCOME = 1;
     public final static int DEFAULT_PARENT_ID = -1;
@@ -36,6 +40,7 @@ public class Category extends ServerBaseEntity implements Parcelable {
         this.parentId = parentId;
         this.orderNum = orderNum;
         this.type = type;
+        setCreateTime(new Timestamp(System.currentTimeMillis()));
     }
 
     @Ignore
@@ -192,5 +197,20 @@ public class Category extends ServerBaseEntity implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(type);
         }
+    }
+
+    @Override
+    public String getItemTitle() {
+        return getTitle();
+    }
+
+    @Override
+    public String getItemIconResName() {
+        return getIconResName();
+    }
+
+    @Override
+    public String getItemDesc() {
+        return getType() == Category.TYPE_EXPENDITURE ? "支出" : "收入";
     }
 }

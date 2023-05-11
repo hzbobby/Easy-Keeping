@@ -4,21 +4,33 @@
     package="com.vividbobo.easy">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <permission android:name="Manifest.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".EasyApplication"
-        android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:requestRawExternalStorageAccess="true"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Easy"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.dataImportAndExport.ImportActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="com.huawei.hms.ml.DEPENDENCY"
             android:value="ocr" />
+
         <service
             android:name=".accessibility.ContentReaderService"
             android:exported="true"
@@ -42,6 +54,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <activity
+            android:name=".ui.dataImportAndExport.ExportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.EmptyActivity"
+            android:exported="false"
+            android:theme="@style/TransparentTheme" />
         <activity
             android:name=".ui.home.ScreenshotImportActivity"
             android:exported="false" />
@@ -67,7 +86,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

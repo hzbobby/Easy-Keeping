@@ -2,6 +2,7 @@ package com.vividbobo.easy.database.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -34,4 +35,9 @@ public interface ResourceDao {
     @Query("select * from resources where resType==:resourceType")
     ListenableFuture<List<Resource>> getResourcesByResType(Resource.ResourceType resourceType);
 
+    @Query("select * from resources where resType in (:types)")
+    LiveData<List<Resource>> getResoucesByResTypes(Resource.ResourceType[] types);
+
+    @Delete
+    void delete(Resource resource);
 }

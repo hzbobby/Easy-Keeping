@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Resource;
@@ -19,10 +20,12 @@ import com.vividbobo.easy.databinding.DialogAddLegerBinding;
 import com.vividbobo.easy.ui.common.BaseFullScreenMaterialDialog;
 import com.vividbobo.easy.ui.others.OnDialogResult;
 import com.vividbobo.easy.utils.ConstantValue;
+import com.vividbobo.easy.utils.GlideUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.utils.ToastUtil;
 import com.vividbobo.easy.viewmodel.LegerViewModel;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /***
@@ -62,20 +65,19 @@ public class AddLegerDialog extends BaseFullScreenMaterialDialog<DialogAddLegerB
     protected void onViewBinding(DialogAddLegerBinding binding) {
         editLeger = (Leger) getArguments().getSerializable(KEY_LEGER);
         Log.d(TAG, "update: edit is null: " + Objects.isNull(editLeger));
+        binding.appBarLayout.layoutToolBarTitleTv.setText(R.string.add_leger);
 
         if (editLeger != null) {
+            binding.appBarLayout.layoutToolBarTitleTv.setText("编辑账本");
             binding.legerTitleTil.getEditText().setText(editLeger.getTitle());
             binding.legerDescTil.getEditText().setText(editLeger.getDesc());
             coverResName = editLeger.getItemIconResName();
             coverResType = editLeger.getCoverType();
-            if (Objects.equals(editLeger.getCoverType(), Resource.ResourceType.SYSTEM_COVER)) {
-                ResourceUtils.bindImageDrawable(getContext(), ResourceUtils.getDrawable(editLeger.getCoverPath())).centerCrop().into(binding.legerCoverIv);
-            } else {
 
-            }
+            GlideUtils.bindLegerCover(getContext(), editLeger.getItemIconResName(), editLeger.getCoverType())
+                    .centerCrop().into(binding.legerCoverIv);
         }
 
-        binding.appBarLayout.layoutToolBarTitleTv.setText(R.string.add_leger);
         binding.appBarLayout.layoutToolBar.inflateMenu(R.menu.confirm);
         binding.appBarLayout.layoutToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,8 +112,12 @@ public class AddLegerDialog extends BaseFullScreenMaterialDialog<DialogAddLegerB
                 Resource resource = (Resource) result.getSerializable("data");
                 coverResName = resource.getResName();
                 coverResType = resource.getResType();
-                ResourceUtils.bindImageDrawable(getContext(), ResourceUtils.getDrawable(coverResName))
-                        .centerCrop().into(binding.legerCoverIv);
+                if (coverResType.equals(Resource.ResourceType.USER_COVER)) {
+                    Glide.with(getContext()).load(coverResName).centerCrop().into(binding.legerCoverIv);
+                } else {
+                    ResourceUtils.bindImageDrawable(getContext(), ResourceUtils.getDrawable(coverResName))
+                            .centerCrop().into(binding.legerCoverIv);
+                }
             }
         });
         binding.legerCoverIv.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +163,7 @@ public class AddLegerDialog extends BaseFullScreenMaterialDialog<DialogAddLegerB
             coverResType = Resource.ResourceType.SYSTEM_COVER;
         }
         leger.setCoverType(coverResType);
+        leger.setCreateTime(new Timestamp(System.currentTimeMillis()));
         Log.d(TAG, "save: " + leger.toString());
         legerViewModel.insert(leger);
         return true;

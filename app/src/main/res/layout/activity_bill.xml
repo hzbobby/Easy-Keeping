@@ -164,25 +164,43 @@
                 android:tooltipText="@string/is_reimburse"
                 app:chipCornerRadius="36dp" />
 
+            <!--            <com.google.android.material.chip.Chip-->
+            <!--                android:id="@+id/bill_receive_payment_chip"-->
+            <!--                style="@style/Widget.Material3.Chip.Assist.Elevated"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:checkable="true"-->
+            <!--                android:text="@string/receive_payment"-->
+            <!--                app:chipCornerRadius="36dp" />-->
+
 <!--            <com.google.android.material.chip.Chip-->
-<!--                android:id="@+id/bill_receive_payment_chip"-->
+<!--                android:id="@+id/bill_statistics_chip"-->
 <!--                style="@style/Widget.Material3.Chip.Assist.Elevated"-->
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="5dp"-->
 <!--                android:checkable="true"-->
-<!--                android:text="@string/receive_payment"-->
+<!--                android:text="@string/statistics"-->
 <!--                app:chipCornerRadius="36dp" />-->
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/bill_statistics_chip"
+                android:id="@+id/bill_in_exp_chip"
+                style="@style/Widget.Material3.Chip.Assist.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:text="不计入收支"
+                app:chipCornerRadius="36dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/bill_budget_chip"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:checkable="true"
-                android:text="@string/statistics"
+                android:text="不计入预算"
                 app:chipCornerRadius="36dp" />
-
         </com.google.android.material.chip.ChipGroup>
 
     </HorizontalScrollView>
@@ -294,8 +312,8 @@
                 android:background="@android:color/transparent"
                 android:gravity="top"
                 android:hint="@string/click_to_remark"
-                android:lines="1"
                 android:inputType="text"
+                android:lines="1"
                 android:maxLength="200"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"

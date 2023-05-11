@@ -5,7 +5,6 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import androidx.room.Query;
 
 import com.vividbobo.easy.database.EasyDatabase;
 import com.vividbobo.easy.database.dao.AccountDao;
@@ -13,40 +12,40 @@ import com.vividbobo.easy.database.dao.BillDao;
 import com.vividbobo.easy.database.dao.CategoryDao;
 import com.vividbobo.easy.database.dao.ConfigDao;
 import com.vividbobo.easy.database.dao.LegerDao;
+import com.vividbobo.easy.database.dao.PayeeDao;
 import com.vividbobo.easy.database.dao.RoleDao;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
+import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
+import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.utils.AsyncProcessor;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class BillsRepo {
     //the DAO
     private final BillDao billDao;
-    private final LegerDao legerDao;
-    private final RoleDao roleDao;
-    private final AccountDao accountDao;
-    private final ConfigDao configDao;
-    private final CategoryDao categoryDao;
-
-
-    private final MutableLiveData<Integer> filterLegerId;
-    private final LiveData<Leger> selectedLeger;
-
+    private final LiveData<Leger> filterLeger;
     private final MutableLiveData<Integer> filterRoleId;
     private final LiveData<Role> selectedRole;
-
-    private final MutableLiveData<Integer> filterSrcAccountId;
-    private final LiveData<Account> selectedSrcAccount;
-    private final MutableLiveData<Integer> filterTarAccountId;
-    private final LiveData<Account> selectedTarAccount;
     private final MutableLiveData<Integer> filterExpCategoryId;
     private final LiveData<Category> selectedExpCategory;
     private final MutableLiveData<Integer> filterIncCategoryId;
     private final LiveData<Category> selectedIncCategory;
+    private final MutableLiveData<Integer> filterLegerId;
+    private final MutableLiveData<Integer> filterPayeeId;
+    private final LiveData<Payee> selectedPayee;
+    private final MutableLiveData<Integer> filterAccountId;
+    private final LiveData<Account> selectedAccount;
+    private final MutableLiveData<Integer> filterTarAccountId;
+    private final LiveData<Account> selectedTarAccount;
+    private final LiveData<Account> lastSelectedAccount;
+    private final LiveData<Leger> selectedLeger;
+    private final AccountDao accountDao;
 
 
     //the LiveData
@@ -55,37 +54,65 @@ public class BillsRepo {
     public BillsRepo(Application application) {
         EasyDatabase db = EasyDatabase.getDatabase(application);
         this.billDao = db.billDao();
-        this.legerDao = db.legerDao();
-        this.roleDao = db.roleDao();
-        this.configDao = db.configDao();
-        this.accountDao = db.accountDao();
-        this.categoryDao = db.categoryDao();
+        LegerDao legerDao = db.legerDao();
+        RoleDao roleDao = db.roleDao();
+        ConfigDao configDao = db.configDao();
+        accountDao = db.accountDao();
+        CategoryDao categoryDao = db.categoryDao();
+        PayeeDao payeeDao = db.payeeDao();
 
-        filterLegerId = new MutableLiveData<>(1);
-        selectedLeger = Transformations.switchMap(filterLegerId, legerId -> legerDao.getLegerByIdLD(legerId));
+        selectedLeger = configDao.getSelectedLeger();
+        lastSelectedAccount = configDao.getSelectedAccount();
+
+        filterTarAccountId = new MutableLiveData<Integer>();
+        selectedTarAccount = Transformations.switchMap(filterTarAccountId, tarAccountId -> accountDao.getAccountByIdLD(tarAccountId));
+
+
+        filterAccountId = new MutableLiveData<>();
+        selectedAccount = Transformations.switchMap(filterAccountId, accountId -> accountDao.getAccountByIdLD(accountId));
+
+        filterPayeeId = new MutableLiveData<>();
+        selectedPayee = Transformations.switchMap(filterPayeeId, payeeId -> payeeDao.getPayeeById(payeeId));
+
+        filterLegerId = new MutableLiveData<>(configDao.getSelectedIdByType(Config.TYPE_LEGER).getValue());
+        filterLeger = Transformations.switchMap(filterLegerId, legerId -> legerDao.getLegerByIdLD(legerId));
+
         filterRoleId = new MutableLiveData<>(1);
         selectedRole = Transformations.switchMap(filterRoleId, roleId -> roleDao.getRoleByIdLD(roleId));
-        filterSrcAccountId = new MutableLiveData<>(1);      //怎么获取config里选中的ID
-        selectedSrcAccount = Transformations.switchMap(filterSrcAccountId, accountId -> accountDao.getAccountByIdLD(accountId));
-        filterTarAccountId = new MutableLiveData<>(0);      //没有
-        selectedTarAccount = Transformations.switchMap(filterTarAccountId, accountId -> accountDao.getAccountByIdLD(accountId));
+
+
         filterExpCategoryId = new MutableLiveData<>(1);
         selectedExpCategory = Transformations.switchMap(filterExpCategoryId, categoryId -> categoryDao.getCategoryByIdLd(categoryId));
         filterIncCategoryId = new MutableLiveData<>(24);
         selectedIncCategory = Transformations.switchMap(filterIncCategoryId, categoryId -> categoryDao.getCategoryByIdLd(categoryId));
+    }
 
+    public LiveData<Leger> getSelectedLeger() {
+        return selectedLeger;
+    }
+
+    public LiveData<Account> getSelectedTarAccount() {
+        return selectedTarAccount;
+    }
+
+    public LiveData<Account> getLastSelectedAccount() {
+        return lastSelectedAccount;
+    }
+
+    public LiveData<Account> getSelectedAccount() {
+        return selectedAccount;
+    }
+
+    public LiveData<Payee> getSelectedPayee() {
+        return selectedPayee;
     }
 
     public LiveData<Role> getSelectedRole() {
         return selectedRole;
     }
 
-    public void setFilterLegerId(Integer id) {
-        this.filterLegerId.setValue(id);
-    }
-
-    public LiveData<Leger> getSelectedLeger() {
-        return selectedLeger;
+    public LiveData<Leger> getFilterLeger() {
+        return filterLeger;
     }
 
     public void insert(Bill bill) {
@@ -102,21 +129,6 @@ public class BillsRepo {
         this.filterRoleId.setValue(roleId);
     }
 
-    public void setFilterSrcAccountId(Integer id) {
-        this.filterSrcAccountId.setValue(id);
-    }
-
-    public LiveData<Account> getSelectedSrcAccount() {
-        return selectedSrcAccount;
-    }
-
-    public void setFilterTarAccountId(Integer tarAccountId) {
-        this.filterTarAccountId.setValue(tarAccountId);
-    }
-
-    public LiveData<Account> getSelectedTarAccount() {
-        return selectedTarAccount;
-    }
 
     public void setFilterExpCategoryId(Integer categoryId) {
         this.filterExpCategoryId.setValue(categoryId);
@@ -133,5 +145,51 @@ public class BillsRepo {
 
     public LiveData<Category> getSelectedIncCategory() {
         return selectedIncCategory;
+    }
+
+    public void setFilterLegerId(Integer legerId) {
+        filterLegerId.postValue(legerId);
+    }
+
+    public void setFilterPayeeId(Integer payeeId) {
+        filterPayeeId.postValue(payeeId);
+    }
+
+    public void setFilterAccountId(Integer accountId) {
+        filterAccountId.postValue(accountId);
+    }
+
+    public void setFilterTarAccountId(Integer tarAccountId) {
+
+    }
+
+    public void save(Bill bill) {
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                if (Objects.isNull(bill.getId())) {
+                    billDao.insert(bill);
+                } else {
+                    billDao.update(bill);
+                }
+
+                return null;
+            }
+        });
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                if (bill.getBillType() == Bill.TRANSFER) {
+                    Account tarAccount = accountDao.getRawAccountById(bill.getTarAccountId());
+                    tarAccount.setBalance(tarAccount.getBalance() + bill.getAmount());
+                    accountDao.update(tarAccount);
+                }
+                Account srcAccount = accountDao.getRawAccountById(bill.getAccountId());
+                Long balance = bill.getBillType() == Bill.INCOME ? bill.getAmount() : -bill.getAmount();
+                srcAccount.setBalance(srcAccount.getBalance() + balance);
+                accountDao.update(srcAccount);
+                return null;
+            }
+        });
     }
 }

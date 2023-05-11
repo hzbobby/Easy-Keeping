@@ -1,6 +1,8 @@
 package com.vividbobo.easy.ui.bill;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,12 +12,15 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -32,9 +37,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.timepicker.MaterialTimePicker;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.BaseActivity;
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.database.model.Account;
@@ -52,17 +54,21 @@ import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.ui.role.RolePicker;
 import com.vividbobo.easy.ui.store.StorePicker;
 import com.vividbobo.easy.ui.tags.TagPicker;
-import com.vividbobo.easy.utils.AsyncProcessor;
-import com.vividbobo.easy.utils.FileUtil;
+import com.vividbobo.easy.utils.ConstantValue;
 import com.vividbobo.easy.utils.FormatUtils;
+import com.vividbobo.easy.utils.ImageUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
+import com.vividbobo.easy.utils.ToastUtil;
 import com.vividbobo.easy.viewmodel.AccountViewModel;
 import com.vividbobo.easy.viewmodel.BillViewModel;
 import com.vividbobo.easy.viewmodel.ConfigViewModel;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -81,14 +87,21 @@ import javax.script.ScriptException;
  */
 public class BillActivity extends BaseActivity {
     private static final String TAG = "BillActivity";
+    private static final int REQUEST_READ_EXTERNAL_STORAGE = 0x1001;
+    public static final String KEY_DATA_BILL = "editBill";
     private ActivityBillBinding binding;
     private BillViewModel billViewModel;
     private ConfigViewModel configViewModel;
-    private AccountViewModel accountViewModel;
-
-    private Bill bill2save;
     private StringBuilder expression = new StringBuilder();
     private StringBuilder resultBoardText = new StringBuilder();
+    private List<Uri> selectedImageUris;
+    private final ActivityResultLauncher<PickVisualMediaRequest> imagePickerLauncher = registerForActivityResult(new PickMultipleVisualMediaWithReadPermission(), uris -> {
+        if (!uris.isEmpty()) {
+            billViewModel.setImageUris(uris);
+        } else {
+        }
+    });
+
 
     private View.OnClickListener calculatorKeyPressListener = new View.OnClickListener() {
         @Override
@@ -100,11 +113,12 @@ public class BillActivity extends BaseActivity {
             if (tag.equals(ResourceUtils.getString(R.string.key_tag_equal))) {
                 if (binding.keyEqual.getText().toString().equals(ResourceUtils.getString(R.string.key_done))) {
                     //保存
-                    if (bill2save == null) {
-                        save();
-                    } else {
-                        update();
-                    }
+                    save();
+//                    if (bill2save == null) {
+//                        save();
+//                    } else {
+//                        update();
+//                    }
                     finish();
                 } else {
                     //计算表达式
@@ -121,7 +135,7 @@ public class BillActivity extends BaseActivity {
                         expression = new StringBuilder(String.valueOf(res));
                     }
                     //记录数值
-                    billViewModel.setAmount((long) (res * 100));
+                    billViewModel.setBillAmount((long) (res * 100));
                     binding.keyEqual.setText(ResourceUtils.getString(R.string.key_done));
                 }
 
@@ -137,10 +151,7 @@ public class BillActivity extends BaseActivity {
 
             } else if (tag.equals(ResourceUtils.getString(R.string.key_tag_record_again))) {
                 clearResultBoard();
-
-
                 save();
-
             } else if (tag.equals(ResourceUtils.getString(R.string.key_tag_dot))) {
                 expression.append(tag);
                 resultBoardText.append(tag);
@@ -160,6 +171,26 @@ public class BillActivity extends BaseActivity {
     private MaterialDatePicker<Long> datePicker;
     private boolean[] statisticsCheckItems = new boolean[2];
     private BillFragmentAdapter fragmentAdapter;
+    private Leger billLeger;
+    private Date billDate;
+    private LocalTime billTime;
+    private Role billRole;
+    private Payee billPayee;
+    private Account billAccount;
+    private Account billTarAccount;
+    private List<Tag> billTags;
+    private List<String> billImages;
+    private Boolean billRefund;
+    private Boolean billReimburse;
+    private Boolean billInExp;
+    private Boolean billBudget;
+    private Category expCategory;
+    private Category inCategory;
+    private int billType;
+    private Long billAmount;
+    private Account lastSelectedAccount;
+    private Long billId;
+    private String billRemark;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -170,7 +201,6 @@ public class BillActivity extends BaseActivity {
         setContentView(binding.getRoot());
         billViewModel = new ViewModelProvider(this).get(BillViewModel.class);
         configViewModel = new ViewModelProvider(this).get(ConfigViewModel.class);
-        accountViewModel = new ViewModelProvider(this).get(AccountViewModel.class);
 
 
         /***************** toolbar 相关设置 *****************/
@@ -207,12 +237,17 @@ public class BillActivity extends BaseActivity {
                 int transferVisible = position == 2 ? View.GONE : View.VISIBLE;
                 switch (position) {
                     case 0:
+                        billType = Bill.EXPENDITURE;
                         billViewModel.setBillType(Bill.EXPENDITURE);
                         break;
                     case 1:
+                        billType = Bill.INCOME;
+
                         billViewModel.setBillType(Bill.INCOME);
                         break;
                     default:
+                        billType = Bill.TRANSFER;
+
                         billViewModel.setBillType(Bill.TRANSFER);
                 }
 
@@ -220,7 +255,9 @@ public class BillActivity extends BaseActivity {
                 binding.billPickAccountChip.setVisibility(transferVisible);
                 binding.billRefundCheckChip.setVisibility(expenditureVisible);
                 binding.billReimburseCheckChip.setVisibility(expenditureVisible);
-                binding.billStatisticsChip.setVisibility(transferVisible);
+                binding.billBudgetChip.setVisibility(transferVisible);
+                binding.billInExpChip.setVisibility(transferVisible);
+//                binding.billStatisticsChip.setVisibility(transferVisible);
 //                binding.billReceivePaymentChip.setVisibility(expenditureVisible);
             }
         });
@@ -234,122 +271,118 @@ public class BillActivity extends BaseActivity {
         tabLayoutMediator.attach();
 
 
-        //
+        configDataInitial();
         pickerInitial();
         remarkConfig();
         calculaterConfig();
         pickersConfig();
         viewModelObserve();
-
+        chipConfig();
 
         /***************** edit init **********************/
-        editInitial();
+        configEdit();
+    }
+
+    private void chipConfig() {
+
+        binding.billRefundCheckChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                billViewModel.setRefundChecked(isChecked);
+            }
+        });
+        binding.billReimburseCheckChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                billViewModel.setReimburseChecked(isChecked);
+            }
+        });
+        binding.billInExpChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                billViewModel.setInExpIncludedChecked(isChecked);
+            }
+        });
+        binding.billBudgetChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                billViewModel.setBudgetIncludedChecked(isChecked);
+            }
+        });
+    }
+
+    private void configDataInitial() {
+        billViewModel.setImageUris(new ArrayList<>());
+        billViewModel.setBillDate(new Date(System.currentTimeMillis()));
+        billViewModel.setBillTime(LocalTime.now());
+        billViewModel.setFilterIncCategoryId(24);
+        billViewModel.setFilterExpCategoryId(1);
+    }
+
+    /**
+     * 编辑时，初始化数据
+     */
+    private void configEdit() {
+        if (Objects.isNull(getIntent())) {
+            return;
+        }
+        Bill editBill = (Bill) getIntent().getSerializableExtra(KEY_DATA_BILL);
+        if (Objects.isNull(editBill)) {
+            return;
+        }
+        // eidtBill is not null, then initial the data for UI
+        // change viewpager
+        binding.billViewPager.setCurrentItem(editBill.getBillType(), false);
+        billId = editBill.getId();
+
+        // set chosen category
+        Integer chosenCategoryId = editBill.getCategoryId();
+        if (editBill.getBillType() == Bill.EXPENDITURE) {
+            billViewModel.setFilterExpCategoryId(chosenCategoryId);
+        } else if (editBill.getBillType() == Bill.INCOME) {
+            billViewModel.setFilterIncCategoryId(chosenCategoryId);
+        }
+
+        //config expression
+        expression.append(FormatUtils.getAmount(editBill.getAmount()));
+
+        // set amount
+        billViewModel.setBillAmount(editBill.getAmount());
+        //set leger, then it will change selectedLeger
+        billViewModel.setChosenLegerId(editBill.getLegerId());
+        // set date
+        billViewModel.setBillDate(editBill.getDate());
+        // set time
+        billViewModel.setBillTime(editBill.getTime());
+        // set role
+        billViewModel.setChosenRoleId(editBill.getRoleId());
+        // set payee
+        billViewModel.setChosenPayeeId(editBill.getPayeeId());
+        // set account
+        billViewModel.setChosenAccountId(editBill.getAccountId());
+        // set tags
+        billViewModel.setChosenTags(editBill.getTags());
+        // set images
+        billViewModel.setBillImages(editBill.getImagePaths());
+        // set refund
+        billViewModel.setRefundChecked(editBill.getRefund());
+        // set reimburse
+        billViewModel.setReimburseChecked(editBill.getReimburse());
+        // set in.. and exp.. included
+        billViewModel.setInExpIncludedChecked(editBill.getIncomeExpenditureIncluded());
+        // set budget
+        billViewModel.setBudgetIncludedChecked(editBill.getBudgetIncluded());
+        // set tar account
+        billViewModel.setChosenTarAccountId(editBill.getTarAccountId());
+        // set remark
+        billViewModel.setRemark(editBill.getRemark());
     }
 
     private void pickerInitial() {
         timePicker = new MaterialTimePicker.Builder().setTitleText(ResourceUtils.getString(R.string.pick_time)).build();
         initialDatePicker(null);
-
-
     }
 
-    private void editInitial() {
-        if (getIntent() != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                bill2save = getIntent().getSerializableExtra("data", Bill.class);
-            } else {
-                bill2save = (Bill) getIntent().getSerializableExtra("data");
-            }
-            if (bill2save != null) {
-                //根据类型切换到那个页面
-                if (bill2save.getBillType() == Bill.EXPENDITURE) {
-                    binding.billViewPager.setCurrentItem(0, false);
-                    //设置选中的类型
-                    billViewModel.setFilterExpCategoryId(bill2save.getCategoryId());
-                    //store
-                    if (Objects.nonNull(bill2save.getPayeeId()))
-                        binding.billStorePickerChip.setChecked(true);
-
-                    //optional
-                    //is refund
-                    if (Objects.nonNull(bill2save.getRefund())) {
-                        binding.billRefundCheckChip.setChecked(bill2save.getRefund());
-                    }
-                    // is reimburse
-                    if (Objects.nonNull(bill2save.getReimburse())) {
-                        binding.billReimburseCheckChip.setChecked(bill2save.getReimburse());
-                    }
-
-
-                } else if (bill2save.getBillType() == Bill.INCOME) {
-                    binding.billViewPager.setCurrentItem(1, false);
-                    //设置选中的类型
-                    billViewModel.setFilterIncCategoryId(bill2save.getCategoryId());
-                    Log.d(TAG, "editInitial: income category");
-                } else {
-                    binding.billViewPager.setCurrentItem(2, false);
-                    //设置账户
-                    //tarAccount
-                    if (Objects.nonNull(bill2save.getTarAccountId())) {
-                        billViewModel.setFilterTarAccountId(bill2save.getTarAccountId());
-                    }
-                }
-
-                //选中category 或 account
-
-
-                //remark
-                billViewModel.setRemark(bill2save.getRemark());
-                //amount
-                billViewModel.setAmount(bill2save.getAmount());
-                //leger
-                billViewModel.setFilterLegerId(bill2save.getLegerId());
-
-                //time
-                billViewModel.setTime(bill2save.getTime());
-                binding.billTimePickerChip.setChecked(true);
-
-                //date
-                billViewModel.setDate(bill2save.getDate());
-//                binding.billDatePickerIv
-
-                //role
-                if (Objects.nonNull(bill2save.getRoleId())) {
-                    binding.billRolePickerChip.setChecked(true);
-                }
-//                billViewModel.setFilterRoleId(bill2save.getRoleId());   //needed?
-
-
-                //account
-                if (Objects.nonNull(bill2save.getAccountId())) {
-                    billViewModel.setFilterSrcAccountId(bill2save.getAccountId());
-                    binding.billPickAccountChip.setChecked(true);
-                }
-
-
-                //tags
-                if (Objects.nonNull(bill2save.getTags())) {
-                    binding.billPickTagsChip.setChecked(true);
-                    billViewModel.setTags(bill2save.getTags());
-                }
-
-                //images
-                if (Objects.nonNull(bill2save.getImagePaths())) {
-                    binding.billPhotoPickerChip.setChecked(true);
-                    billViewModel.setImagePaths(bill2save.getImagePaths());
-                }
-
-                //statistics
-                if (Objects.nonNull(bill2save.getIncomeExpenditureIncluded())) {
-                    statisticsCheckItems[0] = bill2save.getIncomeExpenditureIncluded();
-                }
-                if (Objects.nonNull(bill2save.getBudgetIncluded())) {
-                    statisticsCheckItems[1] = bill2save.getBudgetIncluded();
-                }
-            }
-        }
-
-    }
 
     private void remarkConfig() {
         /************** remark confing *************/
@@ -373,84 +406,36 @@ public class BillActivity extends BaseActivity {
         });
     }
 
+
+    private void openGallery() {
+        imagePickerLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
+    }
+
     /**
      * 顶部chip bar 的一些相关配置：点击事件、...
      */
     private void pickersConfig() {
-        /******************* statistics chip picker config *********************/
-        // 统计选项选中记录数组
-        AlertDialog statisticsPicker = new MaterialAlertDialogBuilder(binding.getRoot().getContext()).setTitle(R.string.pick_statistics).setMultiChoiceItems(R.array.statistics_items, statisticsCheckItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                switch (which) {
-                    case 0:
-                        statisticsCheckItems[0] = isChecked;
-                        break;
-                    case 1:
-                        statisticsCheckItems[1] = isChecked;
-                        break;
-                    default:
-
-                }
-            }
-        }).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //计入viewModel
-                billViewModel.setIncomeExpenditureIncluded(statisticsCheckItems[0]);
-                billViewModel.setBudgetIncluded(statisticsCheckItems[1]);
-            }
-        }).create();
-        binding.billStatisticsChip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                statisticsPicker.show();
-            }
-        });
 
         /***************** image picker *******************/
         //image viewer sheet
         ImageViewerSheet imageViewerSheet = ImageViewerSheet.newInstance();
-        //imagePicker
-        ActivityResultLauncher<PickVisualMediaRequest> pickMedia = registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(9), uris -> {
-            // Callback is invoked after the user selects media items or closes the
-            // photo picker.
-            if (!uris.isEmpty()) {
-                /**
-                 * 存储思路
-                 * 先存储为内存文件，保存时，再写入系统
-                 * 先写成功后，再保存账单条目
-                 *
-                 * 1.作为内部文件
-                 * 2.作为数据库字段
-                 * 3.作为服务器文件  yes, 先存储再应用内部，再上传，上传成功，可删除该文件
-                 */
-                /**
-                 * 先保存Uri，待点保存时，再进行写入应用内部
-                 */
-                List<String> imagePaths = new ArrayList<>();
-                for (Uri uri : uris) {
-                    String path = FileUtil.getFilePathFromContentUri(this, uri);
-                    Log.d(TAG, "pickersConfig: real path: " + path);
-                    imagePaths.add(path);
-                }
-                billViewModel.setImagePaths(imagePaths);
+        imageViewerSheet.setOnFooterClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
             }
         });
-        //编译器报错bug，采用 activityx.1.7以上就不会
-        ActivityResultContracts.PickVisualMedia.VisualMediaType mediaType = (ActivityResultContracts.PickVisualMedia.VisualMediaType) ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE;
-        PickVisualMediaRequest request = new PickVisualMediaRequest.Builder().setMediaType(mediaType).build();
-
         binding.billPhotoPickerChip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //if 选择了附件，进入图片查看器 bottom sheet？
                 //else 进行选择图片
-                if (billViewModel.getImagePaths() != null && !billViewModel.getImagePaths().getValue().isEmpty()) {  //查看图片
+
+                if (Objects.nonNull(billViewModel.getImageUris()) && !billViewModel.getImageUris().getValue().isEmpty()) {  //查看图片
                     imageViewerSheet.show(getSupportFragmentManager(), ImageViewerSheet.TAG);
                 } else {
                     //选择图片
-                    pickMedia.launch(request);
+                    openGallery();
                 }
             }
         });
@@ -467,7 +452,7 @@ public class BillActivity extends BaseActivity {
         timePicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                billViewModel.setTime(LocalTime.of(timePicker.getHour(), timePicker.getMinute()));
+                billViewModel.setBillTime(LocalTime.of(timePicker.getHour(), timePicker.getMinute()));
             }
         });
         binding.billTimePickerChip.setOnClickListener(new View.OnClickListener() {
@@ -494,7 +479,7 @@ public class BillActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, Object item, int position) {
                 Account account = (Account) item;
-                billViewModel.setSrcAccount(account);
+                billViewModel.setChosenAccountId(account.getId());
                 accountPicker.dismiss();
             }
         });
@@ -512,7 +497,7 @@ public class BillActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, Object item, int position) {
                 Role role = (Role) item;
-                billViewModel.setRole(role);
+                billViewModel.setChosenRoleId(role.getId());
                 rolePicker.dismiss();
             }
         });
@@ -529,7 +514,7 @@ public class BillActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, Object item, int position) {
                 Payee payee = (Payee) item;
-                billViewModel.setStore(payee);
+                billViewModel.setChosenPayeeId(payee.getId());
                 storePicker.dismiss();
             }
         });
@@ -544,7 +529,7 @@ public class BillActivity extends BaseActivity {
         tagPicker.setOnPickerConfirmClickListener(new BaseMaterialDialog.OnPickerConfirmClickListener<List<Tag>>() {
             @Override
             public void onClick(List<Tag> result) {
-                billViewModel.setTags(result);
+                billViewModel.setChosenTags(result);
             }
         });
         binding.billPickTagsChip.setOnClickListener(new View.OnClickListener() {
@@ -558,66 +543,135 @@ public class BillActivity extends BaseActivity {
     }
 
     private void viewModelObserve() {
-        /******************** 获取默认账本、账户、角色 ***********************/
-        configViewModel.getSelectedLeger().observe(this, new Observer<Leger>() {
+        billViewModel.getBillAmount().observe(this, new Observer<Long>() {
             @Override
-            public void onChanged(Leger leger) {
-                billViewModel.setLeger(leger);
+            public void onChanged(Long aLong) {
+                billAmount = aLong;
+                binding.resultBoardText.setText(FormatUtils.getAmount(aLong));
             }
         });
-        configViewModel.getSelectedAccount().observe(this, new Observer<Account>() {
-            @Override
-            public void onChanged(Account account) {
-                billViewModel.setSrcAccount(account);
-            }
-        });
-        configViewModel.getSelectedRole().observe(this, new Observer<Role>() {
-            @Override
-            public void onChanged(Role role) {
-                billViewModel.setRole(role);
-            }
-        });
-        /****************** bill attrs reactive ********************/
-        billViewModel.getRemark().observe(this, new Observer<String>() {
+        billViewModel.getInputRemark().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 binding.billRemark.setText(s);
             }
         });
-        billViewModel.getAmount().observe(this, new Observer<Long>() {
+        billViewModel.getChosenLeger().observe(this, new Observer<Leger>() {
+
             @Override
-            public void onChanged(Long aLong) {
-                binding.resultBoardText.setText(FormatUtils.getAmount(aLong));
+            public void onChanged(Leger leger) {
+                billLeger = leger;
             }
         });
-        billViewModel.getTime().observe(this, new Observer<LocalTime>() {
-            @Override
-            public void onChanged(LocalTime localTime) {
-                //set time picker;
-                if (localTime != null) {
-//                    timePicker.setHour(localTime.getHour());
-//                    timePicker.setMinute(localTime.getMinute());
-                }
-            }
-        });
-        billViewModel.getDate().observe(this, new Observer<Date>() {
+        billViewModel.getBillDate().observe(this, new Observer<Date>() {
             @Override
             public void onChanged(Date date) {
-                //set date picker
-                initialDatePicker(date);
+                billDate = date;
             }
         });
+        billViewModel.getBillTime().observe(this, new Observer<LocalTime>() {
+            @Override
+            public void onChanged(LocalTime localTime) {
+                billTime = localTime;
+            }
+        });
+        billViewModel.getChosenRole().observe(this, new Observer<Role>() {
+            @Override
+            public void onChanged(Role role) {
+                billRole = role;
+            }
+        });
+        billViewModel.getChosenPayee().observe(this, new Observer<Payee>() {
+            @Override
+            public void onChanged(Payee payee) {
+                billPayee = payee;
+            }
+        });
+
+
+        billViewModel.getChosenTags().observe(this, new Observer<List<Tag>>() {
+            @Override
+            public void onChanged(List<Tag> tags) {
+                billTags = tags;
+            }
+        });
+        billViewModel.getBillImages().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> strings) {
+                billImages = strings;
+            }
+        });
+        billViewModel.getRefundChecked().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                billRefund = aBoolean;
+                binding.billRefundCheckChip.setChecked(aBoolean);
+            }
+        });
+        billViewModel.getReimburseChecked().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                billReimburse = aBoolean;
+                binding.billReimburseCheckChip.setChecked(aBoolean);
+            }
+        });
+        billViewModel.getInExpIncludedChecked().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                billInExp = aBoolean;
+                binding.billInExpChip.setChecked(aBoolean);
+            }
+        });
+        billViewModel.getBudgetIncludedChecked().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                billBudget = aBoolean;
+                binding.billBudgetChip.setChecked(aBoolean);
+            }
+        });
+        billViewModel.getChosenExpCategory().observe(this, new Observer<Category>() {
+            @Override
+            public void onChanged(Category category) {
+                expCategory = category;
+            }
+        });
+        billViewModel.getChosenInCategory().observe(this, new Observer<Category>() {
+            @Override
+            public void onChanged(Category category) {
+                inCategory = category;
+            }
+        });
+
+        billViewModel.getLastSelectedAccount().observe(this, new Observer<Account>() {
+            @Override
+            public void onChanged(Account account) {
+                lastSelectedAccount = account;
+            }
+        });
+
+        billViewModel.getSelectedLeger().observe(this, new Observer<Leger>() {
+            @Override
+            public void onChanged(Leger leger) {
+                billLeger = leger;
+            }
+        });
+        billViewModel.getImageUris().observe(this, new Observer<List<Uri>>() {
+            @Override
+            public void onChanged(List<Uri> uris) {
+                selectedImageUris = uris;
+            }
+        });
+
+        /********** config *********/
 
     }
 
     //初始化 date picker
     private void initialDatePicker(Date date) {
-        if (date == null) {
-            datePicker = MaterialDatePicker.Builder.datePicker().setTitleText(ResourceUtils.getString(R.string.pick_date)).build();
-        } else {
-            datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("选择日期").setSelection(date.getTime()).build();
-        }
-        datePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener) selection -> billViewModel.setDate(new Date((Long) selection)));
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker().setTitleText("选择日期");
+        if (Objects.nonNull(date)) builder.setSelection(date.getTime());
+        datePicker = builder.build();
+        datePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener) selection -> billViewModel.setBillDate(new Date((Long) selection)));
     }
 
     /**
@@ -690,129 +744,63 @@ public class BillActivity extends BaseActivity {
 
     private void save() {
 
-        Log.d(TAG, "save: 保存到数据库");
-        int billType = billViewModel.getBillType().getValue();
-        Bill bill = new Bill();
-        bill.setAmount(billViewModel.getAmount().getValue());
-        bill.setBillType(billType);
 
-        Long srcAmount = billViewModel.getSrcAccount().getBalance();
-
-
+        Category category = null;
         if (billType == Bill.EXPENDITURE) {
-            bill.setCategoryId(billViewModel.getCategoryExpenditure().getValue().getId());
-            bill.setCategoryTitle(billViewModel.getCategoryExpenditure().getValue().getTitle());
-            bill.setCategoryIconResName(billViewModel.getCategoryExpenditure().getValue().getIconResName());
-
-            billViewModel.getSrcAccount().setBalance(srcAmount -= bill.getAmount());
-        } else if (billType == Bill.INCOME) {
-            bill.setCategoryId(billViewModel.getCategoryIncome().getValue().getId());
-            bill.setCategoryTitle(billViewModel.getCategoryIncome().getValue().getTitle());
-            bill.setCategoryIconResName(billViewModel.getCategoryIncome().getValue().getIconResName());
-
-            billViewModel.getSrcAccount().setBalance(srcAmount += bill.getAmount());
+            category = expCategory;
         } else {
-            //转账 - 设置目标账户
-            bill.setTarAccountId(billViewModel.getTarAccount().getId());
-            bill.setTarAccountTitle(billViewModel.getTarAccount().getTitle());
-            bill.setTarAccountIconResName(billViewModel.getTarAccount().getItemIconResName());
-            billViewModel.getSrcAccount().setBalance(srcAmount -= bill.getAmount());
-
-            Long tarAmount = billViewModel.getTarAccount().getBalance();
-            billViewModel.getTarAccount().setBalance(tarAmount += bill.getAmount());
+            category = inCategory;
         }
-        //保存账户更改
-        accountViewModel.update(billViewModel.getSrcAccount());
+        Bill bill = Bill.createBill(billType, billAmount, billLeger);
+
         if (billType == Bill.TRANSFER) {
-            accountViewModel.update(billViewModel.getTarAccount());
-        }
+            if (Objects.isNull(billViewModel.getSrcAccount())) {
+                ToastUtil.makeToast("请选择转出账户");
+            }
+            if (Objects.isNull(billViewModel.getTarAccount())) {
+                ToastUtil.makeToast("请选择转入账户");
+            }
 
-        //获取选中的账本
-        bill.setLegerId(billViewModel.getLeger().getId());
-        bill.setLegerTitle(billViewModel.getLeger().getTitle());
-
-        //获取选中的角色
-        bill.setRoleId(billViewModel.getRole().getId());
-        bill.setRoleTitle(billViewModel.getRole().getTitle());
-
-        //获取选中的账户
-        bill.setAccountId(billViewModel.getSrcAccount().getId());
-        bill.setAccountTitle(billViewModel.getSrcAccount().getTitle());
-        bill.setAccountIconResName(billViewModel.getSrcAccount().getIconResName());
-        bill.setCurrencyCode(billViewModel.getSrcAccount().getCurrencyCode());
-
-
-        //获取标签
-        bill.setTags(billViewModel.getTags().getValue());
-
-        //设置商户
-        if (billType == Bill.EXPENDITURE && billViewModel.getStore() != null) {
-            bill.setPayeeId(billViewModel.getStore().getId());
-            bill.setPayeeTitle(billViewModel.getStore().getTitle());
-        }
-
-
-        //统计信息
-        if (billType != Bill.TRANSFER) {
-            //记录收支
-            bill.setIncomeExpenditureIncluded(billViewModel.getIncomeExpenditureIncluded());    //收付款？
-//        预算
-            bill.setBudgetIncluded(billViewModel.getBudgetIncluded());
-        }
-
-        if (billType == Bill.EXPENDITURE) {
-            //是否退款
-            bill.setRefund(binding.billRefundCheckChip.isChecked());
-            //报销
-            bill.setReimburse(binding.billReimburseCheckChip.isChecked());
-        }
-
-
-        //其他设置
-        bill.setDate(billViewModel.getDate().getValue());
-        bill.setTime(billViewModel.getTime().getValue());
-        if (billViewModel.getRemark().getValue().isEmpty()) {
-            billViewModel.setRemark(binding.billRemark.getText().toString());
-        }
-        bill.setRemark(billViewModel.getRemark().getValue());
-        bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
-
-
-        if (billViewModel.getImagePaths() == null || billViewModel.getImagePaths().getValue().isEmpty()) {
-            //没有选择图片
-            billViewModel.insert(bill);
+            bill.setAccount(billViewModel.getSrcAccount());
+            bill.setTarAccount(billViewModel.getTarAccount());
         } else {
-            //选择了图片
-            ListenableFuture<Boolean> pathLF = FileUtil.saveImagesToInternalStorage(this, billViewModel.getImagePaths().getValue());
-            Futures.addCallback(pathLF, new FutureCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                    bill.setImagePaths(billViewModel.getImagePaths().getValue());
-                    billViewModel.insert(bill);
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    Log.d(TAG, "onFailure: 保存图片失败");
-                }
-            }, AsyncProcessor.getInstance().getExecutorService());
+            if (billType == Bill.EXPENDITURE) {
+                bill.setRefund(billRefund);
+                bill.setReimburse(billReimburse);
+                bill.setPayee(billPayee);
+            }
+            bill.setCategory(category);
+            bill.setIncomeExpenditureIncluded(billInExp);
+            bill.setBudgetIncluded(billBudget);
+            bill.setAccount(lastSelectedAccount);
         }
 
-    }
+        bill.setRole(billRole);
+        bill.setTags(billTags);
+        bill.setImagePaths(billImages);
+        bill.setDate(billDate);
+        bill.setTime(billTime);
+        bill.setRemark(billViewModel.getInputRemark().getValue());
 
-    private void update() {
-        //TODO 编辑保存
-        //更新
-        if (bill2save.getBillType() == Bill.TRANSFER) {
-            //src account
-
-
-            //tar account
-        } else {
-            //category
-
+        if (Objects.nonNull(selectedImageUris) && !selectedImageUris.isEmpty()) {
+            List<String> imagePaths = new ArrayList<>();
+            Timestamp timestamp = bill.getCreateTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String timestampStr = sdf.format(timestamp);
+            for (int i = 0; i < selectedImageUris.size(); i++) {
+                Uri uri = selectedImageUris.get(i);
+                String fileName = "bill_" + timestampStr + "_" + i;
+                String path = ImageUtils.saveImageToAppPrivateFolder(this, uri, fileName, ConstantValue.PRIVATE_DIR_IMAGES);
+                imagePaths.add(path);
+            }
+            bill.setImagePaths(imagePaths);
         }
+        Log.d(TAG, "save: " + bill.toString());
 
+        if (Objects.nonNull(billId)) {
+            bill.setId(billId);
+        }
+        billViewModel.save(bill);
     }
 
 
@@ -832,4 +820,48 @@ public class BillActivity extends BaseActivity {
         binding.resultBoardText.setHint(ResourceUtils.getString(R.string.zero_hint));
     }
 
+
+    public class PickMultipleVisualMediaWithReadPermission extends ActivityResultContract<PickVisualMediaRequest, List<Uri>> {
+
+        private static final int MAX_SELECTION_COUNT = 9;
+
+        @NonNull
+        @Override
+        public Intent createIntent(@NonNull Context context, PickVisualMediaRequest input) {
+
+
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+            String mimeType;
+//            if (input.getMediaType() instanceof PickVisualMedia.ImageOnly) {
+            mimeType = "image/*";
+//            } else if (input.getMediaType() instanceof PickVisualMedia.VideoOnly) {
+//                mimeType = "video/*";
+//            } else {
+//                mimeType = "*/*";
+//            }
+
+            intent.setType(mimeType);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            return intent;
+        }
+
+        @Override
+        public List<Uri> parseResult(int resultCode, @Nullable Intent intent) {
+            List<Uri> result = new ArrayList<>();
+            if (resultCode == Activity.RESULT_OK && intent != null) {
+                if (intent.getClipData() != null) {
+                    int count = Math.min(intent.getClipData().getItemCount(), MAX_SELECTION_COUNT);
+                    for (int i = 0; i < count; i++) {
+                        result.add(intent.getClipData().getItemAt(i).getUri());
+                    }
+                } else if (intent.getData() != null) {
+                    result.add(intent.getData());
+                }
+            }
+            return result;
+        }
+    }
 }

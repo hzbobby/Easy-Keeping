@@ -2,8 +2,10 @@ package com.vividbobo.easy.ui.bill;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +18,7 @@ import com.vividbobo.easy.ui.common.BottomSheetDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.viewmodel.BillViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageViewerSheet extends BottomSheetDialog<SheetImageViewerBinding> {
@@ -23,16 +26,18 @@ public class ImageViewerSheet extends BottomSheetDialog<SheetImageViewerBinding>
 
     private View.OnClickListener onFooterClickListener;
     private OnItemClickListener onItemClickListener;
-    private List<String> imagePaths;
     private BillViewModel billViewModel;
 
 
     public static ImageViewerSheet newInstance() {
+
         Bundle args = new Bundle();
+
         ImageViewerSheet fragment = new ImageViewerSheet();
         fragment.setArguments(args);
         return fragment;
     }
+
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
@@ -45,7 +50,6 @@ public class ImageViewerSheet extends BottomSheetDialog<SheetImageViewerBinding>
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        billViewModel = new ViewModelProvider(getActivity()).get(BillViewModel.class);
     }
 
     @Override
@@ -53,14 +57,19 @@ public class ImageViewerSheet extends BottomSheetDialog<SheetImageViewerBinding>
         return SheetImageViewerBinding.inflate(inflater);
     }
 
+
     @Override
     public void onViewBinding(SheetImageViewerBinding binding) {
+        billViewModel = new ViewModelProvider(getActivity()).get(BillViewModel.class);
 
         ImageViewerAdapter imageViewerAdapter = new ImageViewerAdapter(getContext());
+        imageViewerAdapter.setEnableFooter(true);
+
         imageViewerAdapter.setOnItemClickListener(onItemClickListener);
         imageViewerAdapter.setOnFooterClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
+                Log.d(TAG, "onItemClick: add footer click");
                 if (onFooterClickListener != null) {
                     onFooterClickListener.onClick(view);
                 }
@@ -68,11 +77,19 @@ public class ImageViewerSheet extends BottomSheetDialog<SheetImageViewerBinding>
         });
         binding.imageViewerRv.setAdapter(imageViewerAdapter);
 
-        billViewModel.getImagePaths().observe(getActivity(), new Observer<List<String>>() {
+        binding.clearImageTv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(List<String> strings) {
-                imageViewerAdapter.updateItems(strings);
+            public void onClick(View v) {
+                billViewModel.setImageUris(new ArrayList<>());
             }
         });
+
+        billViewModel.getImageUris().observe(getActivity(), new Observer<List<Uri>>() {
+            @Override
+            public void onChanged(List<Uri> uris) {
+                imageViewerAdapter.updateItems(uris);
+            }
+        });
+
     }
 }

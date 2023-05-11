@@ -23,6 +23,8 @@ public interface RoleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Role... roles);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Role> roles);
 
     @Query("select * from roles where id=:id")
     LiveData<Role> getRoleByIdLD(int id);

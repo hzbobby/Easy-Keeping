@@ -32,7 +32,7 @@ public class WeChatTransitionResultAnalyzer extends PayResultAnalyzer {
         Log.d(ContentReaderService.class.getName(), new String(new char[depth]).replace("\0", "\t") + nodeInfo.toString());
         //get the specify node info;
         if (Objects.equals(nodeInfo.getViewIdResourceName(), RES_NAME_OF_AMOUNT)) {
-            setSuccess(true);
+
             String amountStr = nodeInfo.getText().toString();
             setAmount((long) (Double.parseDouble(amountStr.substring(1)) * 100));
         }

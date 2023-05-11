@@ -6,9 +6,12 @@ import android.util.Log;
 import com.google.android.material.color.DynamicColors;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hms.mlsdk.common.MLApplication;
 import com.vividbobo.easy.database.EasyDatabase;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Leger;
+import com.vividbobo.easy.hmsml.HmsMlCredential;
 import com.vividbobo.easy.utils.AsyncProcessor;
 import com.vividbobo.easy.utils.ColorUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
@@ -38,6 +41,12 @@ public class EasyApplication extends Application {
 
         onFirstLaunchInitial();
 
+        // ml settings
+        MLApplication.initialize(getApplicationContext());
+        AGConnectServicesConfig config = AGConnectServicesConfig.fromContext(getApplicationContext());
+//        MLApplication.getInstance().setApiKey(config.getString("client/api_key"));
+        MLApplication.getInstance().setApiKey(HmsMlCredential.API_KEY);
+        MLApplication.getInstance().setUserRegion(MLApplication.REGION_DR_CHINA);
     }
 
     //第一次启动时，做的初始化

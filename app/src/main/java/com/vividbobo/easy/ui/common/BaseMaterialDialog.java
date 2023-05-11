@@ -44,8 +44,13 @@ public abstract class BaseMaterialDialog<VB extends androidx.viewbinding.ViewBin
 
         onBuildDialog(builder);
         onBindView(binding);
+        onCreateDialog(builder, binding);
 
         return builder.create();
+    }
+
+    protected void onCreateDialog(MaterialAlertDialogBuilder builder, VB binding) {
+
     }
 
     /**

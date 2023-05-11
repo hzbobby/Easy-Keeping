@@ -98,6 +98,7 @@ public class ExpandableGroupRvAdapter extends RecyclerView.Adapter<ExpandableGro
             super(itemView);
             expandIv = itemView.findViewById(R.id.group_vh_expand_iv);
             moreIv = itemView.findViewById(R.id.group_vh_more_iv);
+            moreIv.setVisibility(View.GONE);
             iconIv = itemView.findViewById(R.id.group_vh_icon_iv);
             title = itemView.findViewById(R.id.group_vh_title_tv);
             dropContainerMcv = itemView.findViewById(R.id.group_vh_container_mcv);

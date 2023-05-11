@@ -5,21 +5,22 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.vividbobo.easy.databinding.ActivityMainBinding;
 import com.vividbobo.easy.ui.account.AccountFragment;
 import com.vividbobo.easy.ui.chart.ChartFragment;
+import com.vividbobo.easy.ui.dataImportAndExport.ExportActivity;
+import com.vividbobo.easy.ui.dataImportAndExport.ImportActivity;
 import com.vividbobo.easy.ui.home.HomeFragment;
+import com.vividbobo.easy.ui.others.AccountSettingsDialog;
 import com.vividbobo.easy.ui.settings.SettingsActivity;
-import com.vividbobo.easy.utils.SharePreferenceUtil;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
@@ -113,10 +114,15 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         break;
                     case R.id.auto_record_item:
+                        AccountSettingsDialog.newInstance().show(getSupportFragmentManager(), AccountSettingsDialog.TAG);
                         break;
-                    case R.id.data_backup_recover:
+//                    case R.id.data_backup_recover:
+//                        break;
+                    case R.id.data_export:
+                        startActivity(new Intent(MainActivity.this, ExportActivity.class));
                         break;
-                    case R.id.data_import_export:
+                    case R.id.data_import:
+                        startActivity(new Intent(MainActivity.this, ImportActivity.class));
                         break;
 
                     default:

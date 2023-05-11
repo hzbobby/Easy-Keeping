@@ -48,7 +48,8 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingItem
 
         Bundle expenseArgs = new Bundle();
         settingItems.add(new SettingItem("支出类型管理", SettingItem.SETTING_CATEGORY_EXPENDITURE, this));
-        settingItems.add(new SettingItem("onFling测试", SettingItem.SETTING_TESTING, this));
+        settingItems.add(new SettingItem("收入类型管理", SettingItem.SETTING_CATEGORY_INCOME, this));
+//        settingItems.add(new SettingItem("onFling测试", SettingItem.SETTING_TESTING, this));
         settingItems.add(new SettingItem("角色管理", SettingItem.SETTING_ROLE, this));
         settingItems.add(new SettingItem("店家管理", SettingItem.SETTING_STORE, this));
         settingItems.add(new SettingItem("币种管理", SettingItem.SETTING_CURRENCY, this));
@@ -99,6 +100,9 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingItem
                 break;
             case SettingItem.SETTING_CATEGORY_EXPENDITURE:
                 CategorySettingsFullDialog.newInstance(Category.TYPE_EXPENDITURE).show(getSupportFragmentManager(), CategorySettingsFullDialog.TAG);
+                break;
+            case SettingItem.SETTING_CATEGORY_INCOME:
+                CategorySettingsFullDialog.newInstance(Category.TYPE_INCOME).show(getSupportFragmentManager(), CategorySettingsFullDialog.TAG);
                 break;
             case SettingItem.SETTING_ROLE:
                 RoleFullDialog.newInstance().show(getSupportFragmentManager(), RoleFullDialog.TAG);

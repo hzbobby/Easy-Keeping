@@ -1,7 +1,6 @@
 package com.vividbobo.easy.ui.bill;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.vividbobo.easy.adapter.adapter.CategoryAdapter;
-import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.CategoryPresent;
 import com.vividbobo.easy.databinding.FragmentCategoryBinding;
@@ -31,6 +29,7 @@ public class CategoryFragment extends Fragment {
     private CategoryViewModel categoryViewModel;
     private BillViewModel billViewModel;
     private int billType;
+    private CategoryAdapter categoryAdapter;
 
     static CategoryFragment newInstance(@NonNull int type) {
         CategoryFragment fragment = new CategoryFragment();
@@ -61,7 +60,7 @@ public class CategoryFragment extends Fragment {
 
         binding.billCategoryRv.setLayoutManager(new GridLayoutManager(getContext(), 5));
         //category
-        CategoryAdapter categoryAdapter = new CategoryAdapter(getActivity());
+        categoryAdapter = new CategoryAdapter(getActivity());
         categoryAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
@@ -74,18 +73,18 @@ public class CategoryFragment extends Fragment {
                             categoryAdapter.setItemSelected(position);
                             //设置viewModel
                             if (billType == Category.TYPE_EXPENDITURE) {
-                                billViewModel.setCategoryExpenditure((Category) item);
+                                billViewModel.setFilterExpCategoryId(((Category) item).getId());
                             } else {
-                                billViewModel.setCategoryIncome((Category) item);
+                                billViewModel.setFilterIncCategoryId(((Category) item).getId());
                             }
                         }
                     }).show(getParentFragmentManager(), MoreCategoryBottomSheet.TAG);
                 } else {
                     categoryAdapter.setItemSelected(position);
                     if (billType == Category.TYPE_EXPENDITURE) {
-                        billViewModel.setCategoryExpenditure((Category) item);
+                        billViewModel.setFilterExpCategoryId(((Category) item).getId());
                     } else {
-                        billViewModel.setCategoryIncome((Category) item);
+                        billViewModel.setFilterIncCategoryId(((Category) item).getId());
                     }
                 }
             }
@@ -100,6 +99,14 @@ public class CategoryFragment extends Fragment {
         binding.billCategoryRv.setAdapter(categoryAdapter);
 
 
+        //如果是编辑
+
+        configViewModel(billType);
+
+        return root;
+    }
+
+    private void configViewModel(Integer billType) {
         if (billType == Category.TYPE_EXPENDITURE) {
             categoryViewModel.getExpenditureCategories().observe(getViewLifecycleOwner(), new Observer<List<CategoryPresent>>() {
                 @Override
@@ -107,13 +114,13 @@ public class CategoryFragment extends Fragment {
                     categoryAdapter.updateItems(categoryPresents);
                 }
             });
-            billViewModel.getSelectedExpCategory().observe(getActivity(), new Observer<Category>() {
+            billViewModel.getChosenExpCategory().observe(getActivity(), new Observer<Category>() {
                 @Override
                 public void onChanged(Category category) {
-                    Log.d("TAG", "onChanged: livedate expense");
                     categoryAdapter.setSelectedCategory(category);
                 }
             });
+
         } else {
             categoryViewModel.getIncomeCategories().observe(getViewLifecycleOwner(), new Observer<List<CategoryPresent>>() {
                 @Override
@@ -121,7 +128,7 @@ public class CategoryFragment extends Fragment {
                     categoryAdapter.updateItems(categoryPresents);
                 }
             });
-            billViewModel.getSelectedIncCategory().observe(getActivity(), new Observer<Category>() {
+            billViewModel.getChosenInCategory().observe(getActivity(), new Observer<Category>() {
                 @Override
                 public void onChanged(Category category) {
                     categoryAdapter.setSelectedCategory(category);
@@ -129,10 +136,6 @@ public class CategoryFragment extends Fragment {
             });
         }
 
-        //如果是编辑
-
-
-        return root;
     }
 
 }

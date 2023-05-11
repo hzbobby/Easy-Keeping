@@ -23,8 +23,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_16
-        targetCompatibility JavaVersion.VERSION_16
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
@@ -33,13 +33,19 @@ android {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/com.opencsv/opencsv
+    implementation 'com.opencsv:opencsv:5.7.1'
+
+
+    implementation 'com.google.mlkit:entity-extraction:16.0.0-beta4'
     /************* HMS ML Kit  **************/
     //ocr
     // 引入基础SDK
-    implementation 'com.huawei.hms:ml-computer-vision-ocr:2.0.5.301'
+    implementation 'com.huawei.hms:ml-computer-vision-ocr:3.11.0.301'
     // 引入中英文文字识别模型包
-    implementation 'com.huawei.hms:ml-computer-vision-ocr-cn-model:2.0.5.301'
-
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-cn-model:3.11.0.301'
+    // 集成在线文本实体抽取SDK
+    implementation 'com.huawei.hms:ml-computer-ner:3.11.0.302'
 
     /************* charts lib *************/
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'

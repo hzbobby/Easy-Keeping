@@ -14,6 +14,7 @@ public class SettingItem {
     public static final int SETTING_STORE = 5;
     public static final int SETTING_CURRENCY = 6;
     public static final int SETTING_TAG = 1;
+    public static final int SETTING_CATEGORY_INCOME = 7;
 
 
     private Long id;

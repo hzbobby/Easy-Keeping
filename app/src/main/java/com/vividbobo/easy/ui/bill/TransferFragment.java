@@ -77,7 +77,7 @@ public class TransferFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //交换账户
-                if (Objects.nonNull(billViewModel.getSrcAccount()) && Objects.nonNull(billViewModel.getTarAccount())) {
+                if (Objects.nonNull(billViewModel.getBillAmount()) && Objects.nonNull(billViewModel.getTarAccount())) {
                     Account srcAccount = billViewModel.getSrcAccount();
                     Account tarAccount = billViewModel.getTarAccount();
                     setSrcAccount(tarAccount);
@@ -94,24 +94,6 @@ public class TransferFragment extends Fragment {
             public void onChanged(List<Account> accountList) {
                 srcAdapter.setItems(accountList);
                 tarAdapter.setItems(accountList);
-            }
-        });
-
-
-        billViewModel.getSelectedSrcAccount().observe(getActivity(), new Observer<Account>() {
-            @Override
-            public void onChanged(Account account) {
-                if (account != null) {
-                    setSrcAccount(account);
-                }
-            }
-        });
-        billViewModel.getSelectedTarAccount().observe(getActivity(), new Observer<Account>() {
-            @Override
-            public void onChanged(Account account) {
-                if (account != null) {
-                    setTarAccount(account);
-                }
             }
         });
 

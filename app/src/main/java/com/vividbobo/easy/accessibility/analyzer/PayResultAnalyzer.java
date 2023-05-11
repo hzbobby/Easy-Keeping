@@ -12,12 +12,6 @@ public abstract class PayResultAnalyzer {
     private String payee = "";
     private String remark = "";
     private boolean success = false; //pay status
-
-    /**
-     * 分析页面上的component
-     *
-     * @param nodeInfo
-     */
     public abstract void analyze(AccessibilityNodeInfo nodeInfo);
 
     public Long getAmount() {

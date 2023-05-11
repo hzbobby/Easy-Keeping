@@ -30,6 +30,7 @@ import com.vividbobo.easy.viewmodel.CurrencyViewModel;
 import com.vividbobo.easy.viewmodel.ResourceViewModel;
 
 import java.util.List;
+import java.util.Objects;
 
 public class AccountAddActivity extends BaseActivity {
     public static final String KEY_EDIT_ACCOUNT = "edit_account";
@@ -46,6 +47,7 @@ public class AccountAddActivity extends BaseActivity {
     private AccountType selectedAccountType = null;
     private Currency selectedCurrency = null;
     private Resource selectedResource = null;
+    private Account editAccount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,21 +89,38 @@ public class AccountAddActivity extends BaseActivity {
         });
 
         //edit initial
-        Account editAccount = (Account) getIntent().getSerializableExtra(KEY_EDIT_ACCOUNT);
+        editAccount = (Account) getIntent().getSerializableExtra(KEY_EDIT_ACCOUNT);
         if (editAccount != null) {
-            binding.addAccountTitleTv.getEditText().setText(editAccount.getTitle());
+            //accountType
+            selectedAccountType = new AccountType();
+            selectedAccountType.setId(editAccount.getAccountTypeId());
+            selectedAccountType.setTitle(editAccount.getAccountTypeTitle());
+            selectedAccountType.setIconResName(editAccount.getAccountTypeIconResName());
+            //currency
+            selectedCurrency = new Currency();
+            selectedCurrency.setCode(editAccount.getCurrencyCode());
+            //resource
+            selectedResource = new Resource();
+            selectedResource.setId(editAccount.getIconResId());
+            selectedResource.setResName(editAccount.getIconResName());
+
+            binding.appBarLayout.layoutToolBarTitleTv.setText("编辑账户");
+            Log.d("TAG", "onCreate: " + editAccount.toString());
+            binding.addAccountTitleTv.getEditText().setText(editAccount.getTitle().toString());
             binding.addAccountTypeTil.getEditText().setText(editAccount.getAccountTypeTitle());
             binding.addAccountTypeTil.setStartIconDrawable(ResourceUtils.getDrawable(editAccount.getAccountTypeIconResName()));
-            ResourceUtils.bindImageDrawable(this, ResourceUtils.getDrawable(editAccount.getIconResName())).centerInside().into(binding.addAccountIconIm);
+            if (Objects.nonNull(editAccount.getIconResName())) {
+                ResourceUtils.bindImageDrawable(this, ResourceUtils.getDrawable(editAccount.getIconResName())).centerInside().into(binding.addAccountIconIm);
+            }
             binding.addAccountCurrencyTil.getEditText().setText(editAccount.getCurrencyCode());
             binding.addAccountBalanceTextTil.getEditText().setText(editAccount.getFormatBalance());
-            if (editAccount.getDesc() != null || !editAccount.getDesc().isEmpty()) {
+            if (Objects.nonNull(editAccount.getDesc()) && !editAccount.getDesc().isEmpty()) {
                 binding.addAccountDescTv.getEditText().setText(editAccount.getDesc());
             }
-            if (editAccount.getCardNum() != null || !editAccount.getCardNum().isEmpty()) {
+            if (Objects.nonNull(editAccount.getCardNum()) && !editAccount.getCardNum().isEmpty()) {
                 binding.addAccountCardTv.getEditText().setText(editAccount.getCardNum());
             }
-            if (editAccount.getRemark() != null || !editAccount.getRemark().isEmpty()) {
+            if (Objects.nonNull(editAccount.getRemark()) && !editAccount.getRemark().isEmpty()) {
                 binding.addAccountRemarkTv.getEditText().setText(editAccount.getRemark());
             }
         }
@@ -206,8 +225,16 @@ public class AccountAddActivity extends BaseActivity {
         }, AsyncProcessor.getInstance().getExecutorService());
     }
 
+    private void update() {
+    }
+
     private void save() {
-        Account account = new Account();
+        Account account;
+        if (editAccount != null) {
+            account = editAccount;
+        } else {
+            account = new Account();
+        }
         String balanceStr = binding.addAccountBalanceTextTil.getEditText().getText().toString();
         Double balance = null;
         if (balanceStr.isEmpty()) {

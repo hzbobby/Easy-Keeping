@@ -7,12 +7,13 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.vividbobo.easy.adapter.Itemzable;
 import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 
 import java.io.Serializable;
 
 @Entity(tableName = "accountTypes")
-public class AccountType extends BaseEntity implements Serializable, Parcelable, DropdownMenuAdapter.DropdownMenuItem {
+public class AccountType extends BaseEntity implements Serializable, Parcelable, DropdownMenuAdapter.DropdownMenuItem, Itemzable {
     public static final Integer DEFAULT_PARENT_ID = -1;
     @PrimaryKey(autoGenerate = true)
     private Integer id;

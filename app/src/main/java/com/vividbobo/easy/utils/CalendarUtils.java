@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class CalendarUtils {
@@ -56,6 +57,22 @@ public class CalendarUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static String formatDate(java.util.Date date, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(date);
+    }
+
+    public static Date getDateFrom(String dateString, String pattern, Locale locale) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, locale);
+        try {
+            java.util.Date date = sdf.parse(dateString);
+            return new Date(date.getTime());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public static Date getLastDay(int year, int month) {
         Calendar calendar = Calendar.getInstance();

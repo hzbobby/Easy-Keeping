@@ -3,24 +3,28 @@
     <item
         android:id="@+id/auto_record_item"
         android:icon="@drawable/menu_ic_auto_record"
-        android:title="@string/auto_record"/>
+        android:title="@string/auto_record" />
     <item
         android:id="@+id/settings_fragment"
         android:icon="@drawable/menu_ic_setting"
-        android:title="@string/setting"/>
+        android:title="@string/setting" />
     <item
         android:id="@+id/data_item"
         android:title="@string/data">
         <menu>
-            <item
-                android:id="@+id/data_backup_recover"
-                android:icon="@drawable/menu_ic_backup_recover"
+<!--            <item-->
+<!--                android:id="@+id/data_backup_recover"-->
+<!--                android:icon="@drawable/menu_ic_backup_recover"-->
 
-                android:title="@string/data_backup_recover"/>
+<!--                android:title="@string/data_backup_recover" />-->
             <item
-                android:id="@+id/data_import_export"
+                android:id="@+id/data_export"
                 android:icon="@drawable/menu_ic_import_export"
-                android:title="@string/data_import_export"/>
+                android:title="@string/data_export" />
+            <item
+                android:id="@+id/data_import"
+                android:icon="@drawable/ic_description"
+                android:title="@string/data_import" />
         </menu>
     </item>
 

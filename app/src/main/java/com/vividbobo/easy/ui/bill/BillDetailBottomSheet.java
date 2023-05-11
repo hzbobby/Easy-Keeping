@@ -2,6 +2,7 @@ package com.vividbobo.easy.ui.bill;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -9,16 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.helper.widget.Carousel;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
 import com.vividbobo.easy.R;
+import com.vividbobo.easy.database.converter.Converters;
+import com.vividbobo.easy.database.converter.LocalTimeConverter;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.databinding.SheetBillDetailBinding;
 import com.vividbobo.easy.ui.common.BottomSheetDialog;
+import com.vividbobo.easy.utils.ConvertUtils;
 import com.vividbobo.easy.utils.FormatUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 
+import java.util.List;
 import java.util.Objects;
 
 public class BillDetailBottomSheet extends BottomSheetDialog<SheetBillDetailBinding> {
@@ -131,10 +137,15 @@ public class BillDetailBottomSheet extends BottomSheetDialog<SheetBillDetailBind
         if (Objects.nonNull(bill.getRemark()) && !bill.getRemark().isEmpty()) {
             binding.remarkTv.setText(bill.getRemark());
         }
-        //其他
+        if (Objects.nonNull(bill.getDate())) {
+            binding.dateTv.setText(Converters.fromDateToDateText(bill.getDate()));
+        }
+        if (Objects.nonNull(bill.getTime())) {
+            binding.timeTv.setText(LocalTimeConverter.localTimeToString(bill.getTime()));
+        }
+
 
         binding.createTimeTv.setText(bill.getCreateTime().toString());
-
         binding.roleTv.setText(bill.getRoleTitle());
         binding.remarkTv.setText(bill.getRemark());
         //setting tags
@@ -146,28 +157,52 @@ public class BillDetailBottomSheet extends BottomSheetDialog<SheetBillDetailBind
                 chip.setText(tag.getTitle());
                 chip.setTextColor(Color.parseColor(tag.getHexCode()));
                 binding.tagChipGroup.addView(chip);
-
             }
         }
 
+        //其他
+        StringBuilder sb = new StringBuilder();
+        if (Objects.nonNull(bill.getRefund()) && bill.getRefund()) sb.append("退款 ");
+        if (Objects.nonNull(bill.getReimburse()) && bill.getReimburse()) sb.append("报销 ");
+        if (Objects.nonNull(bill.getIncomeExpenditureIncluded()) && bill.getIncomeExpenditureIncluded())
+            sb.append("不计入收支");
+        if (Objects.nonNull(bill.getBudgetIncluded()) && bill.getBudgetIncluded())
+            sb.append("不计入预算");
+        if (sb.toString().isBlank()) {
+            binding.otherTv.setVisibility(View.GONE);
+        } else {
+            binding.otherTv.setVisibility(View.VISIBLE);
+            binding.otherTv.setText(sb.toString());
+        }
 
-        Integer[] imageRes = new Integer[]{R.drawable.bg1, R.drawable.bg1, R.drawable.bg1, R.drawable.bg1, R.drawable.bg1, R.drawable.bg1};
-        binding.carousel.setAdapter(new Carousel.Adapter() {
-            @Override
-            public int count() {
-                return imageRes.length;
-            }
+        if(Objects.isNull(bill.getImagePaths())||bill.getImagePaths().size()==0){
+            binding.motionLayout.setVisibility(View.GONE);
+        }else{
+            binding.motionLayout.setVisibility(View.VISIBLE);
 
-            @Override
-            public void populate(View view, int index) {
-                ImageFilterView imageFilterView = (ImageFilterView) view;
-                imageFilterView.setImageResource(imageRes[index]);
-            }
+            List<String> pathList = bill.getImagePaths();
+            Log.d(TAG, "onViewBinding: imagePathListSize: " + pathList.size());
 
-            @Override
-            public void onNewItem(int index) {
+            binding.carousel.setAdapter(new Carousel.Adapter() {
+                @Override
+                public int count() {
+                    return pathList.size();
+                }
 
-            }
-        });
+                @Override
+                public void populate(View view, int index) {
+                    ImageFilterView imageFilterView = (ImageFilterView) view;
+                    Log.d(TAG, "populate: index: " + index);
+                    Log.d(TAG, "populate: path: " + pathList.get(index));
+                    Glide.with(getContext()).load(pathList.get(index)).into(imageFilterView);
+                }
+
+                @Override
+                public void onNewItem(int index) {
+
+                }
+            });
+        }
+
     }
 }

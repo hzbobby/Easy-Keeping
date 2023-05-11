@@ -5,12 +5,13 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.vividbobo.easy.accessibility.ContentReaderService;
 
-public class WeChatPayResultAnalyzer extends PayResultAnalyzer {
+public class WeChatScanPayResultAnalyzer extends PayResultAnalyzer {
     private static final String TAG = "WeChatPayResultAnalyzer";
     private int textViewCount;
 
     @Override
     public void analyze(AccessibilityNodeInfo nodeInfo) {
+        setSuccess(false);
         textViewCount = 0;
         exploreNodeHierarchy(nodeInfo, 0);
     }
@@ -23,10 +24,12 @@ public class WeChatPayResultAnalyzer extends PayResultAnalyzer {
         String className = nodeInfo.getClassName().toString();
         if (className.toLowerCase().contains("textview")) {
             Log.d(TAG, "exploreNodeHierarchy: textview count: " + textViewCount);
+            Log.d(TAG, "exploreNodeHierarchy: textView: " + nodeInfo.getText());
             switch (textViewCount) {
                 case 0:
                     // 成功
-                    setSuccess(true);
+                    if (nodeInfo.getText().toString().contains("成功"))
+                        setSuccess(true);
                     break;
                 case 1:
                     //payee
@@ -34,7 +37,12 @@ public class WeChatPayResultAnalyzer extends PayResultAnalyzer {
                     break;
                 case 2:
                     //amount
-                    setAmount((long) (Double.parseDouble(nodeInfo.getText().toString().substring(1)) * 100));
+                    try {
+                        setAmount((long) (Double.parseDouble(nodeInfo.getText().toString().substring(1)) * 100));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        setSuccess(false);
+                    }
                     break;
                 default:
             }

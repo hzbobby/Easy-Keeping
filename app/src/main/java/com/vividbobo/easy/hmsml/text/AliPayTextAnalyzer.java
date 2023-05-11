@@ -10,7 +10,6 @@ import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.text.MLText;
 import com.vividbobo.easy.database.EasyDatabase;
-import com.vividbobo.easy.database.dao.AccountDao;
 import com.vividbobo.easy.database.dao.ConfigDao;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Bill;
@@ -22,6 +21,7 @@ import com.vividbobo.easy.utils.AsyncProcessor;
 import com.vividbobo.easy.utils.CalendarUtils;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
@@ -46,8 +46,7 @@ public class AliPayTextAnalyzer extends TextAnalyzer {
             public void onSuccess(MLText text) {
                 // 识别成功处理。
                 List<MLText.Block> blocks = text.getBlocks();
-                constructBillList(blocks);
-
+                parseBillList(blocks);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -58,135 +57,160 @@ public class AliPayTextAnalyzer extends TextAnalyzer {
         });
     }
 
-    private void constructBillList(List<MLText.Block> blocks) {
+    private void parseBillList(List<MLText.Block> blocks) {
         AsyncProcessor.getInstance().submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                EasyDatabase db = EasyDatabase.getDatabase(mContext);
-                AccountDao accountDao = db.accountDao();
-                ConfigDao configDao = db.configDao();
+                    @Override
+                    public Object call() throws Exception {
+                        EasyDatabase db = EasyDatabase.getDatabase(mContext);
+                        ConfigDao configDao = db.configDao();
 
-                Bill bill = null;
-
-                for (int i = 0; i < blocks.size(); i++) {
-                    MLText.Block infoBlock = blocks.get(i);
-                    if (Objects.equals(infoBlock.getStringValue(), "w")) {
-                        continue;
-                    }
-                    if (infoBlock.getStringValue().isEmpty()) {
-                        continue;
-                    }
-//                    Log.d(TAG, "onSuccess: block " + i);
-                    Log.d(TAG, "onSuccess: block: " + infoBlock.getStringValue());
-                    String[] infos = infoBlock.getStringValue().split("\n");
-//                    for (int j = 0; j < infos.length; j++) {
-//                        Log.d(TAG, "onSuccess: split: " + infos[j]);
-//                    }
-                    Log.d(TAG, "call: infos.length: " + infos.length);
-                    if (infos.length >= 3) {
-                        //new bill
-                        bill = Bill.create();
-
-                        if (infos.length > 0) {
-                            bill.setPayeeTitle(infos[0].replace(PAYEE_TRIP_HEAD, "").strip());
-                        }
-                        if (infos.length > 1) {
-                            //remark
-                            bill.setRemark(infos[1]);
-                            // and predict category
-
-                            //...
-
-
-                        }
-                        if (infos.length > 2) {
-                            String time = infos[2].substring(infos[2].length() - 5).strip();
-                            String[] timeParts = time.split(":");
-                            Integer hours = Integer.parseInt(timeParts[0]);
-                            Integer minutes = Integer.parseInt(timeParts[1]);
-                            bill.setTime(LocalTime.of(hours, minutes)); //set time
-
-                            //set date
-                            Calendar calendar = Calendar.getInstance();
-                            if (infos[2].contains("今天")) {
-                                bill.setDate(new Date(calendar.getTime().getTime()));
-                            } else if (infos[2].contains("昨天")) {
-                                calendar.add(Calendar.DAY_OF_MONTH, -1);
-                                bill.setDate(new Date(calendar.getTime().getTime()));
-                            } else {
-                                String date = infos[2].substring(0, infos[2].length() - 5).strip();
-                                Long dateLong = CalendarUtils.getDateFrom(date, "MM-dd").getTime();
-                                bill.setDate(new Date(dateLong));
+                        Bill bill = null;
+                        Integer year = null;
+                        for (int i = 0; i < blocks.size(); i++) {
+                            MLText.Block infoBlock = blocks.get(i);
+                            if (Objects.equals(infoBlock.getStringValue(), "w")) {
+                                continue;
                             }
-                        }
-                        // account
-                        Account account = configDao.getRawAccountByType(Config.TYPE_IMPORT_ACCOUNT_WECHAT);
-                        bill.setAccountId(account.getId());
-                        bill.setAccountTitle(account.getTitle());
-                        bill.setAccountIconResName(account.getIconResName());
-
-                        //leger
-                        Leger leger = configDao.getRawLegerByType(Config.TYPE_LEGER);
-                        bill.setLegerTitle(leger.getTitle());
-                        bill.setLegerId(leger.getId());
-
-                        //role
-                        Role role = configDao.getRawRoleByType(Config.TYPE_ROLE);
-                        bill.setRoleTitle(role.getTitle());
-                        bill.setRoleId(role.getId());
-                    } else {
-                        //amount
-                        if (Objects.isNull(bill)) {
-                            continue;
-                        }
-                        try {
-                            Double amountD = Double.parseDouble(infoBlock.getStringValue().strip());
-                            //billType
-                            if (amountD < 0) {
-                                bill.setBillType(Bill.EXPENDITURE);
-
-                            } else {
-                                bill.setBillType(Bill.INCOME);
+                            if (infoBlock.getStringValue().isEmpty()) {
+                                continue;
                             }
-                            //amount
-                            bill.setAmount((long) (Math.abs(amountD) * 100));
 
-                            //predict category by remark
-                            //...
-
-                            // default category
-                            Category category = null;
-                            if (bill.getBillType() == Bill.EXPENDITURE) {
-                                category = configDao.getRawCategoryByType(Config.TYPE_CATEGORY_EXPENDITURE);
-                            } else {
-                                category = configDao.getRawCategoryByType(Config.TYPE_CATEGORY_INCOME);
+                            Log.d(TAG, "onSuccess: block " + i);
+                            Log.d(TAG, "onSuccess: block: " + infoBlock.getStringValue());
+                            if (i == 0) {
+                                //year
+                                try {
+                                    year = Integer.parseInt(infoBlock.getStringValue().substring(0, 4).strip());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    year = LocalDate.now().getYear();
+                                }
                             }
-                            bill.setCategoryId(category.getId());
-                            bill.setCategoryTitle(category.getTitle());
-                            bill.setCategoryIconResName(category.getIconResName());
 
-                            //add to list
-                            addBill(bill);
+                            String[] infos = infoBlock.getStringValue().split("\n");
+                            if (infos.length > 2) {
+                                //new bill
+                                bill = Bill.create();
+                                int infosLength = infos.length;
+                                // payee
+                                if (infos[infosLength - 3].contains(PAYEE_TRIP_HEAD)) {
+                                    bill.setPayeeTitle(infos[infosLength - 3]
+                                            .replace(PAYEE_TRIP_HEAD, "").strip());
+                                } else {
+                                    bill.setPayeeTitle(infos[infosLength - 3].strip());
+                                }
+                                // remark
+                                bill.setRemark(infos[infosLength - 2]);
+                                // parse date and time
+                                // ...
 
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        } finally {
-                            bill = null;
+
+                                String time = infos[infosLength - 1].substring(infos[infosLength - 1].length() - 5).strip();
+                                String[] timeParts = time.split(":");
+                                Integer hours = Integer.parseInt(timeParts[0]);
+                                Integer minutes = Integer.parseInt(timeParts[1]);
+                                bill.setTime(LocalTime.of(hours, minutes)); //set time
+
+                                //set date
+                                Calendar calendar = Calendar.getInstance();
+                                if (infos[infosLength - 1].contains("今天")) {
+                                    bill.setDate(new Date(calendar.getTime().getTime()));
+                                } else if (infos[infosLength - 1].contains("昨天")) {
+                                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                                    bill.setDate(new Date(calendar.getTime().getTime()));
+                                } else {
+                                    String date = String.valueOf(year) + "-" + infos[infosLength - 1].substring(0, infos[infosLength - 1].length() - 5).strip();
+
+                                    try {
+                                        Long dateLong = CalendarUtils.getDateFrom(date, "yyyy-MM-dd").getTime();
+                                        bill.setDate(new Date(dateLong));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        bill.setDate(new Date(calendar.getTime().getTime()));
+                                    }
+                                }
+                                // account
+                                Account account = configDao.getRawAccountByType(Config.TYPE_IMPORT_ACCOUNT_ALIPAY);
+                                bill.setAccountId(account.getId());
+                                bill.setAccountTitle(account.getTitle());
+                                bill.setAccountIconResName(account.getIconResName());
+
+                                //leger
+                                Leger leger = configDao.getRawLegerByType(Config.TYPE_LEGER);
+                                bill.setLegerTitle(leger.getTitle());
+                                bill.setLegerId(leger.getId());
+
+                                //role
+                                Role role = configDao.getRawRoleByType(Config.TYPE_ROLE);
+                                bill.setRoleTitle(role.getTitle());
+                                bill.setRoleId(role.getId());
+                            } else {
+                                // else , amount text block
+                                if (Objects.isNull(bill)) {
+                                    // create the bill in infos block (1st block)
+                                    continue;
+                                }
+                                try {
+                                    String[] rightParts = infoBlock.getStringValue().split("\n");
+                                    //amount
+                                    Double amountD = Double.parseDouble(rightParts[0].strip());
+                                    // set billType
+                                    if (amountD < 0) {
+                                        bill.setBillType(Bill.EXPENDITURE);
+
+                                    } else {
+                                        bill.setBillType(Bill.INCOME);
+                                    }
+                                    // set amount
+                                    bill.setAmount((long) (Math.abs(amountD) * 100));
+
+                                    // set other attrs and save bill.
+                                    //...
+
+
+                                    //predict category by remark
+                                    //...
+                                    if (rightParts.length > 1) {
+                                        bill.setRemark(bill.getRemark() + " " + rightParts[1]);
+                                    }
+
+                                    // default category
+                                    Category category = null;
+                                    if (bill.getBillType() == Bill.EXPENDITURE) {
+                                        category = configDao.getRawCategoryByType(Config.TYPE_CATEGORY_EXPENDITURE);
+                                    } else {
+                                        category = configDao.getRawCategoryByType(Config.TYPE_CATEGORY_INCOME);
+                                    }
+                                    bill.setCategoryId(category.getId());
+                                    bill.setCategoryTitle(category.getTitle());
+                                    bill.setCategoryIconResName(category.getIconResName());
+
+                                    //add to list
+                                    addBill(bill);
+
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    bill = null;
+                                }
+                            }
+
+
                         }
+
+                        return null;
                     }
+                }).
 
-
-                }
-
-                return null;
-            }
-        }).addListener(new Runnable() {
-            @Override
-            public void run() {
-                onTextAnalyzerSuccess.onSuccess(getBillList());
+                addListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        onTextAnalyzerSuccess.onSuccess(getBillList());
 //                Log.d(TAG, "run: success: " + getBillList().toString());
-            }
-        }, AsyncProcessor.getInstance().getExecutorService());
+                    }
+                }, AsyncProcessor.getInstance().
+
+                        getExecutorService());
 
     }
 

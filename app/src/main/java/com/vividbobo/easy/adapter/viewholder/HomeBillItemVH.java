@@ -16,6 +16,9 @@ import com.vividbobo.easy.utils.CalendarUtils;
 import com.vividbobo.easy.utils.FormatUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 
+import java.io.ObjectStreamClass;
+import java.util.Objects;
+
 public class HomeBillItemVH extends RecyclerView.ViewHolder {
     private ImageView iconIv;
     private TextView categoryTv, dateTv, otherTv, labelTv, amountTv, accountTv, roleTv, storeTv, refundTv, reimburseTv, sta1Tv, sta2Tv, imageTv;
@@ -56,7 +59,9 @@ public class HomeBillItemVH extends RecyclerView.ViewHolder {
             e.printStackTrace();
         }
         categoryTv.setText(billPresent.getCategoryTitle());
-        dateTv.setText(CalendarUtils.getDateMMdd(billPresent.getDate()));
+        if (Objects.nonNull(billPresent.getDate())){
+            dateTv.setText(CalendarUtils.getDateMMdd(billPresent.getDate()));
+        }
         amountTv.setText(FormatUtils.getAmount(billPresent.getAmount()));
         accountTv.setText(billPresent.getAccountTitle());
 

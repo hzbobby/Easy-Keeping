@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Category;
 import com.vividbobo.easy.database.model.Config;
@@ -17,11 +18,16 @@ public interface ConfigDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Config config);
 
-    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==1" + Config.TYPE_LEGER)
+
+    @Query("select legers.* from configs,legers where legers.id==configs.selected_id and type==" + Config.TYPE_LEGER)
     LiveData<Leger> getSelectedLeger();
 
     @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==" + Config.TYPE_ROLE)
     LiveData<Role> getSelectedRole();
+
+    @Query("select accounts.* from configs,accounts where accounts.id==configs.selected_id and type==" + Config.TYPE_TAR_ACCOUNT)
+
+    LiveData<Account> getSelectedTarAccount();
 
     @Query("select accounts.* from configs,accounts where accounts.id==configs.selected_id and type==" + Config.TYPE_ACCOUNT)
     LiveData<Account> getSelectedAccount();
@@ -58,4 +64,8 @@ public interface ConfigDao {
 
     @Query("select roles.* from configs,roles where roles.id==configs.selected_id and type==:type")
     Role getRawRoleByType(int type);
+
+    @Query("select selected_id from configs where type==:type")
+    ListenableFuture<Integer> getFutureSelectedIdByType(int type);
+
 }

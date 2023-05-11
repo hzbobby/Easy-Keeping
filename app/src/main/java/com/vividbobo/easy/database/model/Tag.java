@@ -4,10 +4,14 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.opencsv.bean.CsvBindByName;
+import com.vividbobo.easy.adapter.Itemzable;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity(tableName = "tags")
-public class Tag extends ServerBaseEntity implements Serializable {
+public class Tag extends ServerBaseEntity implements Serializable, Itemzable {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String title;
@@ -27,6 +31,7 @@ public class Tag extends ServerBaseEntity implements Serializable {
     public Tag(String title, String hexCode) {
         this.title = title;
         this.hexCode = hexCode;
+        setCreateTime(new Timestamp(System.currentTimeMillis()));
     }
 
     public Integer getId() {
@@ -51,6 +56,21 @@ public class Tag extends ServerBaseEntity implements Serializable {
 
     public void setHexCode(String hexCode) {
         this.hexCode = hexCode;
+    }
+
+    @Override
+    public String getItemTitle() {
+        return getTitle();
+    }
+
+    @Override
+    public String getItemIconResName() {
+        return null;
+    }
+
+    @Override
+    public String getItemDesc() {
+        return getHexCode();
     }
 }
 

@@ -24,6 +24,9 @@ public interface LegerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Leger leger);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Leger> leger);
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void update(Leger editLeger);
 
@@ -37,6 +40,5 @@ public interface LegerDao {
     LiveData<Leger> getLegerByIdLD(Integer id);
 
     @Query("select * from legers where id==:legerId")
-
     Leger getRawLegerById(Integer legerId);
 }

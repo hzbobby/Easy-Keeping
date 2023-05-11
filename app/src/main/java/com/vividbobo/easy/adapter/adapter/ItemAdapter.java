@@ -11,12 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vividbobo.easy.R;
 import com.vividbobo.easy.adapter.Itemzable;
-import com.vividbobo.easy.adapter.viewholder.BaseEntityFooterVH;
-import com.vividbobo.easy.adapter.viewholder.BaseEntityItemVH;
 import com.vividbobo.easy.adapter.viewholder.FooterAddVH;
 import com.vividbobo.easy.adapter.viewholder.ItemVH;
-import com.vividbobo.easy.database.model.BaseEntity;
-import com.vividbobo.easy.ui.account.ResourceBottomSheet;
+import com.vividbobo.easy.database.model.CheckableItem;
 import com.vividbobo.easy.ui.others.commonAdapter.CommonAdapter;
 
 
@@ -25,6 +22,7 @@ import com.vividbobo.easy.ui.others.commonAdapter.CommonAdapter;
  */
 public class ItemAdapter<T extends Itemzable> extends CommonAdapter<T, RecyclerView.ViewHolder, ItemVH<T>, FooterAddVH> {
     private boolean enableIcon;
+    private boolean checkable;
 
     @LayoutRes
     private int itemLayoutRes = 0;
@@ -57,7 +55,7 @@ public class ItemAdapter<T extends Itemzable> extends CommonAdapter<T, RecyclerV
     protected ItemVH<T> onCreateNormalViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v;
         if (itemLayoutRes == 0) {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item2, parent, false);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item2_checkable, parent, false);
         } else {
             v = LayoutInflater.from(parent.getContext()).inflate(itemLayoutRes, parent, false);
         }
@@ -68,7 +66,20 @@ public class ItemAdapter<T extends Itemzable> extends CommonAdapter<T, RecyclerV
     protected void onBindNormalViewHolder(@NonNull ItemVH<T> holder, int position) {
         T entity = getItemByHolderPosition(position);
         holder.setEnableIcon(enableIcon);
+        holder.setCheckable(checkable);
         holder.bind(mContext, entity);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(v, entity, holder.getAdapterPosition());
+                }
+                if (checkable) {
+                    holder.checkBox.toggle();
+//                    entity.setChecked(holder.checkBox.isChecked());
+                }
+            }
+        });
     }
 
     @Override
@@ -81,5 +92,9 @@ public class ItemAdapter<T extends Itemzable> extends CommonAdapter<T, RecyclerV
         if (getFooterItem() != null) {
             holder.bind(mContext, getFooterItem().toString());
         }
+    }
+
+    public void setCheckable(boolean b) {
+        this.checkable = b;
     }
 }

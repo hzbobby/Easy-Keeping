@@ -18,10 +18,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.vividbobo.easy.R;
-import com.vividbobo.easy.adapter.adapter.HomeBillAdapter;
+import com.vividbobo.easy.adapter.adapter.BillAdapter;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillInfo;
 import com.vividbobo.easy.database.model.Leger;
@@ -29,14 +28,15 @@ import com.vividbobo.easy.database.model.Resource;
 import com.vividbobo.easy.databinding.FragmentHomeBinding;
 import com.vividbobo.easy.ui.bill.BillActivity;
 import com.vividbobo.easy.ui.bill.BillDetailBottomSheet;
+import com.vividbobo.easy.ui.calendar.CalendarActivity;
 import com.vividbobo.easy.ui.leger.LegerActivity;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.utils.FormatUtils;
+import com.vividbobo.easy.utils.GlideUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.viewmodel.ConfigViewModel;
 import com.vividbobo.easy.viewmodel.HomeViewModel;
 
-import java.text.Normalizer;
 import java.util.List;
 import java.util.Objects;
 
@@ -79,8 +79,7 @@ public class HomeFragment extends Fragment {
     });
 
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -100,6 +99,7 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.home_voice -> { //;
+                        TextIdentifyBottomSheet.newInstance().show(getParentFragmentManager(), TextIdentifyBottomSheet.TAG);
                         return true;
                     }
                     case R.id.wechat_screenshot_import -> {
@@ -121,8 +121,15 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        HomeBillAdapter homeBillAdapter = new HomeBillAdapter(getActivity());
-        homeBillAdapter.setOnItemClickListener(new OnItemClickListener() {
+        BillAdapter billAdapter = new BillAdapter(getActivity());
+        billAdapter.setOnHeaderClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, Object item, int position) {
+                Intent intent = new Intent(getActivity(), CalendarActivity.class);
+                startActivity(intent);
+            }
+        });
+        billAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object item, int position) {
                 Bill bill = (Bill) item;
@@ -148,14 +155,14 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), BillActivity.class);
-                        intent.putExtra("data", bill);
+                        intent.putExtra(BillActivity.KEY_DATA_BILL, bill);
                         startActivity(intent);
                     }
                 });
                 bottomSheet.show(getParentFragmentManager(), BillDetailBottomSheet.TAG);
             }
         });
-        binding.homeRecyclerView.setAdapter(homeBillAdapter);
+        binding.homeRecyclerView.setAdapter(billAdapter);
 
         //add bill
         binding.homeAddBillBtn.setOnClickListener(new View.OnClickListener() {
@@ -192,14 +199,14 @@ public class HomeFragment extends Fragment {
         homeViewModel.getTodayBillInfo().observe(getActivity(), new Observer<BillInfo>() {
             @Override
             public void onChanged(BillInfo billInfo) {
-                homeBillAdapter.setHeaderItem(billInfo);
+                billAdapter.setHeaderItem(billInfo);
             }
         });
         homeViewModel.getTodayBills().observe(getActivity(), new Observer<List<Bill>>() {
             @Override
             public void onChanged(List<Bill> billPresents) {
                 Log.d(TAG, "onChanged: billPresents size: " + billPresents.size());
-                homeBillAdapter.updateItems(billPresents);
+                billAdapter.updateItems(billPresents);
             }
         });
 
@@ -210,12 +217,8 @@ public class HomeFragment extends Fragment {
                 if (leger == null) return;
 
                 binding.homeToolBarTitle.setText(leger.getTitle());
-                if (leger.getCoverType() == Resource.ResourceType.SYSTEM_COVER) {
-                    ResourceUtils.bindImageDrawable(getContext(), ResourceUtils.getDrawable(leger.getCoverPath()))
-                            .centerCrop().into(binding.homeHeaderCoverIv);
-                } else {
-                    //TODO 非系统图片的加载
-                }
+                GlideUtils.bindLegerCover(getActivity(), leger.getItemIconResName(), leger.getCoverType())
+                        .centerCrop().into(binding.homeHeaderCoverIv);
             }
         });
 

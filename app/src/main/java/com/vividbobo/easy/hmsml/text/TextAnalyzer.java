@@ -16,19 +16,18 @@ public abstract class TextAnalyzer {
     public interface OnTextAnalyzerSuccess {
         void onSuccess(List<Bill> results);
     }
-
+    private MLLocalTextSetting setting = new MLLocalTextSetting.Factory().setOCRMode(MLLocalTextSetting.OCR_DETECT_MODE)
+            // 设置识别语种。
+            .setLanguage("zh").create();
+    protected MLTextAnalyzer analyzer = MLAnalyzerFactory.getInstance().getLocalTextAnalyzer(setting);
+    public abstract void analyze(Bitmap bitmap);
     protected OnTextAnalyzerSuccess onTextAnalyzerSuccess;
 
     public void setOnTextAnalyzerSuccess(OnTextAnalyzerSuccess onTextAnalyzerSuccess) {
         this.onTextAnalyzerSuccess = onTextAnalyzerSuccess;
     }
+    //使用自定义参数MLLocalTextSetting配置端侧文本分析器。
 
-
-    //方式二：使用自定义参数MLLocalTextSetting配置端侧文本分析器。
-    private MLLocalTextSetting setting = new MLLocalTextSetting.Factory().setOCRMode(MLLocalTextSetting.OCR_DETECT_MODE)
-            // 设置识别语种。
-            .setLanguage("zh").create();
-    protected MLTextAnalyzer analyzer = MLAnalyzerFactory.getInstance().getLocalTextAnalyzer(setting);
 
     protected Context mContext;
     private List<Bill> mBillList = new ArrayList<>();
@@ -45,6 +44,5 @@ public abstract class TextAnalyzer {
         this.mContext = mContext;
     }
 
-    public abstract void analyze(Bitmap bitmap);
 
 }

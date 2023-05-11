@@ -17,6 +17,9 @@ public interface PayeeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Payee payee);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Payee> payee);
+
     @Query("select * from payees")
     LiveData<List<Payee>> getAllStores();
 
@@ -25,4 +28,7 @@ public interface PayeeDao {
 
     @Delete
     void delete(Payee item);
+
+    @Query("select * from payees where id=:payeeId")
+    LiveData<Payee> getPayeeById(Integer payeeId);
 }

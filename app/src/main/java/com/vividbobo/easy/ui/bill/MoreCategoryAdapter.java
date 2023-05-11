@@ -18,21 +18,20 @@ public class MoreCategoryAdapter extends CommonAdapter<Category, GridCategoryVie
 
     public MoreCategoryAdapter(Context mContext) {
         super(mContext);
-        setEnableHeader(true);
     }
 
     @Override
-    protected GridCategoryViewHolder onCreateHeaderViewHolder(@NonNull ViewGroup parent,int viewType) {
-        return onCreateNormalViewHolder(parent,viewType);
+    protected GridCategoryViewHolder onCreateHeaderViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return onCreateNormalViewHolder(parent, viewType);
     }
 
     @Override
-    protected RecyclerView.ViewHolder onCreateFooterViewHolder(@NonNull ViewGroup parent,int viewType) {
+    protected RecyclerView.ViewHolder onCreateFooterViewHolder(@NonNull ViewGroup parent, int viewType) {
         return null;
     }
 
     @Override
-    protected GridCategoryViewHolder onCreateNormalViewHolder(@NonNull ViewGroup parent,int viewType) {
+    protected GridCategoryViewHolder onCreateNormalViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_category, parent, false);
         return new GridCategoryViewHolder(view);
     }
@@ -40,7 +39,7 @@ public class MoreCategoryAdapter extends CommonAdapter<Category, GridCategoryVie
     @Override
     protected void onBindNormalViewHolder(@NonNull GridCategoryViewHolder holder, int position) {
         Category item = getItemByHolderPosition(position);
-        holder.bind(item);
+        holder.bind(mContext, item);
     }
 
     @Override

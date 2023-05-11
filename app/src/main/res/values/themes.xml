@@ -14,7 +14,6 @@
         <!-- Customize your theme here. -->
         <item name="android:windowTranslucentStatus">true</item>
 
-
     </style>
 
     <style name="BottomSheetFragmentTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">

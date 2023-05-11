@@ -214,34 +214,34 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.Material3.CardView.Elevated"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp">
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                style="@style/Widget.Material3.CardView.Elevated"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginEnd="8dp"-->
+<!--                android:layout_marginBottom="8dp">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="8dp"
-                    android:gravity="center"
-                    android:text="对比统计"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="24dp"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="对比统计"-->
+<!--                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />-->
 
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/bar_chart2"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </com.google.android.material.card.MaterialCardView>
+<!--                <com.github.mikephil.charting.charts.BarChart-->
+<!--                    android:id="@+id/bar_chart2"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="300dp"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    android:layout_marginBottom="8dp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+<!--            </com.google.android.material.card.MaterialCardView>-->
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

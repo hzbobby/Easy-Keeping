@@ -16,24 +16,19 @@ import com.vividbobo.easy.adapter.viewholder.HomeBillItemVH;
 import com.vividbobo.easy.adapter.viewholder.HomeBillTransferVH;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillInfo;
-import com.vividbobo.easy.database.model.BillPresent;
 import com.vividbobo.easy.ui.others.commonAdapter.CommonAdapter;
 
-public class HomeBillAdapter extends CommonAdapter<Bill, HomeBillHeaderVH, HomeBillItemVH, HomeBillFooterVH> {
+public class BillAdapter extends CommonAdapter<Bill, HomeBillHeaderVH, HomeBillItemVH, HomeBillFooterVH> {
     private static final int ITEM_TYPE_TRANSFER = 102;
 
-    public HomeBillAdapter(Context mContext) {
+    public BillAdapter(Context mContext) {
         super(mContext);
         setEnableHeader(true);
-        setEnableFooter(true);
-        setEnableMaxCount(true);
-        setMaxCount(10);
     }
 
     @Override
     public int getItemViewType(int position) {
         int viewType = super.getItemViewType(position);
-        Log.d("TAG", "getItemViewType: super viewType: " + viewType);
         if (viewType == CommonAdapter.ITEM_TYPE_NORMAL) {
             Bill bill = getItemByHolderPosition(position);
             if (bill.getBillType() == Bill.TRANSFER) {
@@ -41,7 +36,6 @@ public class HomeBillAdapter extends CommonAdapter<Bill, HomeBillHeaderVH, HomeB
                 viewType = ITEM_TYPE_TRANSFER;
             }
         }
-        Log.d("TAG", "getItemViewType: final viewType" + viewType);
         return viewType;
     }
 

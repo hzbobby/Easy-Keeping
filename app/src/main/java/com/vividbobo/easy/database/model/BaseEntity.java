@@ -1,6 +1,8 @@
 package com.vividbobo.easy.database.model;
 
-public abstract class BaseEntity extends ServerBaseEntity {
+import java.io.Serializable;
+
+public abstract class BaseEntity extends ServerBaseEntity implements Serializable {
 
     private String title;
     private String desc;
@@ -49,4 +51,13 @@ public abstract class BaseEntity extends ServerBaseEntity {
         this.desc = desc;
     }
 
+    @Override
+    public String toString() {
+        return "BaseEntity{" +
+                "title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                ", iconResId=" + iconResId +
+                ", iconResName='" + iconResName + '\'' +
+                '}';
+    }
 }

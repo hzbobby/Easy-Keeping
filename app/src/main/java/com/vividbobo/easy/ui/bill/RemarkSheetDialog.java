@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.vividbobo.easy.databinding.DialogFullRemarkBinding;
@@ -45,7 +46,6 @@ public class RemarkSheetDialog extends BottomSheetDialog<DialogFullRemarkBinding
 
     @Override
     public void onViewBinding(DialogFullRemarkBinding binding) {
-        binding.dialogFullEditText.setText(billViewModel.getRemark().getValue());
 
         binding.dialogFullExpendLessIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +89,12 @@ public class RemarkSheetDialog extends BottomSheetDialog<DialogFullRemarkBinding
                     return true;
                 }
                 return false;
+            }
+        });
+        billViewModel.getInputRemark().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                binding.dialogFullEditText.setText(s);
             }
         });
 

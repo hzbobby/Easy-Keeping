@@ -20,8 +20,22 @@ import java.util.Locale;
 public class Converters {
 
     @TypeConverter
+    public static Timestamp toTimestamp(String value) {
+        Type timestampType = new TypeToken<Timestamp>() {
+        }.getType();
+        return new Gson().fromJson(value, timestampType);
+    }
+
+    @TypeConverter
+    public static String toTimestampString(Timestamp value) {
+        Gson gson = new Gson();
+        return gson.toJson(value);
+    }
+
+    @TypeConverter
     public static List<Tag> fromString(String value) {
-        Type listType = new TypeToken<List<Tag>>() {}.getType();
+        Type listType = new TypeToken<List<Tag>>() {
+        }.getType();
         return new Gson().fromJson(value, listType);
     }
 

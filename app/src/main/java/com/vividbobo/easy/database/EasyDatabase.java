@@ -133,6 +133,9 @@ public abstract class EasyDatabase extends RoomDatabase {
                     dao.insert(new Config(Config.TYPE_LEGER, 1));
                     //默认角色
                     dao.insert(new Config(Config.TYPE_ROLE, 1));
+                    //上次选中账户
+                    dao.insert(new Config(Config.TYPE_ACCOUNT, 1));
+                    dao.insert(new Config(Config.TYPE_TAR_ACCOUNT, 1));
 
                     //自动记账
                     //默认账本
@@ -161,7 +164,8 @@ public abstract class EasyDatabase extends RoomDatabase {
                 @Override
                 public Object call() throws Exception {
                     LegerDao legerDao = INSTANCE.legerDao();
-                    legerDao.insert(new Leger(1, "日常账本", "默认账本", "bg1", Resource.ResourceType.SYSTEM_COVER));
+                    Leger leger = new Leger(1, "日常账本", "默认账本", "bg1", Resource.ResourceType.SYSTEM_COVER);
+                    legerDao.insert(leger);
                     return null;
                 }
             });

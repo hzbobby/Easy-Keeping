@@ -32,4 +32,10 @@ public interface CategoryDao {
 
     @Query("select * from categories where id==:categoryId")
     Category getRawCategoryById(Integer categoryId);
+
+    @Query("select * from categories")
+    LiveData<List<Category>> getAllCategory();
+
+    @Query("select * from categories where type=:type")
+    LiveData<List<Category>> getCategoriesByType(Integer type);
 }

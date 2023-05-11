@@ -1,6 +1,7 @@
 package com.vividbobo.easy.viewmodel;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -25,232 +26,272 @@ import java.util.List;
  * 用于三个Fragment之间共享数据
  */
 public class BillViewModel extends AndroidViewModel {
-    //用 viewmodel 共享数据
+    private final BillsRepo billsRepo;
+    private final LiveData<Category> chosenExpCategory;
+    private final LiveData<Category> chosenInCategory;
+    private final LiveData<Leger> chosenLeger;
+    private final LiveData<Account> lastSelectedAccount;
+    private final LiveData<Leger> selectedLeger;
 
-    //金额
-    private final MutableLiveData<Long> amount = new MutableLiveData<>(0L);
-    //支出类别
-    private final MutableLiveData<Category> categoryExpenditure = new MutableLiveData<>(new Category("其他", "category_othe_others"));
-    //收入类别
-    private final MutableLiveData<Category> categoryIncome = new MutableLiveData<>(new Category("其他", "category_othe_others"));
+    private MutableLiveData<List<Uri>> imageUris = new MutableLiveData<>(new ArrayList<>());
+//
+//
+//    //用 viewmodel 共享数据
+//
+//    //金额
+//    private final MutableLiveData<Long> amount = new MutableLiveData<>(0L);
+//    //支出类别
+//    private final MutableLiveData<Category> categoryExpenditure = new MutableLiveData<>(new Category("其他", "category_othe_others"));
+//    //收入类别
+//    private final MutableLiveData<Category> categoryIncome = new MutableLiveData<>(new Category("其他", "category_othe_others"));
+//
+//    //账单类别
+//    private final MutableLiveData<Integer> billType = new MutableLiveData<>(Bill.EXPENDITURE);
+//
+//    //账户
+//    private Account tarAccount = null;
+//    private Account srcAccount = null;
+//
+//    //备注
+//    private final MutableLiveData<String> remark = new MutableLiveData<>("");
+//    //标签
+//    private final MutableLiveData<List<Tag>> tags = new MutableLiveData<>(new ArrayList<>());
+//    //日期
+//    private final MutableLiveData<Date> date = new MutableLiveData<>(new Date(System.currentTimeMillis()));  //或改用long
+//    //时间
+//    private final MutableLiveData<LocalTime> time = new MutableLiveData<>(LocalTime.now());
+//    private Payee payee = null;
+//    private final MutableLiveData<String> currencyCode = new MutableLiveData<>();
+//    private Boolean isIncomeExpenditureIncluded = false;
+//    private Boolean isBudgetIncluded = false;
+//    private Role role = null;
+//
+//
+//    private BillsRepo billsRepo;
+//    private Leger leger;
+//    private MutableLiveData<List<String>> imagePaths = new MutableLiveData<>(new ArrayList<>());
 
-    //账单类别
-    private final MutableLiveData<Integer> billType = new MutableLiveData<>(Bill.EXPENDITURE);
 
-    //账户
-    private Account tarAccount = null;
-    private Account srcAccount = null;
+    private final MutableLiveData<Date> billDate;
+    private final MutableLiveData<LocalTime> billTime;
+    private final MutableLiveData<List<Tag>> chosenTags;
+    private final MutableLiveData<List<String>> billImages;
+    private final MutableLiveData<Boolean> refundChecked;
+    private final MutableLiveData<Boolean> reimburseChecked;
+    private final MutableLiveData<Boolean> inExpIncludedChecked;
+    private final LiveData<Role> chosenRole;
+    private final MutableLiveData<String> inputRemark;
+    private final MutableLiveData<Long> billAmount;
+    private final LiveData<Payee> chosenPayee;
+    private final LiveData<Account> chosenTarAccount;
+    private final MutableLiveData<Boolean> budgetIncludedChecked;
+    private final MutableLiveData<Integer> billType;
 
-    //备注
-    private final MutableLiveData<String> remark = new MutableLiveData<>("");
-    //标签
-    private final MutableLiveData<List<Tag>> tags = new MutableLiveData<>(new ArrayList<>());
-    //日期
-    private final MutableLiveData<Date> date = new MutableLiveData<>(new Date(System.currentTimeMillis()));  //或改用long
-    //时间
-    private final MutableLiveData<LocalTime> time = new MutableLiveData<>(LocalTime.now());
-    private Payee payee = null;
-    private final MutableLiveData<String> currencyCode = new MutableLiveData<>();
-    private Boolean isIncomeExpenditureIncluded = false;
-    private Boolean isBudgetIncluded = false;
-    private Role role = null;
+    private Account srcAccount;
+    private Account tarAccount;
 
-
-    private BillsRepo billsRepo;
-    private Leger leger;
-    private MutableLiveData<List<String>> imagePaths = new MutableLiveData<>(new ArrayList<>());
 
     public BillViewModel(@NonNull Application application) {
         super(application);
-        billsRepo = new BillsRepo(application);
+        this.billsRepo = new BillsRepo(application);
+        chosenExpCategory = billsRepo.getSelectedExpCategory();
+        chosenInCategory = billsRepo.getSelectedIncCategory();
+        chosenLeger = billsRepo.getFilterLeger();
+        chosenRole = billsRepo.getSelectedRole();
+        chosenPayee = billsRepo.getSelectedPayee();
+        chosenTarAccount = billsRepo.getSelectedTarAccount();
+        lastSelectedAccount = billsRepo.getLastSelectedAccount();
+        selectedLeger = billsRepo.getSelectedLeger();
 
-    }
-
-    public void setFilterLegerId(Integer id) {
-        billsRepo.setFilterLegerId(id);
-    }
-
-    public LiveData<Leger> getSelectedLeger() {
-        return billsRepo.getSelectedLeger();
-    }
-
-    public Boolean getIncomeExpenditureIncluded() {
-        return isIncomeExpenditureIncluded;
-    }
-
-    public void setIncomeExpenditureIncluded(Boolean incomeExpenditureIncluded) {
-        isIncomeExpenditureIncluded = incomeExpenditureIncluded;
-    }
-
-    public Boolean getBudgetIncluded() {
-        return isBudgetIncluded;
-    }
-
-    public void setBudgetIncluded(Boolean budgetIncluded) {
-        isBudgetIncluded = budgetIncluded;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setStore(Payee payee) {
-        this.payee = payee;
-    }
-
-    public Payee getStore() {
-        return payee;
-    }
-
-    public void setAmount(Long aLong) {
-        amount.setValue(aLong);
-    }
-
-    public void setCategoryExpenditure(Category category) {
-        categoryExpenditure.setValue(category);
-    }
-
-    public void setCategoryIncome(Category category) {
-        categoryIncome.setValue(category);
-    }
-
-    public void setBillType(int type) {
-        billType.setValue(type);
-    }
-
-    public void setSrcAccount(Account account) {
-        this.srcAccount = account;
-    }
-
-    public void setTarAccount(Account account) {
-        tarAccount = account;
-    }
-
-    public void setRemark(String remarkStr) {
-        remark.setValue(remarkStr);
-    }
-
-    public void setTags(List<Tag> tagList) {
-        tags.setValue(tagList);
-    }
-
-    public void setDate(Date date) {
-        this.date.setValue(date);
-    }
-
-    public void setTime(LocalTime time) {
-        this.time.setValue(time);
-    }
-
-    public LiveData<Long> getAmount() {
-        return amount;
-    }
-
-    public LiveData<Category> getCategoryExpenditure() {
-        return categoryExpenditure;
-    }
-
-    public LiveData<Category> getCategoryIncome() {
-        return categoryIncome;
-    }
-
-    public LiveData<Integer> getBillType() {
-        return billType;
+        billDate = new MutableLiveData<>(new Date(System.currentTimeMillis()));
+        billTime = new MutableLiveData<>(LocalTime.now());
+        chosenTags = new MutableLiveData<>();
+        billImages = new MutableLiveData<>();
+        refundChecked = new MutableLiveData<>(false);
+        reimburseChecked = new MutableLiveData<>(false);
+        inExpIncludedChecked = new MutableLiveData<>(false);
+        budgetIncludedChecked = new MutableLiveData<>(false);
+        inputRemark = new MutableLiveData<String>();
+        billType = new MutableLiveData<>();
+        billAmount = new MutableLiveData<Long>();
     }
 
     public Account getSrcAccount() {
         return srcAccount;
     }
 
+    public void setSrcAccount(Account srcAccount) {
+        this.srcAccount = srcAccount;
+    }
+
     public Account getTarAccount() {
         return tarAccount;
     }
 
-    public LiveData<String> getRemark() {
-        return remark;
+    public void setTarAccount(Account tarAccount) {
+        this.tarAccount = tarAccount;
     }
 
-    public LiveData<List<Tag>> getTags() {
-        return tags;
+    public LiveData<Leger> getSelectedLeger() {
+        return selectedLeger;
     }
 
-    public LiveData<Date> getDate() {
-        return date;
+    public LiveData<Account> getLastSelectedAccount() {
+        return lastSelectedAccount;
     }
 
-    public LiveData<LocalTime> getTime() {
-        return time;
+
+    public LiveData<Payee> getChosenPayee() {
+        return chosenPayee;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode.setValue(currencyCode);
+    public LiveData<Leger> getChosenLeger() {
+        return chosenLeger;
     }
 
-    public LiveData<String> getCurrencyCode() {
-        return currencyCode;
+    public LiveData<Role> getChosenRole() {
+        return chosenRole;
     }
 
-    public void setLeger(Leger leger) {
-        this.leger = leger;
+    public void setFilterExpCategoryId(Integer id) {
+        billsRepo.setFilterExpCategoryId(id);
     }
 
-    public Leger getLeger() {
-        return leger;
+    public void setFilterIncCategoryId(Integer id) {
+        billsRepo.setFilterIncCategoryId(id);
     }
 
-    public void setImagePaths(List<String> result) {
-        this.imagePaths.setValue(result);
+    public void setChosenLegerId(Integer legerId) {
+        billsRepo.setFilterLegerId(legerId);
     }
 
-    public MutableLiveData<List<String>> getImagePaths() {
-        return imagePaths;
+    public void setBillDate(Date date) {
+        billDate.postValue(date);
     }
 
-    public void insert(Bill bill) {
-        billsRepo.insert(bill);
+    public LiveData<Date> getBillDate() {
+        return billDate;
     }
 
-    public void setFilterRoleId(Integer roleId) {
+    public void setBillTime(LocalTime time) {
+        billTime.postValue(time);
+    }
+
+    public LiveData<LocalTime> getBillTime() {
+        return billTime;
+    }
+
+    public LiveData<Category> getChosenExpCategory() {
+        return chosenExpCategory;
+    }
+
+    public LiveData<Category> getChosenInCategory() {
+        return chosenInCategory;
+    }
+
+    public void setChosenRoleId(Integer roleId) {
         billsRepo.setFilterRoleId(roleId);
     }
 
-    public LiveData<Role> getSelectedRole() {
-        return billsRepo.getSelectedRole();
+    public void setChosenPayeeId(Integer payeeId) {
+        billsRepo.setFilterPayeeId(payeeId);
     }
 
-    public void setFilterSrcAccountId(Integer id) {
-        billsRepo.setFilterSrcAccountId(id);
+    public void setChosenAccountId(Integer accountId) {
+        billsRepo.setFilterAccountId(accountId);
     }
 
-    public LiveData<Account> getSelectedSrcAccount() {
-        return billsRepo.getSelectedSrcAccount();
+    public void setChosenTags(List<Tag> tags) {
+        chosenTags.postValue(tags);
     }
 
-    public void setFilterTarAccountId(Integer tarAccountId) {
+    public void setBillImages(List<String> imagePaths) {
+        billImages.postValue(imagePaths);
+    }
+
+    public void setRefundChecked(Boolean refund) {
+        refundChecked.postValue(refund);
+    }
+
+    public void setReimburseChecked(Boolean reimburse) {
+        reimburseChecked.postValue(reimburse);
+    }
+
+    public void setInExpIncludedChecked(Boolean incomeExpenditureIncluded) {
+        inExpIncludedChecked.postValue(incomeExpenditureIncluded);
+    }
+
+
+    public void setBudgetIncludedChecked(Boolean budgetIncluded) {
+        budgetIncludedChecked.postValue(budgetIncluded);
+    }
+
+    public void setChosenTarAccountId(Integer tarAccountId) {
         billsRepo.setFilterTarAccountId(tarAccountId);
     }
 
-    public LiveData<Account> getSelectedTarAccount() {
-        return billsRepo.getSelectedTarAccount();
+    public void setRemark(String remark) {
+        inputRemark.postValue(remark);
     }
 
-    public void setFilterExpCategoryId(Integer categoryId) {
-        billsRepo.setFilterExpCategoryId(categoryId);
+
+    public void setBillType(int type) {
+        billType.postValue(type);
     }
 
-    public void setFilterIncCategoryId(Integer categoryId) {
-        billsRepo.setFilterIncCategoryId(categoryId);
+    public LiveData<Integer> getBillType() {
+        return billType;
     }
 
-    public LiveData<Category> getSelectedExpCategory() {
-        return billsRepo.getSelectedExpCategory();
+    public LiveData<List<Tag>> getChosenTags() {
+        return chosenTags;
     }
 
-    public LiveData<Category> getSelectedIncCategory() {
-        return billsRepo.getSelectedIncCategory();
+    public LiveData<List<String>> getBillImages() {
+        return billImages;
+    }
+
+    public LiveData<Boolean> getRefundChecked() {
+        return refundChecked;
+    }
+
+    public LiveData<Boolean> getReimburseChecked() {
+        return reimburseChecked;
+    }
+
+    public LiveData<Boolean> getInExpIncludedChecked() {
+        return inExpIncludedChecked;
+    }
+
+    public LiveData<String> getInputRemark() {
+        return inputRemark;
+    }
+
+    public LiveData<Boolean> getBudgetIncludedChecked() {
+        return budgetIncludedChecked;
+    }
+
+
+    public void setBillAmount(Long amount) {
+        billAmount.postValue(amount);
+    }
+
+    public LiveData<Long> getBillAmount() {
+        return billAmount;
+    }
+
+    public void setImageUris(List<Uri> objects) {
+        List<Uri> uris = imageUris.getValue();
+        if (uris == null) uris = new ArrayList<>();
+        uris.addAll(objects);
+        imageUris.postValue(uris);
+    }
+
+    public LiveData<List<Uri>> getImageUris() {
+        return imageUris;
+    }
+
+    public void save(Bill bill) {
+        billsRepo.save(bill);
     }
 }

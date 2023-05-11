@@ -9,6 +9,7 @@ import com.vividbobo.easy.database.EasyDatabase;
 import com.vividbobo.easy.database.dao.BillDao;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillInfo;
+import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.utils.AsyncProcessor;
 import com.vividbobo.easy.utils.CalendarUtils;
 
@@ -19,7 +20,6 @@ import java.util.concurrent.Callable;
 public class HomeRepo {
 
     private final BillDao billDao;
-
     private final LiveData<List<Bill>> todayBills;
     private final LiveData<BillInfo> monthBillInfo;
     private LiveData<BillInfo> todayBillInfo;
@@ -29,9 +29,10 @@ public class HomeRepo {
         EasyDatabase db = EasyDatabase.getDatabase(application);
         billDao = db.billDao();
         today = new Date(System.currentTimeMillis());
-        todayBills = billDao.getBillsByDate(today);
-        todayBillInfo = billDao.getBillInfoByDate(today);
-        monthBillInfo = billDao.getBillInfoByMonth(CalendarUtils.getYYYYMM(today));
+        LiveData<Leger> selectedLeger = db.configDao().getSelectedLeger();
+        todayBills = Transformations.switchMap(selectedLeger, legerId -> billDao.getBillsByDateInLeger(today, legerId.getId()));
+        todayBillInfo = Transformations.switchMap(selectedLeger, legerId -> billDao.getBillInfoByDateInLeger(today, legerId.getId()));
+        monthBillInfo = Transformations.switchMap(selectedLeger, legerId -> billDao.getBillInfoByMonthInLeger(CalendarUtils.getYYYYMM(today), legerId.getId()));
     }
 
     public LiveData<BillInfo> getMonthBillInfo() {
@@ -58,9 +59,6 @@ public class HomeRepo {
         return todayBills;
     }
 
-    public LiveData<List<Bill>> getBillsByDate(Date date) {
-        return billDao.getBillsByDate(date);
-    }
 
     public void updateBill(Bill bill) {
         AsyncProcessor.getInstance().submit(new Callable<Object>() {

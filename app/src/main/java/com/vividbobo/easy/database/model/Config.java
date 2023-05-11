@@ -9,6 +9,8 @@ public class Config extends ServerBaseEntity {
     public static final int TYPE_LEGER = 0x0001;
     public static final int TYPE_ROLE = 0x0002;
     public static final int TYPE_ACCOUNT = 0x0003;
+    public static final int TYPE_TAR_ACCOUNT = 0x0004;
+
 
     public static final int TYPE_CATEGORY_EXPENDITURE = 0x0040;
     public static final int TYPE_CATEGORY_INCOME = 0x0041;

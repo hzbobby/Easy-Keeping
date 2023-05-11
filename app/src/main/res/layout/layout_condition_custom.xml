@@ -94,7 +94,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="center"
-                android:text="2023/04/05 - 2023/05/23"
+                android:text="自定义日期范围"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
         </com.google.android.material.card.MaterialCardView>
 

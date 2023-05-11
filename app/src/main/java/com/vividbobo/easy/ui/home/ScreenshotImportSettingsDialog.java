@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 import com.vividbobo.easy.database.model.Account;
-import com.vividbobo.easy.databinding.DialogScreenshotImportSettingsBinding;
+import com.vividbobo.easy.databinding.DialogAccountSettingsBinding;
 import com.vividbobo.easy.ui.common.BaseFullScreenMaterialDialog;
 import com.vividbobo.easy.ui.others.OnItemClickListener;
 import com.vividbobo.easy.utils.ResourceUtils;
@@ -20,7 +20,7 @@ import com.vividbobo.easy.viewmodel.ScreenshotImportViewModel;
 import java.util.List;
 import java.util.Objects;
 
-public class ScreenshotImportSettingsDialog extends BaseFullScreenMaterialDialog<DialogScreenshotImportSettingsBinding> {
+public class ScreenshotImportSettingsDialog extends BaseFullScreenMaterialDialog<DialogAccountSettingsBinding> {
     public static final String TAG = "ScreenshotImportSetting";
     private ScreenshotImportViewModel screenshotImportViewModel;
 
@@ -40,12 +40,12 @@ public class ScreenshotImportSettingsDialog extends BaseFullScreenMaterialDialog
     }
 
     @Override
-    protected DialogScreenshotImportSettingsBinding getViewBinding(@NonNull LayoutInflater inflater) {
-        return DialogScreenshotImportSettingsBinding.inflate(inflater);
+    protected DialogAccountSettingsBinding getViewBinding(@NonNull LayoutInflater inflater) {
+        return DialogAccountSettingsBinding.inflate(inflater);
     }
 
     @Override
-    protected void onViewBinding(DialogScreenshotImportSettingsBinding binding) {
+    protected void onViewBinding(DialogAccountSettingsBinding binding) {
         binding.appBarLayout.layoutToolBarTitleTv.setText("截图导入设置");
         binding.appBarLayout.layoutToolBar.setNavigationOnClickListener(v -> dismiss());
         DropdownMenuAdapter<Account> wechatAdapter = new DropdownMenuAdapter<Account>(getActivity());
@@ -67,8 +67,8 @@ public class ScreenshotImportSettingsDialog extends BaseFullScreenMaterialDialog
             }
         });
 
-        binding.wechatAnalyzeAccountTv.setAdapter(wechatAdapter);
-        binding.alipayAnalyzeAccountTv.setAdapter(alipayAdapter);
+        binding.wechatAccountTv.setAdapter(wechatAdapter);
+        binding.alipayAccountTv.setAdapter(alipayAdapter);
 
         screenshotImportViewModel.getAllAccounts().observe(getActivity(), new Observer<List<Account>>() {
             @Override
@@ -85,8 +85,8 @@ public class ScreenshotImportSettingsDialog extends BaseFullScreenMaterialDialog
             public void onChanged(Account account) {
                 if (Objects.nonNull(account)) {
 
-                    binding.wechatAnalyzeAccountTil.getEditText().setText(account.getTitle());
-                    binding.wechatAnalyzeAccountTil.setStartIconDrawable(ResourceUtils.getDrawable(account.getIconResName()));
+                    binding.wechatAccountTil.getEditText().setText(account.getTitle());
+                    binding.wechatAccountTil.setStartIconDrawable(ResourceUtils.getDrawable(account.getIconResName()));
                 }
             }
         });
@@ -94,8 +94,8 @@ public class ScreenshotImportSettingsDialog extends BaseFullScreenMaterialDialog
             @Override
             public void onChanged(Account account) {
                 if (Objects.nonNull(account)) {
-                    binding.alipayAnalyzeAccountTil.getEditText().setText(account.getTitle());
-                    binding.alipayAnalyzeAccountTil.setStartIconDrawable(ResourceUtils.getDrawable(account.getIconResName()));
+                    binding.alipayAccountTil.getEditText().setText(account.getTitle());
+                    binding.alipayAccountTil.setStartIconDrawable(ResourceUtils.getDrawable(account.getIconResName()));
                 }
             }
         });

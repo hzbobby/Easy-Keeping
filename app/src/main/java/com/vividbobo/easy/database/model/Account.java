@@ -9,6 +9,7 @@ import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 import com.vividbobo.easy.adapter.adapter.ExpandableAdapter;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity(tableName = "accounts")
 public class Account extends BaseEntity implements Serializable, ExpandableAdapter.ItemExpandableChild, Itemzable, DropdownMenuAdapter.DropdownMenuItem {
@@ -36,6 +37,7 @@ public class Account extends BaseEntity implements Serializable, ExpandableAdapt
         setAccountTypeIconResName(typeIconResName);
         setCurrencyCode(currencyCode);
         setIconResName(accountIconResName);
+        setCreateTime(new Timestamp(System.currentTimeMillis()));
     }
 
     public String getFormatBalance() {
@@ -125,5 +127,20 @@ public class Account extends BaseEntity implements Serializable, ExpandableAdapt
     @Override
     public String getItemDesc() {
         return "余额: " + getFormatBalance();
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                super.toString() +
+                "id=" + id +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", balance=" + balance +
+                ", cardNum='" + cardNum + '\'' +
+                ", remark='" + remark + '\'' +
+                ", accountTypeId=" + accountTypeId +
+                ", accountTypeTitle='" + accountTypeTitle + '\'' +
+                ", accountTypeIconResName='" + accountTypeIconResName + '\'' +
+                '}';
     }
 }

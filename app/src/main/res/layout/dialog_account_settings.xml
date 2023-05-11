@@ -11,8 +11,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/header_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical"
+        android:text="为使用自动记账，请先在设置打开无障碍服务"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar_layout" />
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/wechat_analyze_account_til"
+        android:id="@+id/wechat_account_til"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,18 +33,18 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar_layout">
+        app:layout_constraintTop_toBottomOf="@+id/header_title_tv">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/wechat_analyze_account_tv"
+            android:id="@+id/wechat_account_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="微信默认账户"
+            android:hint="微信账户"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/alipay_analyze_account_til"
+        android:id="@+id/alipay_account_til"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,26 +53,34 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wechat_analyze_account_til">
+        app:layout_constraintTop_toBottomOf="@+id/wechat_account_til">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/alipay_analyze_account_tv"
+            android:id="@+id/alipay_account_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="支付宝默认账户"
+            android:hint="支付宝账户"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/auto_delete_screenshot_sw"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/leger_til"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="自动删除截图"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alipay_analyze_account_til" />
+        app:layout_constraintTop_toBottomOf="@+id/alipay_account_til">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/leger_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="默认账本"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

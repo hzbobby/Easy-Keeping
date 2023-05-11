@@ -2,6 +2,7 @@ package com.vividbobo.easy.database.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -19,8 +20,14 @@ public interface AccountDao {
     @Query("select * from accounts")
     LiveData<List<Account>> getAllAccounts();
 
+    @Query("update accounts set balance = balance+:amount where id=:legerId")
+    void updateLegerBalance(Integer legerId, Long amount);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Account account);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Account> account);
 
     @Query("select * from accounts where id==:id")
     ListenableFuture<Account> getAccountByID(int id);
@@ -33,4 +40,7 @@ public interface AccountDao {
 
     @Query("select * from accounts where id==:accountId")
     Account getRawAccountById(Integer accountId);
+
+    @Delete
+    void delete(Account item);
 }

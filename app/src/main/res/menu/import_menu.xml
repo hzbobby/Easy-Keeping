@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/data_import"
+        android:contentDescription="@string/data_import"
+        android:icon="@drawable/ic_table"
+        android:title="@string/data_import"
+        android:tooltipText="@string/data_import"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/import_setting"
+        android:title="导入设置"
+        android:tooltipText="导入设置"
+        app:showAsAction="never" />
+</menu>
