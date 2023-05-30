@@ -46,11 +46,11 @@ public class AliPayResultAnalyzer extends PayResultAnalyzer {
                         setSuccess(false);
                         Log.d(TAG, "exploreNodeHierarchy: infoNode: " + nodeInfo.getText()
                                 .toString());
+                        setAmount((long) (amount * 100));
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                         setSuccess(false);
                     }
-                    setAmount((long) (amount * 100));
                     break;
                 case 3:
                     //payee
@@ -60,9 +60,6 @@ public class AliPayResultAnalyzer extends PayResultAnalyzer {
                     //
                     setRemark(nodeInfo.getText().toString());
                     break;
-//                case 6:
-////                    setRemark(getRemark() + nodeInfo.getText().toString());
-//                    break;
                 default:
             }
             textViewCount++;

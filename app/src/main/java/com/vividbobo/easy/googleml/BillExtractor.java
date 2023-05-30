@@ -10,4 +10,6 @@ public interface BillExtractor {
     Boolean isSuccess();
 
     String getRemark();
+
+    String getItemName();
 }

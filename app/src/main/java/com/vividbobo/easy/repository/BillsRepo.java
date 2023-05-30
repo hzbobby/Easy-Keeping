@@ -46,6 +46,7 @@ public class BillsRepo {
     private final LiveData<Account> lastSelectedAccount;
     private final LiveData<Leger> selectedLeger;
     private final AccountDao accountDao;
+    private final ConfigDao configDao;
 
 
     //the LiveData
@@ -56,7 +57,7 @@ public class BillsRepo {
         this.billDao = db.billDao();
         LegerDao legerDao = db.legerDao();
         RoleDao roleDao = db.roleDao();
-        ConfigDao configDao = db.configDao();
+        configDao = db.configDao();
         accountDao = db.accountDao();
         CategoryDao categoryDao = db.categoryDao();
         PayeeDao payeeDao = db.payeeDao();
@@ -188,6 +189,18 @@ public class BillsRepo {
                 Long balance = bill.getBillType() == Bill.INCOME ? bill.getAmount() : -bill.getAmount();
                 srcAccount.setBalance(srcAccount.getBalance() + balance);
                 accountDao.update(srcAccount);
+                return null;
+            }
+        });
+    }
+
+    public void setLastSelectedAccountId(Integer accountId) {
+        if (accountId == null) return;
+        if (accountId <= 0) return;
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                configDao.updateSelectedId(Config.TYPE_ACCOUNT, accountId);
                 return null;
             }
         });

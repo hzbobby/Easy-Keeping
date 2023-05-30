@@ -86,6 +86,10 @@ public class CsvUtil {
         return Boolean.parseBoolean(boolStr);
     }
 
+    private static String toString(String str) {
+        if (str.isBlank()) return null;
+        return str;
+    }
 
     static {
         HeaderColumnNameMappingStrategy<Bill> billStrategy = new HeaderColumnNameMappingStrategy<Bill>() {
@@ -96,26 +100,30 @@ public class CsvUtil {
                 bill.setAmount(toLong(line[1]));
                 bill.setBillType(toInteger(line[2]));
                 bill.setCategoryId(toInteger(line[3]));
-                bill.setCategoryTitle(line[4]);
-                bill.setCategoryIconResName(line[5]);
+                bill.setCategoryTitle(CsvUtil.toString(line[4]));
+                bill.setCategoryIconResName(CsvUtil.toString(line[5]));
 
                 bill.setLegerId(toInteger(line[6]));
-                bill.setLegerTitle(line[7]);
+                bill.setLegerTitle(CsvUtil.toString(line[7]));
                 bill.setRoleId(toInteger(line[8]));
-                bill.setRoleTitle(line[9]);
+                bill.setRoleTitle(CsvUtil.toString(line[9]));
                 bill.setAccountId(toInteger(line[10]));
-                bill.setAccountTitle(line[11]);
-                bill.setAccountIconResName(line[12]);
+                bill.setAccountTitle(CsvUtil.toString(line[11]));
+                bill.setAccountIconResName(CsvUtil.toString(line[12]));
 
                 bill.setPayeeId(toInteger(line[13]));
-                bill.setPayeeTitle(line[14]);
+                bill.setPayeeTitle(CsvUtil.toString(line[14]));
                 bill.setTarAccountId(toInteger(line[15]));
-                bill.setTarAccountTitle(line[16]);
-                bill.setTarAccountIconResName(line[17]);
-                bill.setCurrencyCode(line[18]);
+                bill.setTarAccountTitle(CsvUtil.toString(line[16]));
+                bill.setTarAccountIconResName(CsvUtil.toString(line[17]));
+                bill.setCurrencyCode(CsvUtil.toString(line[18]));
                 bill.setTags(Converters.fromString(line[19]));
-                bill.setImagePaths(Converters.fromStringToStringList(line[20]));
-                bill.setRemark(line[21]);
+
+                List<String> imagePathList = Converters.fromStringToStringList(line[20]);
+                Log.d("TAG", "populateNewBean: " + imagePathList.size());
+                if (Objects.nonNull(imagePathList) && !imagePathList.isEmpty())
+                    bill.setImagePaths(imagePathList);
+                bill.setRemark(CsvUtil.toString(line[21]));
                 bill.setRefund(toBoolean(line[22]));
                 bill.setReimburse(toBoolean(line[23]));
                 bill.setIncomeExpenditureIncluded(toBoolean(line[24]));
@@ -354,12 +362,12 @@ public class CsvUtil {
 
     public static Map<String, List> readCSVFolder(Uri selectedFolderUri, Context context) {
         Map<String, List> map = new HashMap<>();
-        map.put(ConstantValue.EXPORT_BILL_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_LEGER_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_ACCOUNT_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_CATEGORY_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_ROLE_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_PAYEE_CSV_FILENAME,new ArrayList());
+        map.put(ConstantValue.EXPORT_BILL_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_LEGER_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_ACCOUNT_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_CATEGORY_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_ROLE_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_PAYEE_CSV_FILENAME, new ArrayList());
         ContentResolver contentResolver = context.getContentResolver();
 
         // 授予选择的文件夹uri以读取其内容的权限
@@ -402,12 +410,12 @@ public class CsvUtil {
 
     public static Map<String, List> readCSVFiles(List<Uri> uris, Context context) {
         Map<String, List> map = new HashMap<>();
-        map.put(ConstantValue.EXPORT_BILL_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_LEGER_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_ACCOUNT_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_CATEGORY_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_ROLE_CSV_FILENAME,new ArrayList());
-        map.put(ConstantValue.EXPORT_PAYEE_CSV_FILENAME,new ArrayList());
+        map.put(ConstantValue.EXPORT_BILL_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_LEGER_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_ACCOUNT_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_CATEGORY_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_ROLE_CSV_FILENAME, new ArrayList());
+        map.put(ConstantValue.EXPORT_PAYEE_CSV_FILENAME, new ArrayList());
 
 
         for (Uri fileUri : uris) {

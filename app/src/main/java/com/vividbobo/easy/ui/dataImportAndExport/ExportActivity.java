@@ -111,14 +111,14 @@ public class ExportActivity extends BaseActivity implements View.OnClickListener
                         //退款
                         bill.setRefund(true);
                         //dismiss?
-//                        homeViewModel.updateBill(bill);
+                        filterViewModel.updateBill(bill);
                         bottomSheet.dismiss();
                     }
                 });
                 bottomSheet.setOnDeleteClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        homeViewModel.deleteBill(bill);
+                        filterViewModel.deleteBill(bill);
                         bottomSheet.dismiss();
                     }
                 });
@@ -126,7 +126,7 @@ public class ExportActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ExportActivity.this, BillActivity.class);
-                        intent.putExtra("data", bill);
+                        intent.putExtra(BillActivity.KEY_DATA_BILL, bill);
                         startActivity(intent);
                     }
                 });
@@ -202,10 +202,11 @@ public class ExportActivity extends BaseActivity implements View.OnClickListener
             }
         }
         queryCondition.getStringMap().clear();
-        queryCondition.getStringMap().put(QueryCondition.BILL_REMARK, binding.remarkTil.getEditText().getText().toString());
+        if (!binding.remarkTil.getEditText().getText().toString().isBlank())
+            queryCondition.getStringMap().put(QueryCondition.BILL_REMARK, binding.remarkTil.getEditText().getText().toString());
     }
 
-    private void addCheckedFilter() {
+    private void filterConditions() {
         addUnCheckedIds(queryCondition.getIntSetMap().get(QueryCondition.BILL_LEGER), legers);
         addUnCheckedIds(queryCondition.getIntSetMap().get(QueryCondition.BILL_ACCOUNT), accounts);
         addUnCheckedIds(queryCondition.getIntSetMap().get(QueryCondition.BILL_ROLE), roles);
@@ -259,7 +260,7 @@ public class ExportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void search() {
-        addCheckedFilter();
+        filterConditions();
         addInputFilter();
         addDateFilter();
 

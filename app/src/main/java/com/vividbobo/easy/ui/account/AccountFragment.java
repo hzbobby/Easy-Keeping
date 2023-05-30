@@ -69,6 +69,7 @@ public class AccountFragment extends Fragment {
         AccountViewModel accountViewModel =
                 new ViewModelProvider(this).get(AccountViewModel.class);
         operationDialog = new ContextOperationMenuDialog<>();
+        operationDialog.setMenuItemVisible(ContextOperationMenuDialog.MENU_ITEM_DETAIL,View.GONE);
         binding = FragmentAccountBinding.inflate(inflater, container, false);
 
         binding.accountToolBar.setNavigationOnClickListener(new View.OnClickListener() {

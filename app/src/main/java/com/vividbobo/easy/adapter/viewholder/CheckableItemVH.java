@@ -39,7 +39,12 @@ public class CheckableItemVH<T extends Itemzable> extends RecyclerView.ViewHolde
             if (entity.getItemIconResName() == null || entity.getItemIconResName().isEmpty()) {
                 ResourceUtils.bindImageDrawable(context, ResourceUtils.getTextImageIcon(entity.getItemTitle(), ResourceUtils.getColor(R.color.black))).centerCrop().into(iconIv);
             } else {
-                ResourceUtils.bindImageDrawable(context, ResourceUtils.getDrawable(entity.getItemIconResName())).centerCrop().into(iconIv);
+                if (entity.getItemIconResName().contains("category")) {
+                    ResourceUtils.bindImageDrawable(context, ResourceUtils.getTintedDrawable(entity.getItemIconResName(), ResourceUtils.getColor(R.color.black)
+                    )).centerCrop().into(iconIv);
+                } else {
+                    ResourceUtils.bindImageDrawable(context, ResourceUtils.getDrawable(entity.getItemIconResName())).centerInside().into(iconIv);
+                }
             }
         } else {
             iconIv.setVisibility(View.GONE);

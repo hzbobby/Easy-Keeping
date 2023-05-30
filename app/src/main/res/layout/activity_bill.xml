@@ -173,15 +173,15 @@
             <!--                android:text="@string/receive_payment"-->
             <!--                app:chipCornerRadius="36dp" />-->
 
-<!--            <com.google.android.material.chip.Chip-->
-<!--                android:id="@+id/bill_statistics_chip"-->
-<!--                style="@style/Widget.Material3.Chip.Assist.Elevated"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="5dp"-->
-<!--                android:checkable="true"-->
-<!--                android:text="@string/statistics"-->
-<!--                app:chipCornerRadius="36dp" />-->
+            <!--            <com.google.android.material.chip.Chip-->
+            <!--                android:id="@+id/bill_statistics_chip"-->
+            <!--                style="@style/Widget.Material3.Chip.Assist.Elevated"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginEnd="5dp"-->
+            <!--                android:checkable="true"-->
+            <!--                android:text="@string/statistics"-->
+            <!--                app:chipCornerRadius="36dp" />-->
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/bill_in_exp_chip"
@@ -245,6 +245,7 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_calculate"
                 android:tooltipText="@string/calculater"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/bill_pick_leger_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/bill_pick_leger_iv" />

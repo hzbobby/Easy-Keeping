@@ -1,5 +1,7 @@
 package com.vividbobo.easy.database.converter;
 
+import android.util.Log;
+
 import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
@@ -14,10 +16,31 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class Converters {
+//    public static Integer[] toIntegerArray(Set<Integer> integerSet) {
+//        Integer[] res = new Integer[integerSet.size()];
+//        int cnt = 0;
+//        for (Integer num :
+//                integerSet) {
+//            res[cnt] = num;
+//            cnt++;
+//        }
+//        return res;
+//    }
+//
+//    public static Set<Integer> toIntegerSet(Integer[] integerArray) {
+//        Set<Integer> res = new HashSet<>();
+//        for (int i = 0; i < integerArray.length; i++) {
+//            res.add(integerArray[i]);
+//        }
+//        return res;
+//    }
+
 
     @TypeConverter
     public static Timestamp toTimestamp(String value) {
@@ -100,8 +123,13 @@ public class Converters {
         if (string == null) {
             return null;
         }
-
-        return new ArrayList<>(Arrays.asList(string.split(",")));
+        String[] splitStrArr = string.strip().split(",");
+        ArrayList<String> res = new ArrayList<String>();
+        for (int i = 0; i < splitStrArr.length; i++) {
+            if (splitStrArr[i].strip().isEmpty()) continue;
+            res.add(splitStrArr[i]);
+        }
+        return res;
     }
 
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

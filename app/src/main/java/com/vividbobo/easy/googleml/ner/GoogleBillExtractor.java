@@ -1,4 +1,4 @@
-package com.vividbobo.easy.googleml;
+package com.vividbobo.easy.googleml.ner;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +17,7 @@ import com.google.mlkit.nl.entityextraction.EntityExtractor;
 import com.google.mlkit.nl.entityextraction.EntityExtractorOptions;
 import com.google.mlkit.nl.entityextraction.MoneyEntity;
 import com.vividbobo.easy.database.model.Bill;
+import com.vividbobo.easy.googleml.BillExtractor;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -66,22 +67,18 @@ public class GoogleBillExtractor implements BillExtractor {
     }
 
     public void extract(String text) {
-        remark = text;
+        beforeExtract(text);
         String preExtractText = preExtract(text);
         entityExtractor.downloadModelIfNeeded().addOnSuccessListener(ignored -> {
-            EntityExtractionParams params = new EntityExtractionParams.Builder(preExtractText).setPreferredLocale(Locale.CHINESE).build();
+            EntityExtractionParams params = new EntityExtractionParams.Builder(preExtractText)
+                    .setPreferredLocale(Locale.CHINESE).build();
             entityExtractor.annotate(params).addOnSuccessListener(new OnSuccessListener<List<EntityAnnotation>>() {
                 @Override
                 public void onSuccess(List<EntityAnnotation> entityAnnotations) {
-
                     Log.d(TAG, "onSuccess: entityAnnotations size: " + entityAnnotations.size());
-
                     String date = null, amount = null;
-
                     for (EntityAnnotation entityAnnotation : entityAnnotations) {
-
                         List<Entity> entities = entityAnnotation.getEntities();
-
                         for (Entity entity : entities) {
                             Log.d(TAG, "onSuccess: entityType: " + entity.getType());
                             try {
@@ -102,12 +99,10 @@ public class GoogleBillExtractor implements BillExtractor {
                                         break;
                                     default:
                                 }
-
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
                         }
-
                     }
                     if (date != null && amount != null) {
                         success = true;
@@ -134,11 +129,25 @@ public class GoogleBillExtractor implements BillExtractor {
 
         }).addOnFailureListener(ignored -> {
             Log.d(TAG, "onClick: down failure");
-//            Toast.makeText(getContext(), "提取失败，请检查网络环境", Toast.LENGTH_SHORT).show();
             onAnalyzeDoneListener.onClick(null);
         });
+    }
 
-
+    private void beforeExtract(String text) {
+        int startIndex = text.indexOf("买了");
+        if (startIndex == -1) {
+            startIndex = text.indexOf("买");
+        }
+        int endIndex = text.indexOf("花了");
+        if (endIndex == -1) {
+            endIndex = text.indexOf("花");
+        }
+        startIndex += 1;
+        if (endIndex <= startIndex) return;
+        itemName = text.substring(startIndex, endIndex);
+        remark = itemName;
+        Log.d(TAG, "beforeExtract: itemName: " + itemName);
+        Log.d(TAG, "beforeExtract: remark: " + remark);
     }
 
     private Integer billType = Bill.EXPENDITURE;
@@ -146,6 +155,7 @@ public class GoogleBillExtractor implements BillExtractor {
     private String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     private Boolean success = false;
     private String remark = null;
+    private String itemName = null;
 
     @Override
     public Integer getBillType() {
@@ -170,5 +180,10 @@ public class GoogleBillExtractor implements BillExtractor {
     @Override
     public String getRemark() {
         return remark;
+    }
+
+    @Override
+    public String getItemName() {
+        return itemName;
     }
 }

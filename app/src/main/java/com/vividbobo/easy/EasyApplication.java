@@ -4,22 +4,20 @@ import android.app.Application;
 import android.util.Log;
 
 import com.google.android.material.color.DynamicColors;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.mlsdk.common.MLApplication;
-import com.vividbobo.easy.database.EasyDatabase;
-import com.vividbobo.easy.database.model.Account;
-import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.hmsml.HmsMlCredential;
 import com.vividbobo.easy.utils.AsyncProcessor;
 import com.vividbobo.easy.utils.ColorUtils;
+import com.vividbobo.easy.utils.ConstantValue;
+import com.vividbobo.easy.utils.LogWatcher;
 import com.vividbobo.easy.utils.ResourceUtils;
-import com.vividbobo.easy.utils.SharePreferenceUtil;
+import com.vividbobo.easy.utils.SharedPrefsUtils;
 import com.vividbobo.easy.utils.ToastUtil;
 
-import java.util.Objects;
-import java.util.concurrent.Future;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * 全局Application
@@ -39,7 +37,7 @@ public class EasyApplication extends Application {
         // Apply dynamic color
         DynamicColors.applyToActivitiesIfAvailable(this);
 
-        onFirstLaunchInitial();
+        onAppCreateInitial();
 
         // ml settings
         MLApplication.initialize(getApplicationContext());
@@ -50,8 +48,8 @@ public class EasyApplication extends Application {
     }
 
     //第一次启动时，做的初始化
-    private void onFirstLaunchInitial() {
-
+    private void onAppCreateInitial() {
+//
     }
 
 

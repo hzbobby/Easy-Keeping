@@ -19,7 +19,7 @@ import com.vividbobo.easy.ui.chart.ChartFragment;
 import com.vividbobo.easy.ui.dataImportAndExport.ExportActivity;
 import com.vividbobo.easy.ui.dataImportAndExport.ImportActivity;
 import com.vividbobo.easy.ui.home.HomeFragment;
-import com.vividbobo.easy.ui.others.AccountSettingsDialog;
+import com.vividbobo.easy.ui.others.AutoBillingSettingsDialog;
 import com.vividbobo.easy.ui.settings.SettingsActivity;
 
 public class MainActivity extends BaseActivity {
@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         break;
                     case R.id.auto_record_item:
-                        AccountSettingsDialog.newInstance().show(getSupportFragmentManager(), AccountSettingsDialog.TAG);
+                        AutoBillingSettingsDialog.newInstance().show(getSupportFragmentManager(), AutoBillingSettingsDialog.TAG);
                         break;
 //                    case R.id.data_backup_recover:
 //                        break;

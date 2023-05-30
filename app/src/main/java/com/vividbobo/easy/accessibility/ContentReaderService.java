@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.Toast;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -22,7 +23,11 @@ import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.ui.EmptyActivity;
 import com.vividbobo.easy.utils.AsyncProcessor;
+import com.vividbobo.easy.utils.LogWatcher;
+import com.vividbobo.easy.utils.ToastUtil;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -154,7 +159,7 @@ public class ContentReaderService extends AccessibilityService {
 
             @Override
             public void onFailure(Throwable t) {
-
+                t.printStackTrace();
             }
         }, AsyncProcessor.getInstance().getExecutorService());
     }
@@ -164,7 +169,13 @@ public class ContentReaderService extends AccessibilityService {
     protected void onServiceConnected() {
         super.onServiceConnected();
         Log.d(TAG, "onServiceConnected: ");
+        Toast.makeText(getApplicationContext(), "自动记账已开启", Toast.LENGTH_SHORT).show();
+        LogWatcher.getInstance().init(getApplicationContext(), "logcat").startWatch();
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogWatcher.getInstance().stopWatch();
+    }
 }

@@ -16,11 +16,12 @@ public abstract class TextAnalyzer {
     public interface OnTextAnalyzerSuccess {
         void onSuccess(List<Bill> results);
     }
+    public abstract void analyze(Bitmap bitmap);
+
     private MLLocalTextSetting setting = new MLLocalTextSetting.Factory().setOCRMode(MLLocalTextSetting.OCR_DETECT_MODE)
             // 设置识别语种。
             .setLanguage("zh").create();
     protected MLTextAnalyzer analyzer = MLAnalyzerFactory.getInstance().getLocalTextAnalyzer(setting);
-    public abstract void analyze(Bitmap bitmap);
     protected OnTextAnalyzerSuccess onTextAnalyzerSuccess;
 
     public void setOnTextAnalyzerSuccess(OnTextAnalyzerSuccess onTextAnalyzerSuccess) {

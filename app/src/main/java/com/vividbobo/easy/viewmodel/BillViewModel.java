@@ -197,8 +197,8 @@ public class BillViewModel extends AndroidViewModel {
         billsRepo.setFilterPayeeId(payeeId);
     }
 
-    public void setChosenAccountId(Integer accountId) {
-        billsRepo.setFilterAccountId(accountId);
+    public void setLastSelectedAccountId(Integer accountId) {
+        billsRepo.setLastSelectedAccountId(accountId);
     }
 
     public void setChosenTags(List<Tag> tags) {

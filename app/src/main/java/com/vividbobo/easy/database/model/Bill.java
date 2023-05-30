@@ -1,5 +1,6 @@
 package com.vividbobo.easy.database.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -60,12 +61,13 @@ public class Bill extends ServerBaseEntity implements Serializable {
     private List<Tag> tags;   //标签
     private List<String> imagePaths;    //图片路径
     private String remark;      //备注
+    @ColumnInfo(defaultValue = "false")
     private Boolean isRefund;   //退款
-
+    @ColumnInfo(defaultValue = "false")
     private Boolean isReimburse;    //报销
-
+    @ColumnInfo(defaultValue = "false")
     private Boolean isIncomeExpenditureIncluded;    //记入收支
-
+    @ColumnInfo(defaultValue = "false")
     private Boolean isBudgetIncluded;   //计入预算
 
     private Date date;    //日期
@@ -347,6 +349,7 @@ public class Bill extends ServerBaseEntity implements Serializable {
         bill.setLeger(leger);
         bill.setCreateTime(new Timestamp(System.currentTimeMillis()));
         bill.initBoolValue();
+        bill.initDateTime();
         return bill;
     }
 

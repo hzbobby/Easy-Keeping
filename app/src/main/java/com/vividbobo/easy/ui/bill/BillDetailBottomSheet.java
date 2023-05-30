@@ -20,7 +20,6 @@ import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.Tag;
 import com.vividbobo.easy.databinding.SheetBillDetailBinding;
 import com.vividbobo.easy.ui.common.BottomSheetDialog;
-import com.vividbobo.easy.utils.ConvertUtils;
 import com.vividbobo.easy.utils.FormatUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 
@@ -134,6 +133,9 @@ public class BillDetailBottomSheet extends BottomSheetDialog<SheetBillDetailBind
         } else {
             binding.storeLayout.setVisibility(View.GONE);
         }
+        if (Objects.nonNull(bill.getLegerTitle())) {
+            binding.legerTv.setText(bill.getLegerTitle());
+        }
         if (Objects.nonNull(bill.getRemark()) && !bill.getRemark().isEmpty()) {
             binding.remarkTv.setText(bill.getRemark());
         }
@@ -175,9 +177,9 @@ public class BillDetailBottomSheet extends BottomSheetDialog<SheetBillDetailBind
             binding.otherTv.setText(sb.toString());
         }
 
-        if(Objects.isNull(bill.getImagePaths())||bill.getImagePaths().size()==0){
+        if (Objects.isNull(bill.getImagePaths()) || bill.getImagePaths().size() == 0) {
             binding.motionLayout.setVisibility(View.GONE);
-        }else{
+        } else {
             binding.motionLayout.setVisibility(View.VISIBLE);
 
             List<String> pathList = bill.getImagePaths();

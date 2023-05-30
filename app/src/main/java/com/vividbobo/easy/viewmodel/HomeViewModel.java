@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import com.vividbobo.easy.database.model.Bill;
 import com.vividbobo.easy.database.model.BillInfo;
 import com.vividbobo.easy.repository.HomeRepo;
+import com.vividbobo.easy.utils.AsyncProcessor;
 
 import java.util.List;
 
@@ -46,4 +47,9 @@ public class HomeViewModel extends AndroidViewModel {
     public void deleteBill(Bill bill) {
         homeRepo.deleteBill(bill);
     }
+
+    public void updateAccount(Integer accountId, Long amount) {
+        homeRepo.updateAccount(accountId,amount);
+    }
+
 }

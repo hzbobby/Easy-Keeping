@@ -141,6 +141,8 @@ public class HomeFragment extends Fragment {
                         bill.setRefund(true);
                         //dismiss?
                         homeViewModel.updateBill(bill);
+                        //对账户添加金额
+                        homeViewModel.updateAccount(bill.getLegerId(),bill.getAmount());
                         bottomSheet.dismiss();
                     }
                 });

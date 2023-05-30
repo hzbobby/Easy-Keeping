@@ -15,6 +15,8 @@ import com.vividbobo.easy.R;
 
 public abstract class BottomSheetDialog<VB extends ViewBinding> extends BottomSheetDialogFragment {
 
+    protected VB binding;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +30,7 @@ public abstract class BottomSheetDialog<VB extends ViewBinding> extends BottomSh
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        VB binding = getViewBinding(inflater);
+        binding = getViewBinding(inflater);
 
         onViewBinding(binding);
 
@@ -56,6 +58,7 @@ public abstract class BottomSheetDialog<VB extends ViewBinding> extends BottomSh
 
     /**
      * 初始时的高度
+     *
      * @return
      */
     protected int getInitialPeekHeight() {
@@ -64,6 +67,7 @@ public abstract class BottomSheetDialog<VB extends ViewBinding> extends BottomSh
 
     /**
      * 向上拉动后的最大高度
+     *
      * @return
      */
     protected int getFullPeekHeight() {

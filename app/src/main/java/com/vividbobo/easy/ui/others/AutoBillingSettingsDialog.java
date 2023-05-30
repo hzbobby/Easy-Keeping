@@ -1,8 +1,13 @@
 package com.vividbobo.easy.ui.others;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,18 +18,21 @@ import com.vividbobo.easy.adapter.adapter.DropdownMenuAdapter;
 import com.vividbobo.easy.database.model.Account;
 import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
-import com.vividbobo.easy.databinding.DialogAccountSettingsBinding;
+import com.vividbobo.easy.databinding.DialogAutoBillingSettingsBinding;
 import com.vividbobo.easy.ui.common.BaseFullScreenMaterialDialog;
+import com.vividbobo.easy.utils.AccessibilityUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.viewmodel.AccountSettingsViewModel;
 
 import java.util.List;
 import java.util.Objects;
 
-public class AccountSettingsDialog extends BaseFullScreenMaterialDialog<DialogAccountSettingsBinding> {
+public class AutoBillingSettingsDialog extends BaseFullScreenMaterialDialog<DialogAutoBillingSettingsBinding> {
     public static final String TAG = "AccountSettingsDialog";
+    private static final int REQUEST_ACTION_ACCESSIBILITY = 0x001;
 
     AccountSettingsViewModel accountSettingsViewModel;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,22 +41,22 @@ public class AccountSettingsDialog extends BaseFullScreenMaterialDialog<DialogAc
         accountSettingsViewModel = new ViewModelProvider(this).get(AccountSettingsViewModel.class);
     }
 
-    public static AccountSettingsDialog newInstance() {
+    public static AutoBillingSettingsDialog newInstance() {
 
         Bundle args = new Bundle();
 
-        AccountSettingsDialog fragment = new AccountSettingsDialog();
+        AutoBillingSettingsDialog fragment = new AutoBillingSettingsDialog();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    protected DialogAccountSettingsBinding getViewBinding(@NonNull LayoutInflater inflater) {
-        return DialogAccountSettingsBinding.inflate(inflater);
+    protected DialogAutoBillingSettingsBinding getViewBinding(@NonNull LayoutInflater inflater) {
+        return DialogAutoBillingSettingsBinding.inflate(inflater);
     }
 
     @Override
-    protected void onViewBinding(DialogAccountSettingsBinding binding) {
+    protected void onViewBinding(DialogAutoBillingSettingsBinding binding) {
         binding.appBarLayout.layoutToolBarTitleTv.setText("自动记账设置");
         binding.appBarLayout.layoutToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +71,28 @@ public class AccountSettingsDialog extends BaseFullScreenMaterialDialog<DialogAc
         binding.wechatAccountTv.setAdapter(wechatAdapter);
         binding.alipayAccountTv.setAdapter(alipayAdapter);
         binding.legerTv.setAdapter(legerAdapter);
+
+
+        binding.enableServiceSw.setChecked(AccessibilityUtils.isAccessibilitySettingsOn(getContext()));
+        binding.enableServiceSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (!AccessibilityUtils.isAccessibilitySettingsOn(getContext())) {
+                        Toast.makeText(getContext(), "请手动开启无障碍服务", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        startActivityForResult(intent, REQUEST_ACTION_ACCESSIBILITY);
+                    }
+                } else {
+                    if (AccessibilityUtils.isAccessibilitySettingsOn(getContext())) {
+                        Toast.makeText(getContext(), "请手动关闭无障碍服务", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        startActivityForResult(intent, REQUEST_ACTION_ACCESSIBILITY);
+                    }
+                }
+            }
+        });
+
 
         wechatAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -126,5 +156,9 @@ public class AccountSettingsDialog extends BaseFullScreenMaterialDialog<DialogAc
                 }
             }
         });
+
+
     }
+
+
 }

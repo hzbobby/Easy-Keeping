@@ -71,6 +71,7 @@ public class ResourceUtils {
     }
 
     public static Drawable getDrawable(@DrawableRes int id) {
+
         return ContextCompat.getDrawable(mContext, id);
     }
 

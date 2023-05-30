@@ -28,11 +28,15 @@ import com.vividbobo.easy.database.model.Payee;
 import com.vividbobo.easy.database.model.QueryCondition;
 import com.vividbobo.easy.database.model.Role;
 import com.vividbobo.easy.database.model.Tag;
+import com.vividbobo.easy.utils.AsyncProcessor;
 import com.vividbobo.easy.utils.ConvertUtils;
 
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.Callable;
 
 import kotlin.jvm.functions.Function1;
 
@@ -46,12 +50,13 @@ public class FilterViewModel extends AndroidViewModel {
     private final LiveData<List<Category>> incomeCategories;
     private final LiveData<List<Bill>> queryBills;
     private final BillDao billDao;
+    private final AccountDao accountDao;
     private MutableLiveData<QueryCondition> queryCondition;
 
     public FilterViewModel(@NonNull Application application) {
         super(application);
         EasyDatabase db = EasyDatabase.getDatabase(application);
-        AccountDao accountDao = db.accountDao();
+        accountDao = db.accountDao();
         accounts = accountDao.getAllAccounts();
 
 
@@ -80,6 +85,28 @@ public class FilterViewModel extends AndroidViewModel {
             }
         }), this::filterTags);
 
+    }
+
+    public void deleteBill(Bill bill) {
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                billDao.delete(bill);
+                return null;
+            }
+        });
+    }
+
+    public void updateAccount(Integer accountID, Long amount) {
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                Account account = accountDao.getRawAccountById(accountID);
+                account.setBalance(account.getBalance() + amount);
+                accountDao.update(account);
+                return null;
+            }
+        });
     }
 
     public List<Bill> filterTags(List<Bill> billList) {
@@ -115,45 +142,55 @@ public class FilterViewModel extends AndroidViewModel {
         return billList;
     }
 
+    public void updateBill(Bill bill) {
+        AsyncProcessor.getInstance().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                billDao.update(bill);
+                return null;
+            }
+        });
+    }
+
     public LiveData<List<Bill>> getQueryBills() {
         return queryBills;
     }
 
     public LiveData<List<Bill>> convertToBills(QueryCondition queryCondition, BillDao billDao) {
-        Integer[] billTypes = null;
-        Integer[] legers = null;
-        Integer[] accounts = null;
-        Integer[] roles = null;
-        Integer[] payees = null;
-        Integer[] categories = null;
+        Set<Integer> billTypes = new HashSet<>();
+        Set<Integer> unCheckedLegerIds = new HashSet<>();
+        Set<Integer> unCheckedAccountIds = new HashSet<>();
+        Set<Integer> unCheckedRoleIds = new HashSet<>();
+        Set<Integer> unCheckedPayeeIds = new HashSet<>();
+        Set<Integer> unCheckedCategoryIds = new HashSet<>();
         Boolean image = null;
         Boolean refund = null;
         Boolean reimburse = null;
         Boolean inExp = null;
         Boolean budget = null;
-        Long minAmount = null;
-        Long maxAmount = null;
+        Long minAmount = 0L;
+        Long maxAmount = Long.MAX_VALUE;
         String remark = null;
         Date startDate = null;
         Date endDate = null;
 
         if (queryCondition.getIntSetMap().containsKey(QueryCondition.BILL_BILLTYPE)) {
-            billTypes = queryCondition.getIntSetMap().get(QueryCondition.BILL_BILLTYPE).toArray(new Integer[0]);
+            billTypes = queryCondition.getIntSetMap().get(QueryCondition.BILL_BILLTYPE);
         }
         if (queryCondition.getIntSetMap().containsKey(QueryCondition.BILL_LEGER)) {
-            legers = (Integer[]) queryCondition.getIntSetMap().get(QueryCondition.BILL_LEGER).toArray(new Integer[0]);
+            unCheckedLegerIds = queryCondition.getIntSetMap().get(QueryCondition.BILL_LEGER);
         }
         if (queryCondition.getIntSetMap().containsKey(QueryCondition.BILL_ACCOUNT)) {
-            accounts = (Integer[]) queryCondition.getIntSetMap().get(QueryCondition.BILL_ACCOUNT).toArray(new Integer[0]);
+            unCheckedAccountIds = queryCondition.getIntSetMap().get(QueryCondition.BILL_ACCOUNT);
         }
         if (queryCondition.getIntSetMap().containsKey(QueryCondition.BILL_ROLE)) {
-            roles = (Integer[]) queryCondition.getIntSetMap().get(QueryCondition.BILL_ROLE).toArray(new Integer[0]);
+            unCheckedRoleIds = queryCondition.getIntSetMap().get(QueryCondition.BILL_ROLE);
         }
         if (queryCondition.getIntSetMap().containsKey(QueryCondition.BILL_PAYEE)) {
-            payees = (Integer[]) queryCondition.getIntSetMap().get(QueryCondition.BILL_PAYEE).toArray(new Integer[0]);
+            unCheckedPayeeIds = queryCondition.getIntSetMap().get(QueryCondition.BILL_PAYEE);
         }
         if (queryCondition.getIntSetMap().containsKey(QueryCondition.BILL_CATEGORY)) {
-            categories = (Integer[]) queryCondition.getIntSetMap().get(QueryCondition.BILL_CATEGORY).toArray(new Integer[0]);
+            unCheckedCategoryIds = queryCondition.getIntSetMap().get(QueryCondition.BILL_CATEGORY);
         }
 
 
@@ -193,11 +230,10 @@ public class FilterViewModel extends AndroidViewModel {
             endDate = new Date(tDate.getTime());
         }
 
-
-        LiveData<List<Bill>> bills = billDao.queryByConditions(billTypes, legers, accounts, roles, payees, categories, image, refund, reimburse, inExp, budget, minAmount, maxAmount, remark, startDate, endDate);
-
+//        LiveData<List<Bill>> bills = billDao.queryByConditions(billTypes, unCheckedLegerIds, unCheckedAccountIds, unCheckedRoleIds, unCheckedPayeeIds, unCheckedCategoryIds, image, refund, reimburse, inExp, budget, minAmount, maxAmount, remark, startDate, endDate);
+        LiveData<List<Bill>> bills = billDao.queryByConditions(billTypes, unCheckedLegerIds, unCheckedAccountIds, unCheckedRoleIds,
+                unCheckedPayeeIds, unCheckedCategoryIds, image, refund, reimburse, inExp, budget, remark, minAmount, maxAmount, startDate, endDate);
         return bills;
-
     }
 
     public LiveData<List<CheckableItem<Category>>> getExpenditureCategories() {

@@ -2,7 +2,10 @@ package com.vividbobo.easy.hmsml.text;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.util.Log;
+
+import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder;
 
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
@@ -23,6 +26,7 @@ import com.vividbobo.easy.utils.CalendarUtils;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +49,7 @@ public class AliPayTextAnalyzer extends TextAnalyzer {
             @Override
             public void onSuccess(MLText text) {
                 // 识别成功处理。
+                Log.d(TAG, "onSuccess: " + text.getPlates());
                 List<MLText.Block> blocks = text.getBlocks();
                 parseBillList(blocks);
             }
@@ -66,8 +71,51 @@ public class AliPayTextAnalyzer extends TextAnalyzer {
 
                         Bill bill = null;
                         Integer year = null;
+
+                        int DEVIATION = 50;
+                        int baseX = 240, baseY = 300;
+//                        for (int i = 0; i < blocks.size(); i++) {
+//                            MLText.Block infoBlock = blocks.get(i);
+//                            // get base Year
+//                            if (i == 0) {
+//                                try {
+//                                    year = Integer.parseInt(infoBlock.getStringValue().substring(0, 4).strip());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                    year = LocalDate.now().getYear();
+//                                }
+//                                continue;
+//                            }
+//                            // text line
+//                            for (int j = 0; j < infoBlock.getContents().size(); j++) {
+//                                MLText.TextLine line = infoBlock.getContents().get(j);
+//                                Rect lineBorder = line.getBorder();
+//                                //最左边坐标偏差小于50，则认为是信息开头处
+//                                if (Math.abs(lineBorder.left - baseX) <= DEVIATION){
+//
+//                                }
+//                            }
+//                        }
+
+
                         for (int i = 0; i < blocks.size(); i++) {
                             MLText.Block infoBlock = blocks.get(i);
+                            Log.d("TEXT_ANALYZER", " \n" + infoBlock.getBorder());
+                            Log.d("TEXT_ANALYZER", "block#" + i);
+                            StringBuilder sb = new StringBuilder();
+                            for (int j = 0; j < infoBlock.getContents().size(); j++) {
+                                MLText.TextLine content = infoBlock.getContents().get(j);
+                                StringBuilder sb2 = new StringBuilder();
+                                for (int k = 0; k < content.getContents().size(); k++) {
+                                    sb2.append("    " + content.getContents().get(k).getStringValue() + "\n");
+                                }
+                                Log.d("TEXT_ANALYZER", sb2.toString());
+                                sb.append("line " + j + " :" + content.getStringValue() + "\n");
+                                Log.d("TEXT_ANALYZER", content.getBorder().toString());
+                                Log.d("TEXT_ANALYZER", content.getStringValue());
+                            }
+                            Log.d("TEXT_ANALYZER", " \n" + sb.toString());
+
                             if (Objects.equals(infoBlock.getStringValue(), "w")) {
                                 continue;
                             }

@@ -5,6 +5,8 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.vividbobo.easy.EasyApplication;
 import com.vividbobo.easy.database.EasyDatabase;
@@ -18,6 +20,7 @@ import com.vividbobo.easy.database.model.Config;
 import com.vividbobo.easy.database.model.Leger;
 import com.vividbobo.easy.utils.AsyncProcessor;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class TextIdentifyViewModel extends AndroidViewModel {
@@ -27,6 +30,8 @@ public class TextIdentifyViewModel extends AndroidViewModel {
     private final BillDao billDao;
     private final LiveData<Category> expCategory;
     private final LiveData<Category> inCategory;
+    private final MutableLiveData<String> filterCategoryName;
+    private final CategoryDao categoryDao;
 
     public TextIdentifyViewModel(@NonNull Application application) {
         super(application);
@@ -36,9 +41,10 @@ public class TextIdentifyViewModel extends AndroidViewModel {
         lastAccount = configDao.getSelectedAccount();
         billDao = db.billDao();
 
-        CategoryDao categoryDao = db.categoryDao();
-        expCategory = categoryDao.getCategoryByIdLd(0);
-        inCategory = categoryDao.getCategoryByIdLd(24);
+        filterCategoryName = new MutableLiveData<>("其他");
+        categoryDao = db.categoryDao();
+        expCategory = Transformations.switchMap(filterCategoryName, title -> categoryDao.getCategoryByNameAndType(title, Category.TYPE_EXPENDITURE));
+        inCategory = Transformations.switchMap(filterCategoryName, title -> categoryDao.getCategoryByNameAndType(title, Category.TYPE_INCOME));
     }
 
     public void insert(Bill bill) {
@@ -65,5 +71,12 @@ public class TextIdentifyViewModel extends AndroidViewModel {
 
     public LiveData<Leger> getLastLeger() {
         return lastLeger;
+    }
+
+    public void setFilterCategoryName(String categoryName) {
+        if (Objects.isNull(categoryName)) {
+            categoryName = "其他";
+        }
+        filterCategoryName.postValue(categoryName);
     }
 }

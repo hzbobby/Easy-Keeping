@@ -193,7 +193,6 @@ public class ScreenshotImportActivity extends BaseActivity {
             bitmap = ImageDecoder.decodeBitmap(source);
         } catch (IOException e) {
             e.printStackTrace();
-//            ToastUtil.makeToast("create bitmap failed at " + i);
         }
         if (Objects.nonNull(bitmap)) {
             analyzer.analyze(bitmap);

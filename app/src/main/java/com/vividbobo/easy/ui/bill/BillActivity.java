@@ -3,7 +3,6 @@ package com.vividbobo.easy.ui.bill;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -33,7 +31,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -59,22 +56,18 @@ import com.vividbobo.easy.utils.FormatUtils;
 import com.vividbobo.easy.utils.ImageUtils;
 import com.vividbobo.easy.utils.ResourceUtils;
 import com.vividbobo.easy.utils.ToastUtil;
-import com.vividbobo.easy.viewmodel.AccountViewModel;
 import com.vividbobo.easy.viewmodel.BillViewModel;
 import com.vividbobo.easy.viewmodel.ConfigViewModel;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 /***
  * TODO 8.选择账户，该账户没有扣款
@@ -217,9 +210,9 @@ public class BillActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
 
                 switch (item.getItemId()) {
-                    case R.id.bill_template:
-                        templateSheetDialog.show(getSupportFragmentManager(), BillTemplateSheetDialog.TAG);
-                        return true;
+//                    case R.id.bill_template:
+//                        templateSheetDialog.show(getSupportFragmentManager(), BillTemplateSheetDialog.TAG);
+//                        return true;
                     default:
                         return false;
                 }
@@ -359,7 +352,7 @@ public class BillActivity extends BaseActivity {
         // set payee
         billViewModel.setChosenPayeeId(editBill.getPayeeId());
         // set account
-        billViewModel.setChosenAccountId(editBill.getAccountId());
+        billViewModel.setLastSelectedAccountId(editBill.getAccountId());
         // set tags
         billViewModel.setChosenTags(editBill.getTags());
         // set images
@@ -479,7 +472,7 @@ public class BillActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, Object item, int position) {
                 Account account = (Account) item;
-                billViewModel.setChosenAccountId(account.getId());
+                billViewModel.setLastSelectedAccountId(account.getId());
                 accountPicker.dismiss();
             }
         });
@@ -584,6 +577,9 @@ public class BillActivity extends BaseActivity {
         billViewModel.getChosenPayee().observe(this, new Observer<Payee>() {
             @Override
             public void onChanged(Payee payee) {
+                if (payee != null) {
+                    Log.d(TAG, "onChanged: payee");
+                }
                 billPayee = payee;
             }
         });
@@ -645,6 +641,9 @@ public class BillActivity extends BaseActivity {
         billViewModel.getLastSelectedAccount().observe(this, new Observer<Account>() {
             @Override
             public void onChanged(Account account) {
+                if (account != null) {
+                    Log.d(TAG, "onChanged: lastSelectedAccount: " + account.getTitle());
+                }
                 lastSelectedAccount = account;
             }
         });
@@ -808,7 +807,7 @@ public class BillActivity extends BaseActivity {
         Double res = null;
         try {
             res = (double) new ScriptEngineManager().getEngineByName("rhino").eval(expression);
-        } catch (ScriptException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return res;

@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment;
 import com.vividbobo.easy.R;
 
 public abstract class BaseFullScreenMaterialDialog<VB extends androidx.viewbinding.ViewBinding> extends DialogFragment {
-    private VB binding;
+    protected VB binding;
 
     protected abstract VB getViewBinding(@NonNull LayoutInflater inflater);
 
