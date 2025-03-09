@@ -2,65 +2,40 @@
 
 Android 记账软件
 
-## 引用开源库
+2023.6 毕业设计归档
 
-    ### 1.skydoves/ColorPickerView [https://github.com/skydoves/ColorPickerView]
+# 主要功能
 
-## APIs
+## 1. 分类记账
+![分类记账](img/Screenshot_20250309-112542.png)
 
-    ### 1.https://www.exchangerate-api.com/docs/standard-requests
+可以通过类别管理，添加二级类别
 
-# 开发记录
+![二级类别](img/Screenshot_20250309-113517.png)
 
-21.优化一下homeFragment的item项
+## 2. 账单详情
+![账单详情](img/Screenshot_20250309-112613.png)
 
-1.~~添加账户后，直接记账，丢失category title信息~~，同2
+## 3. 账本管理
+![账本管理](img/Screenshot_20250309-112718.png)
 
-2.~~默认 分类-其他 有问题~~，对billViewModel设置默认已解决
+## 4. 账单日历
+![账单日历](img/Screenshot_20250309-112732.png)
 
-3.~~对category title 设置为 distinct~~ ，算鸟
+## 5. 记账角色
+![记账角色](img/Screenshot_20250309-112749.png)
 
-4.用bottom sheet 显示账单的详情，里面可以删除和编辑
-1.~~显示图片~~      carousel success
-2.bottom 下滑与 内部的 scrollView 滑动冲突
-3.退款、删除、编辑按钮事件
-4.~~分类图标颜色~~
-5.~~转账界面~~
-6.~~账户item显示~~
-7.~~金额颜色~~
-8.选择账户，该账户没有扣款
-9.bill activity -> images use carousel in bottom view
-10.chip长按取消设置
-11.怎么获取初始Account 和 编辑的 Account
-12.设置编辑时，初始Category选中
-13.貌似跟初始时的那个category冲突了
-14.编辑保存
-15.~~payee 改为 收款方~~   
-16.~~自动记账相关的一些默认设置，账本、角色、账户(创建默认的 微信、支付宝账户)、类别~~
-17.~~bills表 insert 能不能做一个触发，自动去相应的account里扣款/加款~~ 逻辑实现
-~~
+## 6. 商家管理
+![商家管理](img/Screenshot_20250309-112752.png)
 
-5.~~更改transfer item layout~~
+## 7. 账户管理
+![账户管理](img/Screenshot_20250309-112755.png)
 
-22.~~homeFrag 上Header的信息~~
+## 8. 账单标签
+![账单标签](img/Screenshot_20250309-112817.png)
 
-23.日历页面
+## 9. 图表
+![图表](img/Screenshot_20250309-113702.png)
 
-24.图表页面
-18.~~BarChart 不能正常显示，且要补全日期~~ 分组的显示不了
-19.~~构造PieChart数据
-25.~~无障碍记账~~
-
-26.语音输入
-
-27.文字识别
-
-28.截图记账
-
-29.模板记账
-
-# 工作记载
-
-###### 4.26
-
-1.完成一下外文翻译
+## 10. 自动记账
+![自动记账](img/屏幕截图 2025-03-09 115313.png)

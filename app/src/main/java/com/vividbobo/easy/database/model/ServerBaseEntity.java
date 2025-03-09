@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  */
 public class ServerBaseEntity implements Serializable {
 
-    private Boolean uploaded=false;   // 是否上传
+    private Boolean uploaded = false;   // 是否上传
     private Timestamp createTime;   //创建时间
 
     public boolean isUploaded() {
